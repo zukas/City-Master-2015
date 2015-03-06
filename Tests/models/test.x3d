@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D version="3.0" profile="Immersive" xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance" xsd:noNamespaceSchemaLocation="http://www.web3d.org/specifications/x3d-3.0.xsd">
+	<head>
+		<meta name="filename" content="test.x3d" />
+		<meta name="generator" content="Blender 2.73 (sub 4)" />
+	</head>
+	<Scene>
+		<NavigationInfo headlight="true"
+		                visibilityLimit="0.0"
+		                type='"EXAMINE", "ANY"'
+		                avatarSize="0.25, 1.75, 0.75"
+		                />
+		<Background DEF="WO_World"
+		            groundColor="0.051 0.051 0.051"
+		            skyColor="0.051 0.051 0.051"
+		            />
+		<Transform DEF="Cube_TRANSFORM"
+		           translation="0.000000 0.000000 0.000000"
+		           scale="1.000000 1.000000 1.000000"
+		           rotation="-1.000000 0.000000 0.000000 1.570796"
+		           >
+			<Transform DEF="Cube_ifs_TRANSFORM"
+			           translation="0.000000 0.000000 0.000000"
+			           scale="1.000000 1.000000 1.000000"
+			           rotation="1.000000 0.000000 0.000000 0.000000"
+			           >
+				<Group DEF="group_ME_Cube">
+					<Shape>
+						<Appearance>
+							<ImageTexture DEF="IM_rock1_jpg"
+							              url='"/home/zukas/textures/rock1.jpg" "rock1.jpg" "/home/zukas/Blender/../textures/rock1.jpg"'
+							              />
+							<TextureTransform 
+							                  translation="0.000000 0.000000"
+							                  scale="1.000000 12.000000"
+							                  rotation="0.000000"
+							                  />
+							<Material DEF="MA_Material"
+							          diffuseColor="0.800 0.800 0.800"
+							          specularColor="0.401 0.401 0.401"
+							          emissiveColor="0.000 0.000 0.000"
+							          ambientIntensity="0.333"
+							          shininess="0.098"
+							          transparency="0.0"
+							          />
+						</Appearance>
+						<IndexedTriangleSet solid="true"
+						                    normalPerVertex="true"
+						                    index="0 1 2 0 2 3 4 5 6 4 6 7 8 9 10 8 10 11 11 10 12 11 12 13 13 12 14 13 14 15 16 17 15 16 15 14 "
+						                    >
+							<Coordinate point="-0.494347 -0.165455 0.000000 0.494347 -0.165454 -0.000000 0.494347 0.165455 -0.000000 -0.494347 0.165454 0.000000 -0.494343 -0.165451 6.000000 -0.494343 0.165458 6.000000 0.494351 0.165459 6.000000 0.494352 -0.165450 6.000000 -0.494347 -0.165455 0.000000 -0.494343 -0.165451 6.000000 0.494352 -0.165450 6.000000 0.494347 -0.165454 -0.000000 0.494351 0.165459 6.000000 0.494347 0.165455 -0.000000 -0.494343 0.165458 6.000000 -0.494347 0.165454 0.000000 -0.494343 -0.165451 6.000000 -0.494347 -0.165455 0.000000 " />
+							<Normal vector="0.577349 0.577349 0.577349 -0.577349 0.577349 0.577349 -0.577349 -0.577349 0.577349 0.577349 -0.577349 0.577349 0.577319 0.577349 -0.577349 0.577349 -0.577349 -0.577349 -0.577349 -0.577349 -0.577349 -0.577349 0.577349 -0.577349 0.577349 0.577349 0.577349 0.577319 0.577349 -0.577349 -0.577349 0.577349 -0.577349 -0.577349 0.577349 0.577349 -0.577349 -0.577349 -0.577349 -0.577349 -0.577349 0.577349 0.577349 -0.577349 -0.577349 0.577349 -0.577349 0.577349 0.577319 0.577349 -0.577349 0.577349 0.577349 0.577349 " />
+							<TextureCoordinate point="0.5002 0.9769 0.2503 0.9769 0.2503 0.4948 0.5002 0.4948 0.2501 0.9769 0.0001 0.9769 0.0001 0.4948 0.2500 0.4948 0.9999 0.0123 0.9999 0.4944 0.7499 0.4944 0.7499 0.0123 0.5000 0.4944 0.5000 0.0123 0.2500 0.4944 0.2500 0.0123 0.0001 0.4944 0.0001 0.0123 " />
+						</IndexedTriangleSet>
+					</Shape>
+				</Group>
+			</Transform>
+		</Transform>
+	</Scene>
+</X3D>

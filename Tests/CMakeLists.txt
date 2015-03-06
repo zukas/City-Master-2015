@@ -23,25 +23,11 @@ list(APPEND SHADERS
     )
 
 list(APPEND MODELS
-    models/build.fbx
-    models/build.dae
-    models/build.x
-    models/box.fbx
-    models/box.dae
-    models/test.x
-    models/test.dae
-    models/test.x3d
-    models/test.3ds
-    models/test.fbx
     models/cube.dae
     )
 
 list(APPEND TEXTURES
-    textures/rock_stones_0154_01_preview.jpg
-    textures/rock_stones_0154_01_preview.jpg.002.jpg
-    textures/rock1.jpg
     textures/uv_map_texture.png
-    textures/uv_map_texture.jpg
     textures/failed.png
     )
 

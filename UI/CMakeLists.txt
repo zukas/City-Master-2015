@@ -1,1 +1,1 @@
-project(${UI})
+project(${UI} CXX)

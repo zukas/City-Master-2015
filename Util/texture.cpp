@@ -8,17 +8,16 @@
 
 
 RefCount Texture::g_counter;
-std::map<std::string, Texture::TextureData> Texture::g_data;
+std::map<long, Texture::TextureData> Texture::g_data;
 
 Texture::Texture()
 {
 }
 
-Texture::Texture(GLID type, std::string file) :
-    m_filename(std::move(file))
+Texture::Texture(GLID type, const std::string &file) :
+    m_id(std::hash<std::string>()(file))
 {
-
-    auto it = g_data.find(m_filename);
+    auto it = g_data.find(m_id);
     if(it != std::end(g_data))
     {
         m_data = it->second;
@@ -26,19 +25,17 @@ Texture::Texture(GLID type, std::string file) :
     else
     {
         m_data.m_textureType = type;
-        glGenTextures(1, &m_data.m_textureID);
-        glBindTexture(m_data.m_textureType, m_data.m_textureID);
-        int width { 0 };
-        int height { 0 };
-        auto data = SOIL_load_image(m_filename.c_str(), &width, &height, nullptr, SOIL_LOAD_RGB);
-        glTexImage2D(m_data.m_textureType, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(m_data.m_textureType);
+        m_data.m_textureID = SOIL_load_OGL_texture(
+                    file.c_str(),
+                    SOIL_LOAD_AUTO,
+                    SOIL_CREATE_NEW_ID,
+                    SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+
         glTexParameterf(m_data.m_textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameterf(m_data.m_textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        SOIL_free_image_data(data);
 
         glGenSamplers(1, &m_data.m_samplerID);
-        g_data[m_filename] = m_data;
+        g_data[m_id] = m_data;
     }
 
 
@@ -46,19 +43,46 @@ Texture::Texture(GLID type, std::string file) :
 
 }
 
-Texture::Texture(GLID type, const std::vector<unsigned char> &buffer)
+Texture::Texture(GLID type, const std::vector<unsigned char> &buffer, int width, int height, GLID format)
 {
     m_data.m_textureType = type;
     glGenTextures(1, &m_data.m_textureID);
     glBindTexture(m_data.m_textureType, m_data.m_textureID);
-    int width { 0 };
-    int height { 0 };
-    auto data = SOIL_load_image_from_memory(&buffer[0], buffer.size(), &width, &height, nullptr, SOIL_LOAD_RGB);
-    glTexImage2D(m_data.m_textureType, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(m_data.m_textureType, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, buffer.data());
     glGenerateMipmap(m_data.m_textureType);
     glTexParameterf(m_data.m_textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameterf(m_data.m_textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    SOIL_free_image_data(data);
+
+    glGenSamplers(1, &m_data.m_samplerID);
+
+    g_counter + m_data.m_textureID;
+}
+
+Texture::Texture(const std::string &right, const std::string &left, const std::string &bottom, const std::string &top, const std::string &front, const std::string &back)
+{
+    m_data.m_textureType = GL_TEXTURE_CUBE_MAP;
+    m_data.m_textureID = SOIL_load_OGL_cubemap(
+                             right.c_str(),
+                             left.c_str(),
+                             top.c_str(),
+                             bottom.c_str(),
+                             front.c_str(),
+                             back.c_str(),
+                             SOIL_LOAD_AUTO,
+                             SOIL_CREATE_NEW_ID,
+                             SOIL_FLAG_MIPMAPS);
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    if(GLEW_EXT_texture_filter_anisotropic)
+    {
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, 0);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     glGenSamplers(1, &m_data.m_samplerID);
 
@@ -67,16 +91,21 @@ Texture::Texture(GLID type, const std::vector<unsigned char> &buffer)
 
 Texture::Texture(const Texture &other) :
     m_data(other.m_data),
-    m_filename(other.m_filename)
+    m_id(other.m_id)
 {
     g_counter+m_data.m_textureID;
 }
 
 Texture::Texture(Texture &&other) :
     m_data(other.m_data),
-    m_filename(std::move(other.m_filename))
+    m_id(std::move(other.m_id))
 {
     other.m_data = {};
+}
+
+void Texture::setSamplerParameter(GLID parameter, GLID value)
+{
+    glSamplerParameteri(m_data.m_samplerID, parameter, value);
 }
 
 Texture::~Texture()
@@ -86,9 +115,9 @@ Texture::~Texture()
         glDeleteTextures(1, &m_data.m_textureID);
         glDeleteSamplers(1, &m_data.m_samplerID);
         m_data = {};
-        if(!m_filename.empty())
+        if(m_id)
         {
-            g_data.erase(m_filename);
+            g_data.erase(m_id);
         }
     }
 }
@@ -105,7 +134,7 @@ bool Texture::bind(GLenum unit)
 Texture &Texture::operator = (const Texture &other)
 {
     m_data = other.m_data;
-    m_filename = other.m_filename;
+    m_id = other.m_id;
     g_counter+m_data.m_textureID;
 
     return *this;
@@ -114,7 +143,7 @@ Texture &Texture::operator = (const Texture &other)
 Texture &Texture::operator =(Texture &&other)
 {
     m_data = other.m_data;
-    m_filename = std::move(other.m_filename);
+    m_id = std::move(other.m_id);
     other.m_data = {};
     return *this;
 }

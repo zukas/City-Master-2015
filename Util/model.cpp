@@ -21,6 +21,14 @@ Model::Model(Model &&other) :
     other.m_selected = false;
 }
 
+Model::Model(const Model &other) :
+    m_meshes(other.m_meshes),
+    m_id(ColourID::aquireID()),
+    m_selectable(other.m_selectable),
+    m_selected(false)
+{
+}
+
 Model::Model(std::vector<Mesh> meshes) :
     m_meshes(std::move(meshes)),
     m_id(ColourID::aquireID())
@@ -79,12 +87,14 @@ void Model::render(Program &program)
     if(program.type() == Selection)
     {
         if(!m_selectable) return;
-        program.setUniform(glsl_object_id, m_id.colour());
+        program.setObjectID(m_id);
+//        program.setUniform(glsl_object_id, m_id.colour());
 
     }
     else
     {
-        program.setUniform(glsl_object_selected, m_selected);
+        program.setSelected(m_selected);
+//        program.setUniform(glsl_object_selected, m_selected);
     }
     for(auto &m : m_meshes)
     {
@@ -101,6 +111,18 @@ Model &Model::operator = (Model &&other)
 
     other.m_id = 0;
     other.m_selected = false;
+    return *this;
+}
+
+Model &Model::operator = (const Model &other)
+{
+    ColourID::releaseID(m_id);
+
+    m_meshes = other.m_meshes;
+    m_id = ColourID::aquireID();
+    m_selectable = other.m_selectable;
+    m_selected = false;
+
     return *this;
 }
 

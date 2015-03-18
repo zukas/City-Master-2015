@@ -6,6 +6,9 @@
 #include "lamp.h"
 #include "model.h"
 #include "axis.h"
+#include "text.h"
+#include "mouse.h"
+#include "skybox.h"
 
 class glProgram
 {
@@ -19,11 +22,17 @@ class glProgram
         Program m_objectProgram;
         Program m_objectSelectionProgram;
         Program m_axisProgram;
+        Program m_textProgram;
+        Program m_skyProgram;
         Camera m_camera;
+        Text m_text;
         Lamp m_lamp;
+        SkyBox m_box;
+        Mouse m_mouse;
         Axis m_axis;
         std::vector<Model > m_models;
         class GLFWwindow *m_window { nullptr };
+        float m_frameRate { 0 };
 
     public:
         glProgram();

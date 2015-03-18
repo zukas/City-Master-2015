@@ -17,6 +17,7 @@ class Model
         Model();
         ~Model();
         Model(Model &&other);
+        Model(const Model &other);
         Model(std::vector<Mesh > meshes);
 
         void translate(glm::vec3 axis);
@@ -30,11 +31,10 @@ class Model
         void render(Program &program);
 
         Model &operator = (Model &&other);
+        Model &operator = (const Model &other);
 
         bool operator == (int id) const;
 
-        Model(const Model&) = delete;
-        Model &operator = (const Model&) = delete;
 };
 
 #endif // MODEL_H

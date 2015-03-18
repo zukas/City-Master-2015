@@ -8,7 +8,7 @@ ColourID::ColourID(int id) :
     m_red(id & ~(max_green | max_blue)),
     m_green((id & ~ (max_red | max_blue)) >> 8),
     m_blue((id & ~ (max_red | max_green) ) >> 16),
-    m_colour(m_red / 255.f, m_green / 255.f, m_blue / 255.f)
+    m_colour(m_red / 255.f, m_green / 255.f, m_blue / 255.f, 1.f)
 { 
 }
 
@@ -17,7 +17,7 @@ ColourID::ColourID(int in_red, int in_green, int in_blue) :
     m_red(in_red),
     m_green(in_green),
     m_blue(in_blue),
-    m_colour(m_red / 255.f, m_green / 255.f, m_blue / 255.f)
+    m_colour(m_red / 255.f, m_green / 255.f, m_blue / 255.f, 1.f)
 {
 }
 
@@ -26,9 +26,9 @@ int ColourID::value() const
     return m_value;
 }
 
-glm::vec3 ColourID::colour() const
+const float *ColourID::colour() const
 {
-    return m_colour;
+    return &m_colour[0];
 }
 
 int ColourID::red() const
@@ -47,7 +47,7 @@ int ColourID::blue() const
 }
 
 
-ColourID::operator glm::vec3() const
+ColourID::operator glm::vec4() const
 {
     return m_colour;
 }

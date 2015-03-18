@@ -7,6 +7,15 @@
 
 RefCount Program::g_counter;
 
+void Program::cleanUp()
+{
+    if(m_programID != 0 && g_counter - m_programID == 0)
+    {
+        glDeleteProgram(m_programID);
+        m_programID = 0;
+    }
+}
+
 Program::Program() :
     m_programID(0)
 {
@@ -108,7 +117,7 @@ Program::Program(const std::string &vertex, const std::string &fragment, Program
             GLenum type = GL_ZERO;
             char name[100];
             glGetActiveUniform( m_programID, GLuint(i), sizeof(name)-1,
-                &name_len, &num, &type, name );
+                                &name_len, &num, &type, name );
             name[name_len] = 0;
             GLuint location = glGetUniformLocation( m_programID, name );
             printf("Uniform: %s, Localtion: %i\n", name, location);
@@ -118,39 +127,118 @@ Program::Program(const std::string &vertex, const std::string &fragment, Program
 
 
 
+    m_ids.glsl_model_matrix = glGetUniformLocation(m_programID, glsl_model_matrix);
+    m_ids.glsl_view_matrix = glGetUniformLocation(m_programID, glsl_view_matrix);
+    m_ids.glsl_projection_matrix = glGetUniformLocation(m_programID, glsl_projection_matrix);
+    m_ids.glsl_camera_position = glGetUniformLocation(m_programID, glsl_camera_position);
+    m_ids.glsl_light_position = glGetUniformLocation(m_programID, glsl_light_position);
+    m_ids.glsl_light_strength = glGetUniformLocation(m_programID, glsl_light_strength);
+
+    m_ids.glsl_sampler[0] = glGetUniformLocation(m_programID, glsl_sampler[0]);
+    m_ids.glsl_sampler[1] = glGetUniformLocation(m_programID, glsl_sampler[1]);
+    m_ids.glsl_sampler[2] = glGetUniformLocation(m_programID, glsl_sampler[2]);
+    m_ids.glsl_sampler[3] = glGetUniformLocation(m_programID, glsl_sampler[3]);
+    m_ids.glsl_sampler[4] = glGetUniformLocation(m_programID, glsl_sampler[4]);
+
+    m_ids.glsl_texture_count = glGetUniformLocation(m_programID, glsl_texture_count);
+    m_ids.glsl_object_id = glGetUniformLocation(m_programID, glsl_object_id);
+    m_ids.glsl_object_selected = glGetUniformLocation(m_programID, glsl_object_selected);
+    m_ids.glsl_colour = glGetUniformLocation(m_programID, glsl_colour);
+
+
 }
 
 Program::Program(Program &&other) :
     m_programID(other.m_programID),
-    m_type(other.m_type)
+    m_type(other.m_type),
+    m_ids(other.m_ids)
 {
     other.m_programID = 0;
 }
 
 Program::Program(const Program &other) :
     m_programID(other.m_programID),
-    m_type(other.m_type)
+    m_type(other.m_type),
+    m_ids(other.m_ids)
 {
     g_counter+m_programID;
 }
 
 Program::~Program()
 {
-    if(m_programID != 0 && g_counter - m_programID == 0)
-    {
-        glDeleteProgram(m_programID);
-        m_programID = 0;
-    }
+    cleanUp();
 }
 
 void Program::use()
 {
     glUseProgram(m_programID);
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    m_viewport.x = viewport[0];
+    m_viewport.y = viewport[1];
+    m_viewport.w = viewport[2];
+    m_viewport.h = viewport[3];
 }
 
 ProgramType Program::type() const
 {
     return m_type;
+}
+
+void Program::setModelMatrix(const glm::mat4 &mat)
+{
+    glUniformMatrix4fv(m_ids.glsl_model_matrix, 1, GL_FALSE, &mat[0][0]);
+}
+
+void Program::setViewMatrix(const glm::mat4 &mat)
+{
+    glUniformMatrix4fv(m_ids.glsl_view_matrix, 1, GL_FALSE, &mat[0][0]);
+}
+
+void Program::setProjectionMatrix(const glm::mat4 &mat)
+{
+    glUniformMatrix4fv(m_ids.glsl_projection_matrix, 1, GL_FALSE, &mat[0][0]);
+}
+
+void Program::setCameraPosition(const glm::vec3 &vec)
+{
+    glUniform3fv(m_ids.glsl_camera_position, 1, &vec[0]);
+}
+
+void Program::setLigthPosition(const glm::vec3 &vec)
+{
+    glUniform3fv(m_ids.glsl_light_position, 1, &vec[0]);
+}
+
+void Program::setLightStrength(float value)
+{
+    glUniform1f(m_ids.glsl_light_strength, value);
+}
+
+void Program::setSampers(GLID value)
+{
+
+    for(unsigned i = 0; i < value; ++i)
+    {
+        glUniform1ui(m_ids.glsl_sampler[i], i);
+    }
+
+    glUniform1i(m_ids.glsl_texture_count, value);
+}
+
+void Program::setObjectID(const glm::vec4 &vec)
+{
+    glUniform4fv(m_ids.glsl_object_id, 1, &vec[0]);
+}
+
+void Program::setSelected(bool value)
+{
+    glUniform1i(m_ids.glsl_object_selected, value);
+}
+
+void Program::setColour(const glm::vec4 &vec)
+{
+    glUniform4fv(m_ids.glsl_colour, 1, &vec[0]);
 }
 
 void Program::setUniform(const std::string &name, bool value)
@@ -201,6 +289,11 @@ void Program::setUniform(const std::string &name, const glm::mat4 &mat)
     glUniformMatrix4fv(id, 1, GL_FALSE, &mat[0][0]);
 }
 
+Viewport Program::getViewport() const
+{
+    return m_viewport;
+}
+
 Error Program::getError() const
 {
     return m_error;
@@ -209,16 +302,20 @@ Error Program::getError() const
 
 Program &Program::operator =(Program &&other)
 {
+    cleanUp();
     m_programID = other.m_programID;
     m_type = other.m_type;
+    m_ids = other.m_ids;
     other.m_programID = 0;
     return *this;
 }
 
-Program &Program::operator =(const Program &other)
+Program &Program::operator = (const Program &other)
 {
+    cleanUp();
     m_programID = other.m_programID;
     m_type = other.m_type;
+    m_ids = other.m_ids;
     g_counter+m_programID;
     return *this;
 }

@@ -9,6 +9,9 @@ Lamp::Lamp(glm::vec3 postion, float strength) :
 
 void Lamp::update(Program &program)
 {
-    program.setUniform(glsl_light_position, m_position);
-    program.setUniform(glsl_light_strength, m_strength);
+    program.setLightStrength(m_strength);
+    program.setLigthPosition(m_position);
+
+//    program.setUniform(glsl_light_position, m_position);
+//    program.setUniform(glsl_light_strength, m_strength);
 }

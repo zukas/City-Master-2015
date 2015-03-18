@@ -28,10 +28,12 @@ class Mesh
 
     private:
         void bindData();
+        void cleanUp();
 
     public:
         Mesh();
         Mesh(Mesh &&other);
+        Mesh(const Mesh &other);
         Mesh(std::vector<glm::vec3 > vertex, std::vector<glm::vec3 > normals, std::vector<glm::vec2 > uvs);
         Mesh(std::vector<glm::vec3 > vertex, std::vector<glm::vec3 > colours, Shape shape = TRIANGLE);
         ~Mesh();
@@ -43,9 +45,8 @@ class Mesh
 
 
         Mesh &operator = (Mesh &&other);
+        Mesh &operator = (const Mesh &other);
 
-        Mesh(const Mesh&) = delete;
-        Mesh &operator = (const Mesh&) = delete;
 };
 
 #endif // MESH_H

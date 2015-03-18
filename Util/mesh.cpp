@@ -70,6 +70,12 @@ void Mesh::bindData()
     glBindVertexArray(0);
 }
 
+void Mesh::cleanUp()
+{
+    glDeleteVertexArrays(1, &m_vertexArray);
+    m_vertexArray = 0;
+}
+
 Mesh::Mesh()
 {
 
@@ -91,6 +97,20 @@ Mesh::Mesh(Mesh &&other) :
 
     other.m_vertexArray = 0;
     other.m_animIndex = -1;
+}
+
+Mesh::Mesh(const Mesh &other) :
+    modelMatrix(other.modelMatrix),
+    m_vertexes(other.m_vertexes),
+    m_normals(other.m_normals),
+    m_colours(other.m_colours),
+    m_uvs(other.m_uvs),
+    m_textures(other.m_textures),
+    m_animations(other.m_animations),
+    m_type(other.m_type),
+    m_shape(other.m_shape)
+{
+    bindData();
 }
 
 Mesh::Mesh(std::vector<glm::vec3> vertex, std::vector<glm::vec3> normals, std::vector<glm::vec2> uvs) :
@@ -116,8 +136,7 @@ Mesh::Mesh(std::vector<glm::vec3> vertex, std::vector<glm::vec3> colours, Shape 
 
 Mesh::~Mesh()
 {
-    glDeleteVertexArrays(1, &m_vertexArray);
-    m_vertexArray = 0;
+    cleanUp();
 }
 
 void Mesh::addTexture(Texture texture)
@@ -150,19 +169,19 @@ void Mesh::render(Program &program)
         tmp *= m_animations[m_animIndex].transform();
     }
 
-    program.setUniform(glsl_model_matrix, tmp);
+    program.setModelMatrix(tmp);
+//    program.setUniform(glsl_model_matrix, tmp);
 
     if(program.type() != Selection)
     {
         if(m_type == UV)
         {
-            for(unsigned i = 0; i < m_textures.size(); ++i)
+            unsigned text_c =  m_textures.size();
+            program.setSampers(text_c);
+            for(unsigned i = 0; i < text_c; ++i)
             {
-                program.setUniform(glsl_sampler[i], i);
                 m_textures[i].bind(i);
             }
-
-            program.setUniform(glsl_texture_count,(int) m_textures.size());
         }
     }
 
@@ -183,13 +202,13 @@ void Mesh::render(Program &program)
 }
 
 
-Mesh &Mesh::operator =(Mesh &&other)
+Mesh &Mesh::operator = (Mesh &&other)
 {
     modelMatrix = std::move(other.modelMatrix);
     m_vertexArray = other.m_vertexArray;
     m_vertexes = std::move(other.m_vertexes);
-    m_normals = std::move(other.m_colours);
-    m_colours = std::move(other.m_normals);
+    m_normals = std::move(other.m_normals);
+    m_colours = std::move(other.m_colours);
     m_uvs = std::move(other.m_uvs);
     m_textures = std::move(other.m_textures);
     m_animations = std::move(other.m_animations);
@@ -199,5 +218,25 @@ Mesh &Mesh::operator =(Mesh &&other)
 
     other.m_vertexArray = 0;
     other.m_animIndex = -1;
+
+    return *this;
+}
+
+Mesh &Mesh::operator = (const Mesh &other)
+{
+    cleanUp();
+
+    modelMatrix = other.modelMatrix;
+    m_vertexes = other.m_vertexes;
+    m_normals = other.m_normals;
+    m_colours = other.m_colours;
+    m_uvs = other.m_uvs;
+    m_textures = other.m_textures;
+    m_animations = other.m_animations;
+    m_type = other.m_type;
+    m_shape = other.m_shape;
+
+    bindData();
+
     return *this;
 }

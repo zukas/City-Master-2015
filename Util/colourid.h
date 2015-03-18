@@ -12,7 +12,7 @@ class ColourID
         int m_red { 0 };
         int m_green { 0 };
         int m_blue { 0 };
-        glm::vec3 m_colour {};
+        glm::vec4 m_colour {};
 
     public:
         static constexpr int max_red { 255 };
@@ -23,12 +23,12 @@ class ColourID
         ColourID(int in_red, int in_green, int in_blue);
 
         int value() const;
-        glm::vec3 colour() const;
+        const float *colour() const;
         int red() const;
         int green() const;
         int blue() const;
 
-        operator glm::vec3 () const;
+        operator glm::vec4 () const;
         operator int () const;
 
 

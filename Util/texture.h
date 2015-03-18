@@ -16,16 +16,18 @@ class Texture
                 GLID m_samplerID { 0 };
         } m_data;
 
-        std::string m_filename;
+        long m_id { 0 };
         static RefCount g_counter;
-        static std::map<std::string, TextureData> g_data;
+        static std::map<long, TextureData> g_data;
 
     public:
         Texture();
-        Texture(GLID type, std::string file);
-        Texture(GLID type, const std::vector<unsigned char > &buffer);
+        Texture(GLID type, const std::string &file);
+        Texture(GLID type, const std::vector<unsigned char > &buffer, int width, int height, GLID format);
+        Texture(const std::string &right, const std::string &left, const std::string &bottom, const std::string &top, const std::string &front, const std::string &back);
         Texture(const Texture &other) ;
         Texture(Texture &&other);
+        void setSamplerParameter(GLID parameter, GLID value);
         ~Texture();
         bool bind(GLID unit);
         Texture &operator = (const Texture &other);

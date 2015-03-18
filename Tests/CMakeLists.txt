@@ -1,4 +1,4 @@
-project(${TESTS})
+project(${TESTS} CXX)
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/Util)
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/Import)
@@ -20,6 +20,10 @@ list(APPEND SHADERS
     shaders/object_select.frag
     shaders/basic.vert
     shaders/basic.frag
+    shaders/skybox.vert
+    shaders/skybox.frag
+    shaders/text.vert
+    shaders/text.frag
     )
 
 list(APPEND MODELS
@@ -29,6 +33,12 @@ list(APPEND MODELS
 list(APPEND TEXTURES
     textures/uv_map_texture.png
     textures/failed.png
+    textures/front.jpg
+    textures/back.jpg
+    textures/left.jpg
+    textures/right.jpg
+    textures/up.jpg
+    textures/down.jpg
     )
 
 list(APPEND FONTS

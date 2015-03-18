@@ -10,8 +10,8 @@ Camera::Camera(GLFWwindow *window) :
     m_view = glm::lookAt(
     m_position,
     glm::vec3 { 0, 0, 0 },
-    glm::vec3 { 0, 3, 0 });
-    m_projection = glm::perspective(45.f, 16.0f / 9.0f, 0.0001f, 1000.0f);
+    glm::vec3 { 0, 1, 0 });
+    m_projection = glm::perspective(45.f, 16.0f / 9.0f, 0.001f, 200.0f);
 }
 
 void Camera::calcViewport()
@@ -31,9 +31,9 @@ void Camera::calcViewport()
                      );
 
     glm::vec3 right = glm::vec3(
-                          sin(m_horizontalAngle + PI / 2.f) * m_speed,
+                          sin(m_horizontalAngle + PI / 2.f) * PI * m_speed,
                           0,
-                          cos(m_horizontalAngle + PI / 2.f) * m_speed
+                          cos(m_horizontalAngle + PI / 2.f) * PI * m_speed
                           );
 
     glm::vec3 up = glm::vec3(0.f, m_speed, 0.f) * glm::vec3(0, sin(m_verticalAngle), 0);
@@ -79,11 +79,11 @@ void Camera::calcViewport()
 
     if(glfwGetKey(m_window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
     {
-        m_position += up * deltaTime * m_speed;
+        m_position += up * deltaTime * m_speed * PI;
     }
     else if(glfwGetKey(m_window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
     {
-        m_position -= up * deltaTime * m_speed;
+        m_position -= up * deltaTime * m_speed * PI;
     }
 
     if(m_position.y < 5.f)
@@ -110,7 +110,7 @@ void Camera::calcViewport()
     lastTime = currentTime;
 }
 
-glm::mat4 Camera::viewport() const
+glm::mat4 Camera::view() const
 {
     return m_view;
 }
@@ -120,8 +120,15 @@ glm::mat4 Camera::projection() const
     return m_projection;
 }
 
+glm::vec3 Camera::position() const
+{
+    return m_position;
+}
+
 void Camera::update(Program &program)
 {
-    program.setUniform(glsl_view_matrix, m_view);
-    program.setUniform(glsl_projection_matrix, m_projection);
+    program.setViewMatrix(m_view);
+    program.setProjectionMatrix(m_projection);
+//    program.setUniform(glsl_view_matrix, m_view);
+//    program.setUniform(glsl_projection_matrix, m_projection);
 }

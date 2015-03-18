@@ -1,7 +1,9 @@
-project(${UTIL})
+project(${UTIL} CXX)
 
 pkg_check_modules(FREETYPE2 ${FreeType})
 include_directories(${FREETYPE2_INCLUDE_DIRS})
+
+add_subdirectory(SOIL)
 
 list(APPEND HEADERS
     types.h
@@ -16,6 +18,9 @@ list(APPEND HEADERS
     clock.h
     lamp.h
     colourid.h
+    text.h
+    mouse.h
+    skybox.h
     )
 
 list(APPEND SOURCES
@@ -30,7 +35,10 @@ list(APPEND SOURCES
     clock.cpp
     lamp.cpp
     colourid.cpp
+    text.cpp
+    mouse.cpp
+    skybox.cpp
     )
 
 add_library(${PROJECT_NAME} SHARED ${HEADERS} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} ${OpenGL} ${SOIL} ${FREETYPE2_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${OpenGL} gl-soil ${FREETYPE2_LIBRARIES})

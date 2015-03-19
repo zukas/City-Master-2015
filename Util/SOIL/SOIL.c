@@ -92,8 +92,9 @@ int check_extenstion(const char *name)
 {
     int found = -1;
     int numExt = 0;
+    int i;
     glGetIntegerv(GL_NUM_EXTENSIONS, &numExt);
-    for(int i=0; i<numExt && found != 0; i++) {
+    for(i=0; i<numExt && found != 0; i++) {
       const char *ccc = (const char*) glGetStringi(GL_EXTENSIONS, i);
       found = strcmp(ccc, name);
     }

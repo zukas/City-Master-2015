@@ -7,6 +7,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+constexpr float startPosition[3] { 12.f, 16.f, 14.f };
+
 class Camera
 {
     private:
@@ -14,8 +16,6 @@ class Camera
         glm::mat4 m_view;
         glm::mat4 m_projection;
         glm::mat4 m_rotation;
-
-        static constexpr float startPosition[3] { 12.f, 16.f, 14.f };
 
         glm::vec3 m_position { startPosition[0], startPosition[1], startPosition[2] };
         glm::vec3 m_direction { -startPosition[0], -startPosition[1], -startPosition[2] };

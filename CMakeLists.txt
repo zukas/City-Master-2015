@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 project(City-Master-2015 CXX)
 
+message("Additional ubuntu repositories:\nppa:keithw/glfw3")
+message("Required packages:\nlibghc-glut-dev libglfw3-dev libglm-dev libgl1-mesa-dev libglew-dev libfreetype6-dev")
+
 include(FindPkgConfig)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic -fPIC")
@@ -23,10 +26,6 @@ set(OpenGL
     glut
     GLEW
     glfw
-    )
-
-set(SOIL
-    SOIL
     )
 
 set(FreeType

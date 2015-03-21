@@ -106,7 +106,7 @@ void Camera::calcViewport()
                  ) * m_rotation;
 
 
-
+    m_direction = direction;
     lastTime = currentTime;
 }
 
@@ -123,6 +123,11 @@ glm::mat4 Camera::projection() const
 glm::vec3 Camera::position() const
 {
     return m_position;
+}
+
+glm::vec3 Camera::direction() const
+{
+    return m_direction;
 }
 
 void Camera::update(Program &program)

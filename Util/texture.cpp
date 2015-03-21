@@ -31,7 +31,7 @@ Texture::Texture(GLID type, const std::string &file) :
                     SOIL_CREATE_NEW_ID,
                     SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 
-        glTexParameterf(m_data.m_textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameterf(m_data.m_textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(m_data.m_textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glGenSamplers(1, &m_data.m_samplerID);

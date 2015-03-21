@@ -184,7 +184,7 @@ void glProgram::render()
 
     m_skyProgram.use();
     m_camera.update(m_skyProgram);
-    m_skyProgram.setCameraPosition(m_camera.position());
+    m_skyProgram.setCameraPosition( m_camera.position() + m_camera.direction());
     m_box.render(m_skyProgram);
 
 

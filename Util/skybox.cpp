@@ -3,7 +3,7 @@
 #include <GL/gl.h>
 #include <glm/glm.hpp>
 
-constexpr float size { 99.f };
+constexpr float size { 300.f };
 //constexpr float vertexs[72]
 //{
 //    size, size, size,
@@ -208,8 +208,8 @@ void SkyBox::render(Program &program)
 {
     glDepthMask (GL_FALSE);
     glBindVertexArray(m_vertexArray);
-//    program.setSampers(1);
-//    m_texture.bind(0);
+    program.setSampers(1);
+    m_texture.bind(0);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDepthMask (GL_TRUE);
 }

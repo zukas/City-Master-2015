@@ -4,6 +4,22 @@
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+
+struct Private
+{
+
+        std::vector<glm::vec3 > m_vertexes;
+        std::vector<glm::vec3 > m_normals;
+        std::vector<glm::vec3 > m_colours;
+        std::vector<glm::vec2 > m_uvs;
+
+        Private(std::vector<glm::vec3 > vertexes, std::vector<glm::vec3 > normals, std::vector<glm::vec3 > colours, std::vector<glm::vec2 > uvs):
+            m_vertexes(std::move(vertexes)),
+            m_normals(std::move(normals)),
+            m_colours(std::move(colours)),
+            m_uvs(std::move(uvs)) {}
+};
+
 void Mesh::bindData()
 {
     glGenVertexArrays(1, &m_vertexArray);
@@ -14,7 +30,7 @@ void Mesh::bindData()
     glGenBuffers(bufferCount, buffers);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-    glBufferData(GL_ARRAY_BUFFER, m_vertexes.size() * sizeof(glm::vec3), &m_vertexes[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, d_ptr->m_vertexes.size() * sizeof(glm::vec3), &d_ptr->m_vertexes[0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(
                 0,                  // attribute
@@ -28,7 +44,7 @@ void Mesh::bindData()
     if(m_type == UV)
     {
         glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-        glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(glm::vec3), &m_normals[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, d_ptr->m_normals.size() * sizeof(glm::vec3), &d_ptr->m_normals[0], GL_STATIC_DRAW);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(
                     1,                  // attribute
@@ -40,7 +56,7 @@ void Mesh::bindData()
                     );
 
         glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
-        glBufferData(GL_ARRAY_BUFFER, m_uvs.size() * sizeof(glm::vec2), &m_uvs[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, d_ptr->m_uvs.size() * sizeof(glm::vec2), &d_ptr->m_uvs[0], GL_STATIC_DRAW);
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(
                     2,                  // attribute
@@ -54,7 +70,7 @@ void Mesh::bindData()
     else
     {
         glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-        glBufferData(GL_ARRAY_BUFFER, m_colours.size() * sizeof(glm::vec3), &m_colours[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, d_ptr->m_colours.size() * sizeof(glm::vec3), &d_ptr->m_colours[0], GL_STATIC_DRAW);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(
                     1,                  // attribute
@@ -65,6 +81,7 @@ void Mesh::bindData()
                     0            // array buffer offset
                     );
     }
+    m_size = d_ptr->m_vertexes.size();
 
     delete [] buffers;
     glBindVertexArray(0);
@@ -82,17 +99,18 @@ Mesh::Mesh()
 }
 
 Mesh::Mesh(Mesh &&other) :
-    modelMatrix(std::move(other.modelMatrix)),
     m_vertexArray(other.m_vertexArray),
-    m_vertexes(std::move(other.m_vertexes)),
-    m_normals(std::move(other.m_normals)),
-    m_colours(std::move(other.m_colours)),
-    m_uvs(std::move(other.m_uvs)),
+    modelMatrix(std::move(other.modelMatrix)),
+    //    m_vertexes(std::move(other.m_vertexes)),
+    //    m_normals(std::move(other.m_normals)),
+    //    m_colours(std::move(other.m_colours)),
+    //    m_uvs(std::move(other.m_uvs)),
     m_textures(std::move(other.m_textures)),
     m_animations(std::move(other.m_animations)),
     m_animIndex(other.m_animIndex),
+    m_shape(other.m_shape),
     m_type(other.m_type),
-    m_shape(other.m_shape)
+    d_ptr(std::move(other.d_ptr))
 {
 
     other.m_vertexArray = 0;
@@ -101,35 +119,40 @@ Mesh::Mesh(Mesh &&other) :
 
 Mesh::Mesh(const Mesh &other) :
     modelMatrix(other.modelMatrix),
-    m_vertexes(other.m_vertexes),
-    m_normals(other.m_normals),
-    m_colours(other.m_colours),
-    m_uvs(other.m_uvs),
+    //    m_vertexes(other.m_vertexes),
+    //    m_normals(other.m_normals),
+    //    m_colours(other.m_colours),
+    //    m_uvs(other.m_uvs),
     m_textures(other.m_textures),
     m_animations(other.m_animations),
+    m_shape(other.m_shape),
     m_type(other.m_type),
-    m_shape(other.m_shape)
+    d_ptr(other.d_ptr)
 {
     bindData();
 }
 
 Mesh::Mesh(std::vector<glm::vec3> vertex, std::vector<glm::vec3> normals, std::vector<glm::vec2> uvs) :
     modelMatrix(1.f),
-    m_vertexes(std::move(vertex)),
-    m_normals(std::move(normals)),
-    m_uvs(std::move(uvs)),
+    m_shape(TRIANGLE),
     m_type(UV),
-    m_shape(TRIANGLE)
+    d_ptr(std::make_shared<Private > (std::move(vertex), std::move(normals), std::vector<glm::vec3> {}, std::move(uvs) ))
+//    d_ptr()
+//    m_vertexes(std::move(vertex)),
+//    m_normals(),
+//    m_uvs(std::move(uvs)),
+//    m_type(UV),
 {
-    bindData();
+bindData();
 }
 
 Mesh::Mesh(std::vector<glm::vec3> vertex, std::vector<glm::vec3> colours, Shape shape) :
     modelMatrix(1.f),
-    m_vertexes(std::move(vertex)),
-    m_colours(std::move(colours)),
+    //    m_vertexes(std::move(vertex)),
+    //    m_colours(std::move(colours)),
+    m_shape(shape),
     m_type(COLOUR),
-    m_shape(shape)
+    d_ptr(std::make_shared<Private >(std::move(vertex), std::vector<glm::vec3> {}, std::move(colours), std::vector<glm::vec2> {}))
 {
     bindData();
 }
@@ -170,7 +193,7 @@ void Mesh::render(Program &program)
     }
 
     program.setModelMatrix(tmp);
-//    program.setUniform(glsl_model_matrix, tmp);
+    //    program.setUniform(glsl_model_matrix, tmp);
 
     if(program.type() != Selection)
     {
@@ -188,10 +211,10 @@ void Mesh::render(Program &program)
     switch (m_shape)
     {
         case LINE:
-            glDrawArrays(GL_LINES, 0, m_vertexes.size());
+            glDrawArrays(GL_LINES, 0, m_size);
             break;
         case TRIANGLE:
-            glDrawArrays(GL_TRIANGLES, 0, m_vertexes.size());
+            glDrawArrays(GL_TRIANGLES, 0, m_size);
             break;
         default:
             break;
@@ -206,10 +229,7 @@ Mesh &Mesh::operator = (Mesh &&other)
 {
     modelMatrix = std::move(other.modelMatrix);
     m_vertexArray = other.m_vertexArray;
-    m_vertexes = std::move(other.m_vertexes);
-    m_normals = std::move(other.m_normals);
-    m_colours = std::move(other.m_colours);
-    m_uvs = std::move(other.m_uvs);
+    d_ptr = std::move(other.d_ptr);
     m_textures = std::move(other.m_textures);
     m_animations = std::move(other.m_animations);
     m_animIndex = other.m_animIndex;
@@ -227,10 +247,7 @@ Mesh &Mesh::operator = (const Mesh &other)
     cleanUp();
 
     modelMatrix = other.modelMatrix;
-    m_vertexes = other.m_vertexes;
-    m_normals = other.m_normals;
-    m_colours = other.m_colours;
-    m_uvs = other.m_uvs;
+    d_ptr = other.d_ptr;
     m_textures = other.m_textures;
     m_animations = other.m_animations;
     m_type = other.m_type;

@@ -20,7 +20,7 @@ class Camera
         glm::vec3 m_position { startPosition[0], startPosition[1], startPosition[2] };
         glm::vec3 m_direction { -startPosition[0], -startPosition[1], -startPosition[2] };
         float m_horizontalAngle { PI / 3.f };
-        float m_verticalAngle { PI / 1.f };
+        float m_verticalAngle { PI / 16.f };
         float m_mouseSpeed { 0.002f };
         float m_speed { 3.f };
 

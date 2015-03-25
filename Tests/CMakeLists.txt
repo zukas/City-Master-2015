@@ -39,6 +39,24 @@ list(APPEND TEXTURES
     textures/right.jpg
     textures/up.jpg
     textures/down.jpg
+    textures/desertsky_bk.tga
+    textures/desertsky_dn.tga
+    textures/desertsky_ft.tga
+    textures/desertsky_lf.tga
+    textures/desertsky_rt.tga
+    textures/desertsky_up.tga
+    textures/ss_bk.tga
+    textures/ss_dn.tga
+    textures/ss_ft.tga
+    textures/ss_lf.tga
+    textures/ss_rt.tga
+    textures/ss_up.tga
+    textures/bluecloud_bk.jpg
+    textures/bluecloud_dn.jpg
+    textures/bluecloud_ft.jpg
+    textures/bluecloud_lf.jpg
+    textures/bluecloud_rt.jpg
+    textures/bluecloud_up.jpg
     )
 
 list(APPEND FONTS

@@ -63,13 +63,6 @@ glProgram::glProgram()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-    printf("GL_ARB_texture_cube_map: %d\n", glewGetExtension("GL_ARB_texture_cube_map") == GL_TRUE);
-
-    printf("GL_ARB_seamless_cube_map: %d\n", glewGetExtension("GL_ARB_seamless_cube_map") == GL_TRUE);
-
-
-
-
 
     m_objectProgram = { "shaders/object.vert", "shaders/object.frag" };
     m_objectSelectionProgram = {"shaders/object_select.vert", "shaders/object_select.frag", Selection };
@@ -77,14 +70,34 @@ glProgram::glProgram()
     m_textProgram = { "shaders/text.vert", "shaders/text.frag" };
     m_skyProgram = { "shaders/skybox.vert", "shaders/skybox.frag" };
 
+//    m_box =
+//    {
+//        "textures/left.jpg",
+//        "textures/right.jpg",
+//        "textures/down.jpg",
+//        "textures/up.jpg",
+//        "textures/front.jpg",
+//        "textures/back.jpg"
+//    };
+
+//    m_box =
+//    {
+//        "textures/desertsky_lf.tga",
+//        "textures/desertsky_rt.tga",
+//        "textures/desertsky_dn.tga",
+//        "textures/desertsky_up.tga",
+//        "textures/desertsky_ft.tga",
+//        "textures/desertsky_bk.tga"
+//    };
+
     m_box =
     {
-        "textures/left.jpg",
-        "textures/right.jpg",
-        "textures/down.jpg",
-        "textures/up.jpg",
-        "textures/front.jpg",
-        "textures/back.jpg"
+        "textures/bluecloud_lf.jpg",
+        "textures/bluecloud_rt.jpg",
+        "textures/bluecloud_dn.jpg",
+        "textures/bluecloud_up.jpg",
+        "textures/bluecloud_ft.jpg",
+        "textures/bluecloud_bk.jpg"
     };
 
     Model mod = load("models/cube.dae");
@@ -109,26 +122,7 @@ glProgram::glProgram()
 
     m_mouse = { m_window };
 
-    m_mouse.onclick([=](double x, double y)
-    {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        m_objectSelectionProgram.use();
-        m_camera.update(m_objectSelectionProgram);
-
-        for(auto &m : m_models)
-        {
-            m.render(m_objectSelectionProgram);
-        }
-
-        unsigned char res[4] { 0 };
-        glReadPixels(x, m_objectSelectionProgram.getViewport().h - y, 1,1,GL_RGBA, GL_UNSIGNED_BYTE, &res);
-
-        auto it = std::find(std::begin(m_models), std::end(m_models), ColourID(res[0], res[1], res[2]).value());
-        if(it != std::end(m_models))
-        {
-            it->select(!it->selected());
-        }
-    });
+    m_mouse.onclick(std::bind(&glProgram::handleSelection, this, std::placeholders::_1, std::placeholders::_2));
 
     glfwSwapInterval(0);
 
@@ -161,10 +155,15 @@ void glProgram::exec()
         render();
         glfwPollEvents();
         ++frameCount;
-        m_frameRate = float(frameCount) /
+        m_frameRate = frameCount /
                       ( std::chrono::duration_cast<std::chrono::duration<float> >(
                             std::chrono::high_resolution_clock::now() -
                             startTime).count());
+        if(frameCount == 600)
+        {
+            startTime = std::chrono::high_resolution_clock::now();
+            frameCount = 0;
+        }
 
     }
     while (glfwGetKey(m_window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
@@ -184,7 +183,9 @@ void glProgram::render()
 
     m_skyProgram.use();
     m_camera.update(m_skyProgram);
-    m_skyProgram.setCameraPosition( m_camera.position() + m_camera.direction());
+//    m_skyProgram.setViewMatrix(glm::inverse(m_camera.view()));
+//    m_skyProgram.setProjectionMatrix(glm::ortho(0.0f, float(windowWidth), 0.0f, float(windowHeight)));
+//    m_skyProgram.setCameraPosition(m_camera.position());
     m_box.render(m_skyProgram);
 
 
@@ -206,7 +207,7 @@ void glProgram::render()
 
     char buf[128];
     int length = std::sprintf(buf,"FPS: %.2f", m_frameRate);
-    m_text.render(m_textProgram,glm::vec4(0.5f, 0.2f, 0.6f, 1.f), std::string(buf, length), 20, 40);
+    m_text.render(m_textProgram,glm::vec4(0.f, 0.f, 0.f, 1.f), std::string(buf, length), 20, 40);
 
 
     glEnable(GL_DEPTH_TEST);
@@ -215,7 +216,7 @@ void glProgram::render()
     glfwSwapBuffers(m_window);
 }
 
-void glProgram::renderSelection()
+void glProgram::handleSelection(double x, double y)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_objectSelectionProgram.use();
@@ -225,19 +226,13 @@ void glProgram::renderSelection()
     {
         m.render(m_objectSelectionProgram);
     }
-}
 
-void glProgram::mouseTrack()
-{
-    double xPos = 0.;
-    double yPos = 0.;
-    glfwGetCursorPos(m_window, &xPos, &yPos);
+    unsigned char res[4] { 0 };
 
-    unsigned char res[4];
-
-
-    renderSelection();
-    glReadPixels(xPos, m_objectSelectionProgram.getViewport().h - yPos, 1,1,GL_RGBA, GL_UNSIGNED_BYTE, &res);
+    double viewportheight = m_objectSelectionProgram.getViewport().h;
+    double screenX = x;
+    double screenY =  viewportheight - y;
+    glReadPixels(screenX, screenY, 1,1,GL_RGBA, GL_UNSIGNED_BYTE, res);
 
     auto it = std::find(std::begin(m_models), std::end(m_models), ColourID(res[0], res[1], res[2]).value());
     if(it != std::end(m_models))

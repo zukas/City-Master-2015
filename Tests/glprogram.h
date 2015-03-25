@@ -40,8 +40,7 @@ class glProgram
 
     private:
         void render();
-        void renderSelection();
-        void mouseTrack();
+        void handleSelection(double x, double y);
 };
 
 #endif // GLPROGRAM_H

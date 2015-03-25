@@ -6,25 +6,26 @@
 #include "program.h"
 #include "animation.h"
 #include <glm/glm.hpp>
+#include <memory>
 
 class Mesh
 {
     public:
         enum Shape { TRIANGLE = 0, LINE = 1  };
-        glm::mat4 modelMatrix;
+        enum Type { UV = 0, COLOUR = 1  };
 
     private:
         GLID m_vertexArray { 0 };
-        std::vector<glm::vec3 > m_vertexes;
-        std::vector<glm::vec3 > m_normals;
-        std::vector<glm::vec3 > m_colours;
-        std::vector<glm::vec2 > m_uvs;
+    public:
+        glm::mat4 modelMatrix;
+    private:
         std::vector<Texture > m_textures;
         std::vector<Animation > m_animations;
         int m_animIndex { -1 };
-
-        enum { UV = 0, COLOUR = 1  } m_type;
+        int m_size { 0 };
         Shape m_shape;
+        Type m_type;
+        std::shared_ptr<struct Private > d_ptr { nullptr };
 
     private:
         void bindData();

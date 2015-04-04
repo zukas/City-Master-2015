@@ -101,7 +101,7 @@ glProgram::glProgram()
     };
 
     Model mod = load("models/cube.dae");
-
+//    m_models.push_back(std::move(mod));
     for(float i = -30.f; i <= 30.f; i += 10.f)
     {
         for(float j = -30.f; j <= 30.f; j += 10.f)

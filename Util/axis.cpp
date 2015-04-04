@@ -27,7 +27,7 @@ Axis::Axis(float size)
         { 0.f, 0.f, 1.f }
     };
 
-    m_axis = { std::move(axisData), std::move(axisColors), Mesh::LINE };
+//    m_axis = { std::move(axisData), std::move(axisColors), Mesh::LINE };
 }
 
 Axis::Axis(Axis &&other) :

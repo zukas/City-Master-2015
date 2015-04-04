@@ -25,126 +25,111 @@ Program::Program(const std::string &vertex, const std::string &fragment, Program
     m_programID(0),
     m_type(type)
 {
-    std::string vertexCode;
-    std::ifstream vertexFile(vertex);
-    if(vertexFile.is_open()){
-        std::string Line = "";
-        while(getline(vertexFile, Line))
-            vertexCode += "\n" + Line;
-        vertexFile.close();
-    }else{
-        m_error.code = Error::FILE_NOT_FOUND;
-        m_error.message = std::string("Cannot open: ").append(vertex);
-        return;
-    }
 
-    std::string fragmentCode;
-    std::ifstream fragmentFile(fragment);
-    if(fragmentFile.is_open()){
-        std::string Line = "";
-        while(getline(fragmentFile, Line))
-            fragmentCode += "\n" + Line;
-        fragmentFile.close();
-    }else{
-        m_error.code = Error::FILE_NOT_FOUND;
-        m_error.message = std::string("Cannot open: ").append(fragment);
-        return;
-    }
+    createShader(vertex, VERTEX);
+    createShader(fragment, FRAGMENT);
+    createProgram();
+    linkProgram();
+    resolveUniforms();
+//    std::string vertexCode;
+//    std::ifstream vertexFile(vertex);
+//    if(vertexFile.is_open()){
+//        std::string Line = "";
+//        while(getline(vertexFile, Line))
+//            vertexCode += "\n" + Line;
+//        vertexFile.close();
+//    }else{
+//        m_error.code = Error::FILE_NOT_FOUND;
+//        m_error.message = std::string("Cannot open: ").append(vertex);
+//        return;
+//    }
 
-
-    printf("Vertex code\n%s\n\n", vertexCode.c_str());
-
-    printf("Fragment code\n%s\n\n", fragmentCode.c_str());
-
-    fflush(stdout);
-
-    GLuint vertexID = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
-    GLint res = GL_FALSE;
-    int logLength;
-
-    const char* dataPtr = vertexCode.c_str();
-    glShaderSource(vertexID, 1, &dataPtr , nullptr);
-    glCompileShader(vertexID);
-
-    glGetShaderiv(vertexID, GL_COMPILE_STATUS, &res);
-    glGetShaderiv(vertexID, GL_INFO_LOG_LENGTH, &logLength);
-    if ( logLength > 0 ){
-        m_error.code = Error::FAILED_COMPILE_VERTEX_SHADER;
-        m_error.message.resize(logLength+1);
-        glGetShaderInfoLog(fragmentID, logLength, nullptr, &m_error.message[0]);
-        printf("Vertex shader compile error: %s\n",m_error.message.c_str());
-    }
-
-    dataPtr = fragmentCode.c_str();
-    glShaderSource(fragmentID, 1, &dataPtr , nullptr);
-    glCompileShader(fragmentID);
-
-    glGetShaderiv(fragmentID, GL_COMPILE_STATUS, &res);
-    glGetShaderiv(fragmentID, GL_INFO_LOG_LENGTH, &logLength);
-    if ( logLength > 0 ){
-        m_error.code = Error::FAILED_COMPILE_VERTEX_SHADER;
-        m_error.message.resize(logLength+1);
-        glGetShaderInfoLog(fragmentID, logLength, nullptr, &m_error.message[0]);
-        printf("Fragment shader compile error: %s\n",m_error.message.c_str());
-    }
-
-    m_programID = glCreateProgram();
-    glAttachShader(m_programID, vertexID);
-    glAttachShader(m_programID, fragmentID);
-    glLinkProgram(m_programID);
-
-    glGetProgramiv(m_programID, GL_LINK_STATUS, &res);
-    glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &logLength);
-    if ( logLength > 0 ){
-        m_error.code = Error::FAILED_LINK_PROGRAM;
-        m_error.message.resize(logLength+1);
-        glGetShaderInfoLog(fragmentID, logLength, nullptr, &m_error.message[0]);
-        printf("Program link error: %s\n",m_error.message.c_str());
-    }
-
-    glDeleteShader(vertexID);
-    glDeleteShader(fragmentID);
-
-    g_counter+m_programID;
-
-    {
-        int total = -1;
-        glGetProgramiv( m_programID, GL_ACTIVE_UNIFORMS, &total );
-        printf("Number of uniforms: %d\n", total);
-        for(int i=0; i<total; ++i)  {
-            int name_len=-1, num=-1;
-            GLenum type = GL_ZERO;
-            char name[100];
-            glGetActiveUniform( m_programID, GLuint(i), sizeof(name)-1,
-                                &name_len, &num, &type, name );
-            name[name_len] = 0;
-            GLuint location = glGetUniformLocation( m_programID, name );
-            printf("Uniform: %s, Localtion: %i\n", name, location);
-        }
-        fflush(stdout);
-    }
+//    std::string fragmentCode;
+//    std::ifstream fragmentFile(fragment);
+//    if(fragmentFile.is_open()){
+//        std::string Line = "";
+//        while(getline(fragmentFile, Line))
+//            fragmentCode += "\n" + Line;
+//        fragmentFile.close();
+//    }else{
+//        m_error.code = Error::FILE_NOT_FOUND;
+//        m_error.message = std::string("Cannot open: ").append(fragment);
+//        return;
+//    }
 
 
+//    printf("Vertex code\n%s\n\n", vertexCode.c_str());
 
-    m_ids.glsl_model_matrix = glGetUniformLocation(m_programID, glsl_model_matrix);
-    m_ids.glsl_view_matrix = glGetUniformLocation(m_programID, glsl_view_matrix);
-    m_ids.glsl_projection_matrix = glGetUniformLocation(m_programID, glsl_projection_matrix);
-    m_ids.glsl_camera_position = glGetUniformLocation(m_programID, glsl_camera_position);
-    m_ids.glsl_light_position = glGetUniformLocation(m_programID, glsl_light_position);
-    m_ids.glsl_light_strength = glGetUniformLocation(m_programID, glsl_light_strength);
+//    printf("Fragment code\n%s\n\n", fragmentCode.c_str());
 
-    m_ids.glsl_sampler[0] = glGetUniformLocation(m_programID, glsl_sampler[0]);
-    m_ids.glsl_sampler[1] = glGetUniformLocation(m_programID, glsl_sampler[1]);
-    m_ids.glsl_sampler[2] = glGetUniformLocation(m_programID, glsl_sampler[2]);
-    m_ids.glsl_sampler[3] = glGetUniformLocation(m_programID, glsl_sampler[3]);
-    m_ids.glsl_sampler[4] = glGetUniformLocation(m_programID, glsl_sampler[4]);
+//    fflush(stdout);
 
-    m_ids.glsl_texture_count = glGetUniformLocation(m_programID, glsl_texture_count);
-    m_ids.glsl_object_id = glGetUniformLocation(m_programID, glsl_object_id);
-    m_ids.glsl_object_selected = glGetUniformLocation(m_programID, glsl_object_selected);
-    m_ids.glsl_colour = glGetUniformLocation(m_programID, glsl_colour);
+//    GLuint vertexID = glCreateShader(GL_VERTEX_SHADER);
+//    GLuint fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
+//    GLint res = GL_FALSE;
+//    int logLength;
 
+//    const char* dataPtr = vertexCode.c_str();
+//    glShaderSource(vertexID, 1, &dataPtr , nullptr);
+//    glCompileShader(vertexID);
+
+//    glGetShaderiv(vertexID, GL_COMPILE_STATUS, &res);
+//    glGetShaderiv(vertexID, GL_INFO_LOG_LENGTH, &logLength);
+//    if ( logLength > 0 ){
+//        m_error.code = Error::FAILED_COMPILE_VERTEX_SHADER;
+//        m_error.message.resize(logLength+1);
+//        glGetShaderInfoLog(fragmentID, logLength, nullptr, &m_error.message[0]);
+//        printf("Vertex shader compile error: %s\n",m_error.message.c_str());
+//    }
+
+//    dataPtr = fragmentCode.c_str();
+//    glShaderSource(fragmentID, 1, &dataPtr , nullptr);
+//    glCompileShader(fragmentID);
+
+//    glGetShaderiv(fragmentID, GL_COMPILE_STATUS, &res);
+//    glGetShaderiv(fragmentID, GL_INFO_LOG_LENGTH, &logLength);
+//    if ( logLength > 0 ){
+//        m_error.code = Error::FAILED_COMPILE_VERTEX_SHADER;
+//        m_error.message.resize(logLength+1);
+//        glGetShaderInfoLog(fragmentID, logLength, nullptr, &m_error.message[0]);
+//        printf("Fragment shader compile error: %s\n",m_error.message.c_str());
+//    }
+
+//    m_programID = glCreateProgram();
+//    glAttachShader(m_programID, vertexID);
+//    glAttachShader(m_programID, fragmentID);
+//    glLinkProgram(m_programID);
+
+//    glGetProgramiv(m_programID, GL_LINK_STATUS, &res);
+//    glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &logLength);
+//    if ( logLength > 0 ){
+//        m_error.code = Error::FAILED_LINK_PROGRAM;
+//        m_error.message.resize(logLength+1);
+//        glGetShaderInfoLog(fragmentID, logLength, nullptr, &m_error.message[0]);
+//        printf("Program link error: %s\n",m_error.message.c_str());
+//    }
+
+//    glDeleteShader(vertexID);
+//    glDeleteShader(fragmentID);
+
+//    g_counter+m_programID;
+
+//    {
+//        int total = -1;
+//        glGetProgramiv( m_programID, GL_ACTIVE_UNIFORMS, &total );
+//        printf("Number of uniforms: %d\n", total);
+//        for(int i=0; i<total; ++i)  {
+//            int name_len=-1, num=-1;
+//            GLenum type = GL_ZERO;
+//            char name[100];
+//            glGetActiveUniform( m_programID, GLuint(i), sizeof(name)-1,
+//                                &name_len, &num, &type, name );
+//            name[name_len] = 0;
+//            GLuint location = glGetUniformLocation( m_programID, name );
+//            printf("Uniform: %s, Localtion: %i\n", name, location);
+//        }
+//        fflush(stdout);
+//    }
 
 }
 
@@ -167,6 +152,12 @@ Program::Program(const Program &other) :
 Program::~Program()
 {
     cleanUp();
+
+    for(auto id : m_shaders)
+    {
+        glDeleteShader(id);
+    }
+    m_shaders.clear();
 }
 
 void Program::use()
@@ -183,6 +174,128 @@ void Program::use()
 ProgramType Program::type() const
 {
     return m_type;
+}
+
+void Program::type(ProgramType t)
+{
+    m_type = t;
+}
+
+void Program::createShader(const std::string &file, ShaderType t)
+{
+    std::string code;
+    std::ifstream handle(file);
+    if(handle.is_open()){
+        std::string line = "";
+        while(getline(handle, line))
+            code += "\n" + line;
+        handle.close();
+    }
+
+    if(!code.empty())
+    {
+
+        GLuint shaderID { 0 };
+        switch (t) {
+            case VERTEX:
+                shaderID = glCreateShader(GL_VERTEX_SHADER);
+                break;
+            case GEOMETRY:
+                shaderID = glCreateShader(GL_GEOMETRY_SHADER);
+                break;
+            case FRAGMENT:
+                shaderID = glCreateShader(GL_FRAGMENT_SHADER);
+                break;
+            default:
+                break;
+        }
+
+        GLint status { GL_FALSE };
+
+
+        const char* dataPtr = code.c_str();
+        glShaderSource(shaderID, 1, &dataPtr , nullptr);
+        glCompileShader(shaderID);
+        glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
+
+        if(status)
+        {
+            m_shaders.push_back(shaderID);
+        }
+        else
+        {
+            int logLength { 0 };
+            glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &logLength);
+            if ( logLength > 0 ){
+                char *error = new char[logLength + 1];
+                glGetShaderInfoLog(shaderID, logLength, nullptr, error);
+                printf("Shader compile error: %s\n", error);
+            }
+
+        }
+    }
+}
+
+void Program::createProgram()
+{
+    cleanUp();
+    m_programID = glCreateProgram();
+    g_counter+m_programID;
+    for(auto id : m_shaders)
+    {
+        glAttachShader(m_programID, id);
+    }
+}
+
+void Program::linkProgram()
+{
+
+    GLint status { GL_FALSE };
+    glLinkProgram(m_programID);
+    glGetProgramiv(m_programID, GL_LINK_STATUS, &status);
+    if(!status)
+    {
+        int logLength { 0 };
+        glGetShaderiv(m_programID, GL_INFO_LOG_LENGTH, &logLength);
+        if ( logLength > 0 ){
+            char *error = new char[logLength + 1];
+            glGetShaderInfoLog(m_programID, logLength, nullptr, error);
+            printf("Program link error: %s\n", error);
+        }
+        cleanUp();
+
+    }
+    for(auto id : m_shaders)
+    {
+        glDeleteShader(id);
+    }
+    m_shaders.clear();
+}
+
+void Program::resolveUniforms()
+{
+    m_ids.glsl_model_matrix = glGetUniformLocation(m_programID, glsl_model_matrix);
+    m_ids.glsl_view_matrix = glGetUniformLocation(m_programID, glsl_view_matrix);
+    m_ids.glsl_projection_matrix = glGetUniformLocation(m_programID, glsl_projection_matrix);
+    m_ids.glsl_camera_position = glGetUniformLocation(m_programID, glsl_camera_position);
+    m_ids.glsl_light_position = glGetUniformLocation(m_programID, glsl_light_position);
+    m_ids.glsl_light_strength = glGetUniformLocation(m_programID, glsl_light_strength);
+
+    m_ids.glsl_sampler[0] = glGetUniformLocation(m_programID, glsl_sampler[0]);
+    m_ids.glsl_sampler[1] = glGetUniformLocation(m_programID, glsl_sampler[1]);
+    m_ids.glsl_sampler[2] = glGetUniformLocation(m_programID, glsl_sampler[2]);
+    m_ids.glsl_sampler[3] = glGetUniformLocation(m_programID, glsl_sampler[3]);
+    m_ids.glsl_sampler[4] = glGetUniformLocation(m_programID, glsl_sampler[4]);
+
+    m_ids.glsl_texture_count = glGetUniformLocation(m_programID, glsl_texture_count);
+    m_ids.glsl_object_id = glGetUniformLocation(m_programID, glsl_object_id);
+    m_ids.glsl_object_selected = glGetUniformLocation(m_programID, glsl_object_selected);
+    m_ids.glsl_colour = glGetUniformLocation(m_programID, glsl_colour);
+}
+
+GLID Program::program()
+{
+    return m_programID;
 }
 
 void Program::setModelMatrix(const glm::mat4 &mat)
@@ -293,12 +406,6 @@ Viewport Program::getViewport() const
 {
     return m_viewport;
 }
-
-Error Program::getError() const
-{
-    return m_error;
-}
-
 
 Program &Program::operator =(Program &&other)
 {

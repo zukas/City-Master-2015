@@ -88,13 +88,10 @@ void Model::render(Program &program)
     {
         if(!m_selectable) return;
         program.setObjectID(m_id);
-//        program.setUniform(glsl_object_id, m_id.colour());
-
     }
     else
     {
         program.setSelected(m_selected);
-//        program.setUniform(glsl_object_selected, m_selected);
     }
     for(auto &m : m_meshes)
     {

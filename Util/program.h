@@ -10,6 +10,12 @@ enum ProgramType
     Normal, Selection
 };
 
+enum ShaderType
+{
+    VERTEX, GEOMETRY, FRAGMENT
+};
+
+
 struct Viewport
 {
         int x { 0 };
@@ -36,6 +42,7 @@ class Program
 {
     private:
         GLID m_programID;
+        std::vector<GLID > m_shaders;
         ProgramType m_type;
         Viewport m_viewport;
         struct
@@ -53,8 +60,6 @@ class Program
             GLSID glsl_colour { 0 };
         } m_ids;
 
-        Error m_error;
-
         static RefCount g_counter;
 
     private:
@@ -66,8 +71,17 @@ class Program
         Program(Program &&other);
         Program(const Program &other);
         ~Program();
+
         void use();
         ProgramType type() const;
+        void type(ProgramType t);
+        void createShader(const std::string &file, ShaderType t);
+        void createProgram();
+        void linkProgram();
+        void resolveUniforms();
+        GLID program();
+        Viewport getViewport() const;
+
 
         void setModelMatrix(const glm::mat4 &mat);
         void setViewMatrix(const glm::mat4 &mat);
@@ -89,11 +103,9 @@ class Program
         void setUniform(const std::string &name, const glm::vec3 &vec);
         void setUniform(const std::string &name, const glm::vec4 &vec);
         void setUniform(const std::string &name, const glm::mat4 &mat);
-        Viewport getViewport() const;
-
-        Error getError() const;
         Program &operator = (Program &&other);
         Program &operator = (const Program &other);
+
 };
 
 #endif // PROGRAM_H

@@ -6,6 +6,8 @@
 #include "assimp/DefaultLogger.hpp"
 #include "assimp/Logger.hpp"
 
+#include "mesh.h"
+
 #include <GL/gl.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -57,25 +59,33 @@ void processNode(std::vector<Mesh> &meshes, const aiScene *scene, aiNode *node, 
 
 Mesh processMesh(const aiScene *scene, aiMesh *mesh)
 {
-    std::vector<glm::vec3 > vertexes;
-    std::vector<glm::vec3 > normals;
-    std::vector<glm::vec2 > uvs;
+    //    std::vector<glm::vec3 > vertexes;
+    //    std::vector<glm::vec3 > normals;
+    //    std::vector<glm::vec2 > uvs;
 
     int faceCount = mesh->mNumFaces;
+    std::vector<MeshUVPoint > points(faceCount * 3);
+
 
     for(int n = 0; n < faceCount; ++n)
     {
         const aiFace& face = mesh->mFaces[n];
         for(int m = 0; m < 3; ++m)
         {
-            vertexes.push_back(glm::vec3 { mesh->mVertices[face.mIndices[m]].x, mesh->mVertices[face.mIndices[m]].y, mesh->mVertices[face.mIndices[m]].z });
-            uvs.push_back(glm::vec2 { mesh->mTextureCoords[0][face.mIndices[m]].x, mesh->mTextureCoords[0][face.mIndices[m]].y });
-            normals.push_back(mesh->HasNormals() ? glm::vec3 { mesh->mNormals[face.mIndices[m]].x, mesh->mNormals[face.mIndices[m]].y, mesh->mNormals[face.mIndices[m]].z } : glm::vec3(1.f, 1.f, 1.f));
+            glm::vec3 vert { mesh->mVertices[face.mIndices[m]].x, mesh->mVertices[face.mIndices[m]].y, mesh->mVertices[face.mIndices[m]].z };
+            glm::vec3 norm { 1.f, 1.f, 1.f };
+            if(mesh->HasNormals())
+            {
+                norm = { mesh->mNormals[face.mIndices[m]].x, mesh->mNormals[face.mIndices[m]].y, mesh->mNormals[face.mIndices[m]].z };
+            }
+            glm::vec2 UV { mesh->mTextureCoords[0][face.mIndices[m]].x, mesh->mTextureCoords[0][face.mIndices[m]].y };
+
+            points[n * 3 + m] = { std::move(vert), std::move(norm), std::move(UV) };
         }
     }
 
 
-    Mesh res { std::move(vertexes), std::move(normals), std::move(uvs) };
+    Mesh res { std::move(points) };
 
     if(scene->mNumMaterials > mesh->mMaterialIndex)
     {

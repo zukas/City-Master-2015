@@ -11,7 +11,4 @@ void Lamp::update(Program &program)
 {
     program.setLightStrength(m_strength);
     program.setLigthPosition(m_position);
-
-//    program.setUniform(glsl_light_position, m_position);
-//    program.setUniform(glsl_light_strength, m_strength);
 }

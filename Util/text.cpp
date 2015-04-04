@@ -161,7 +161,6 @@ void Text::render(Program &program, const glm::vec4 &colour, const std::string &
 {
     glBindVertexArray(m_vertexArray);
     program.setSampers(1);
-//    program.setUniform(glsl_sampler[0], 0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -191,10 +190,6 @@ void Text::render(Program &program, const glm::vec4 &colour, const std::string &
 
             program.setModelMatrix(model);
             program.setColour(colour);
-
-//            program.setUniform(glsl_model_matrix, model);
-//            program.setUniform(glsl_colour, colour);
-            // Draw character
             glDrawArrays(GL_TRIANGLE_STRIP, index*4, 4);
         }
 

@@ -4,142 +4,15 @@
 #include <glm/glm.hpp>
 
 constexpr float size { 300.f };
-//constexpr float vertexs[72]
-//{
-//    size, size, size,
-//    size, -size, size,
-//    -size, size, size,
-//    -size, -size, size,
-//    -size, size, -size,
-//    -size, -size, -size,
-//    size, size, -size,
-//    size, -size, -size,
-//    -size, size, size,
-//    -size, -size, size,
-//    -size, size, -size,
-//    -size, -size, -size,
-//    size, size, -size,
-//    size, -size, -size,
-//    size, size, size,
-//    size, -size, size,
-//    -size, size, -size,
-//    size, size, -size,
-//    -size, size, size,
-//    size, size, size,
-//    size, -size, -size,
-//    -size, -size, -size,
-//    size, -size, size,
-//    -size, -size, size
-//};
-
-constexpr float vertexes[]
-{
-    -10.0f,  10.0f, -10.0f,
-      -10.0f, -10.0f, -10.0f,
-       10.0f, -10.0f, -10.0f,
-       10.0f, -10.0f, -10.0f,
-       10.0f,  10.0f, -10.0f,
-      -10.0f,  10.0f, -10.0f,
-
-      -10.0f, -10.0f,  10.0f,
-      -10.0f, -10.0f, -10.0f,
-      -10.0f,  10.0f, -10.0f,
-      -10.0f,  10.0f, -10.0f,
-      -10.0f,  10.0f,  10.0f,
-      -10.0f, -10.0f,  10.0f,
-
-       10.0f, -10.0f, -10.0f,
-       10.0f, -10.0f,  10.0f,
-       10.0f,  10.0f,  10.0f,
-       10.0f,  10.0f,  10.0f,
-       10.0f,  10.0f, -10.0f,
-       10.0f, -10.0f, -10.0f,
-
-      -10.0f, -10.0f,  10.0f,
-      -10.0f,  10.0f,  10.0f,
-       10.0f,  10.0f,  10.0f,
-       10.0f,  10.0f,  10.0f,
-       10.0f, -10.0f,  10.0f,
-      -10.0f, -10.0f,  10.0f,
-
-      -10.0f,  10.0f, -10.0f,
-       10.0f,  10.0f, -10.0f,
-       10.0f,  10.0f,  10.0f,
-       10.0f,  10.0f,  10.0f,
-      -10.0f,  10.0f,  10.0f,
-      -10.0f,  10.0f, -10.0f,
-
-      -10.0f, -10.0f, -10.0f,
-      -10.0f, -10.0f,  10.0f,
-       10.0f, -10.0f, -10.0f,
-       10.0f, -10.0f, -10.0f,
-      -10.0f, -10.0f,  10.0f,
-       10.0f, -10.0f,  10.0f
-};
 
 constexpr float vertexs[108]
 {
-    size, -size, -size, size, -size,  size, size,  size,  size, size,  size,  size, size,  size, -size, size, -size, -size,
-    -size, -size,  size,-size, -size, -size,-size,  size, -size,-size,  size, -size,-size,  size,  size,-size, -size,  size,
-    -size,  size, -size, size,  size, -size, size,  size,  size, size,  size,  size,-size,  size,  size,-size,  size, -size,
-    -size, -size,  size, size, -size,  size, size, -size, -size, size, -size, -size,-size, -size, -size,-size, -size,  size,
-    size, -size,  size,-size, -size,  size,-size,  size,  size,-size,  size,  size, size,  size,  size, size, -size,  size,
-    -size, -size, -size, size, -size, -size, size,  size, -size, size,  size, -size,-size,  size, -size,-size, -size, -size
-};
-
-constexpr float normals[72]
-{
-    0.00f, 0.00f, -1.00f,
-    0.00f, 0.00f, -1.00f,
-    0.00f, 0.00f, -1.00f,
-    0.00f, 0.00f, -1.00f,
-    0.00f, 0.00f, 1.00f,
-    0.00f, 0.00f, 1.00f,
-    0.00f, 0.00f, 1.00f,
-    0.00f, 0.00f, 1.00f,
-    1.00f, 0.00f, 0.00f,
-    1.00f, 0.00f, 0.00f,
-    1.00f, 0.00f, 0.00f,
-    1.00f, 0.00f, 0.00f,
-    -1.00f, 0.00f, 0.00f,
-    -1.00f, 0.00f, 0.00f,
-    -1.00f, 0.00f, 0.00f,
-    -1.00f, 0.00f, 0.00f,
-    0.00f, -1.00f, 0.00f,
-    0.00f, -1.00f, 0.00f,
-    0.00f, -1.00f, 0.00f,
-    0.00f, -1.00f, 0.00f,
-    0.00f, 1.00f, 0.00f,
-    0.00f, 1.00f, 0.00f,
-    0.00f, 1.00f, 0.00f,
-    0.00f, 1.00f, 0.00f
-};
-constexpr float uvs[48]
-{
-    0.00f, 1.00f,
-    0.00f, 0.00f,
-    1.00f, 1.00f,
-    1.00f, 0.00f,
-    0.00f, 1.00f,
-    0.00f, 0.00f,
-    1.00f, 1.00f,
-    1.00f, 0.00f,
-    0.00f, 1.00f,
-    0.00f, 0.00f,
-    1.00f, 1.00f,
-    1.00f, 0.00f,
-    0.00f, 1.00f,
-    0.00f, 0.00f,
-    1.00f, 1.00f,
-    1.00f, 0.00f,
-    0.00f, 1.00f,
-    0.00f, 0.00f,
-    1.00f, 1.00f,
-    1.00f, 0.00f,
-    0.00f, 1.00f,
-    0.00f, 0.00f,
-    1.00f, 1.00f,
-    1.00f, 0.00f
+     size, -size, -size,  size, -size,  size, size,  size,  size, size,  size,  size, size,  size, -size, size, -size, -size,
+    -size, -size,  size, -size, -size, -size,-size,  size, -size,-size,  size, -size,-size,  size,  size,-size, -size,  size,
+    -size,  size, -size,  size,  size, -size, size,  size,  size, size,  size,  size,-size,  size,  size,-size,  size, -size,
+    -size, -size,  size,  size, -size,  size, size, -size, -size, size, -size, -size,-size, -size, -size,-size, -size,  size,
+     size, -size,  size, -size, -size,  size,-size,  size,  size,-size,  size,  size, size,  size,  size, size, -size,  size,
+    -size, -size, -size,  size, -size, -size, size,  size, -size, size,  size, -size,-size,  size, -size,-size, -size, -size
 };
 
 SkyBox::SkyBox()
@@ -172,29 +45,6 @@ SkyBox::SkyBox(const std::string &right, const std::string &left, const std::str
                 0,                  // stride
                 nullptr           // array buffer offset
                 );
-    //    glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-    //    glBufferData(GL_ARRAY_BUFFER, 72 * sizeof(float,&normals[0], GL_STATIC_DRAW);
-    //    glEnableVertexAttribArray(1);
-    //    glVertexAttribPointer(
-    //                1,                  // attribute
-    //                3,                  // size
-    //                GL_FLOAT,           // type
-    //                GL_FALSE,           // normalized?
-    //                0,                  // stride
-    //                0           // array buffer offset
-    //                );
-
-    //    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
-    //    glBufferData(GL_ARRAY_BUFFER, 48 * sizeof(float,&uvs[0], GL_STATIC_DRAW);
-    //    glEnableVertexAttribArray(2);
-    //    glVertexAttribPointer(
-    //                2,                  // attribute
-    //                2,                  // size
-    //                GL_FLOAT,           // type
-    //                GL_FALSE,           // normalized?
-    //                0,                  // stride
-    //                0           // array buffer offset
-    //                );
 
     glBindVertexArray(0);
 }

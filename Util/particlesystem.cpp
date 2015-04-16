@@ -73,13 +73,13 @@ ParticleSystem::ParticleSystem()
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)12); // Velocity
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)24); // Color
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_TRUE, sizeof(Particle), (const GLvoid*)24); // Color
         glEnableVertexAttribArray(3);
         glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)36); // Lifetime
         glEnableVertexAttribArray(4);
         glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)40); // Size
         glEnableVertexAttribArray(5);
-        glVertexAttribPointer(5, 1, GL_INT, GL_FALSE, sizeof(Particle), (const GLvoid*)44); // Type
+        glVertexAttribPointer(5, 1, GL_INT, GL_TRUE, sizeof(Particle), (const GLvoid*)44); // Type
     }
     m_bufferCursor = 0;
     m_particleCount = 1;
@@ -90,6 +90,11 @@ ParticleSystem::ParticleSystem()
 ParticleSystem::~ParticleSystem()
 {
 
+}
+
+int ParticleSystem::count() const
+{
+    return m_particleCount;
 }
 
 void ParticleSystem::update()
@@ -117,22 +122,23 @@ void ParticleSystem::update()
     m_programs[0].setUniform("fGenLifeRange", m_maxGenLife);
 
     m_programs[0].setUniform("fGenSize", m_genSize);
+    m_programs[0].setUniform("fDim", 3.f);
 
     m_programs[0].setUniform("iNumToGenerate", 0);
 
-    m_elapsedTime += timePassed;
+//    m_elapsedTime += timePassed;
 
-    if(m_elapsedTime > m_nextGenTime)
-    {
+//    if(m_elapsedTime > m_nextGenTime)
+//    {
 
         m_programs[0].setUniform("iNumToGenerate", m_genCount);
 
-        m_elapsedTime -= m_nextGenTime;
+//        m_elapsedTime -= m_nextGenTime;
 
         glm::vec3 vRandomSeed = glm::vec3(grandf(-2.0f,3.0f), grandf(-2.0f,3.0f), grandf(-2.0f,3.0f));
         m_programs[0].setUniform("vRandomSeed", vRandomSeed);
 
-    }
+//    }
 
 
     glEnable(GL_RASTERIZER_DISCARD);
@@ -167,7 +173,7 @@ void ParticleSystem::render(Camera &camera)
 {
     glEnable(GL_BLEND);
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glBlendFunc(m_blendKey, m_blendFunc);
 
     glDepthMask(0);
 
@@ -195,6 +201,12 @@ void ParticleSystem::render(Camera &camera)
 void ParticleSystem::setTexture(Texture t)
 {
     m_texture = std::move(t);
+}
+
+void ParticleSystem::setBlendFunc(int key, int func)
+{
+    m_blendKey = key;
+    m_blendFunc = func;
 }
 
 void ParticleSystem::setProperties(glm::vec3 position, glm::vec3 minVelocity, glm::vec3 maxValocity, glm::vec3 gravity, glm::vec3 colour, float minLife, float maxLife, float size, float period, int count)

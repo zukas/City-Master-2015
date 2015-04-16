@@ -16,8 +16,8 @@ class Camera
         glm::mat4 m_viewMat;
         glm::mat4 m_projectionMat;
 //        glm::mat4 m_rotationMat;
-        glm::vec3 m_eye { 0.f, 2.f, 12.f };
-        glm::vec3 m_view { 0.f, 2.f, 0.f };
+        glm::vec3 m_eye { 0.f, 6.f, 12.f };
+        glm::vec3 m_view { 0.f, 6.f, 0.f };
         glm::vec3 m_up { 0.f, 1.f, 0.f };
         float m_speed { 25.f };
         float m_sensitivity { 0.1f };

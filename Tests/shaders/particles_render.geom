@@ -19,8 +19,6 @@ flat out vec4 vColorPart;
 
 void main()
 {
-    if(iTypePass[0] != 0)
-    {
         vec3 vPosOld = gl_in[0].gl_Position.xyz;
         float fSize = fSizePass[0];
         mat4 mVP = projectionMatrix* viewMatrix;
@@ -49,5 +47,4 @@ void main()
         EmitVertex();
 
         EndPrimitive();
-    }
 }

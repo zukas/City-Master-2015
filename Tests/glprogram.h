@@ -31,7 +31,8 @@ class glProgram
         SkyBox m_box;
         Mouse m_mouse;
         Axis m_axis;
-        ParticleSystem * m_part { nullptr };
+        ParticleSystem * m_fire { nullptr };
+        ParticleSystem * m_smoke { nullptr };
         std::vector<Model > m_models;
         class GLFWwindow *m_window { nullptr };
         float m_frameRate { 0 };

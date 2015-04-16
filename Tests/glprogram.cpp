@@ -71,19 +71,35 @@ glProgram::glProgram()
     m_textProgram = { "shaders/text.vert", "shaders/text.frag" };
     m_skyProgram = { "shaders/skybox.vert", "shaders/skybox.frag" };
 
-    m_part = new ParticleSystem;
+    m_fire = new ParticleSystem;
     Texture pt { GL_TEXTURE_2D, "textures/particle.bmp"};
     pt.setSamplerParameter(GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
-    m_part->setTexture(std::move(pt));
-    m_part->setProperties(
-                glm::vec3(0.f, 5.f, 0.f), // Where the particles are generated
-                glm::vec3(0.0, -0.01, 0.0), // Minimal velocity
-                glm::vec3(0.0, -0.01, 0.0), // Maximal velocity
-                glm::vec3(0.0, -0.01, 0.0), // Gravity force applied to particles
+    m_fire->setTexture(pt);
+    m_fire->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    m_fire->setProperties(
+                glm::vec3(-.75f, 5.f, -.75f), // Where the particles are generated
+                glm::vec3(0.0, -0.005, 0.0), // Minimal velocity
+                glm::vec3(0.0, -0.008, 0.0), // Maximal velocity
+                glm::vec3(0.0, -0.009, 0.0), // Gravity force applied to particles
                 glm::vec3(1.0f, 0.415f, 0.1215f), // Color (light blue)
                 1000.f, // Minimum lifetime in seconds
                 1500.0f, // Maximum lifetime in seconds
                 0.35f, // Rendered size
+                6.f, // Spawn every 0.05 seconds
+                15); // And spawn 30 particles
+
+    m_smoke = new ParticleSystem;
+    m_smoke->setTexture(std::move(pt));
+    m_smoke->setBlendFunc(GL_ONE, GL_SRC_ALPHA);
+    m_smoke->setProperties(
+                glm::vec3(-2.f, 5.f, -2.f), // Where the particles are generated
+                glm::vec3(0.0, -0.01, 0.0), // Minimal velocity
+                glm::vec3(0.0, -0.005, 0.0), // Maximal velocity
+                glm::vec3(0.0, -0.008, 0.0), // Gravity force applied to particles
+                glm::vec3(1.f, 1.f, 1.f), // Color (light blue)
+                2000.f, // Minimum lifetime in seconds
+                2500.0f, // Maximum lifetime in seconds
+                0.25f, // Rendered size
                 6.f, // Spawn every 0.05 seconds
                 30); // And spawn 30 particles
 
@@ -192,6 +208,9 @@ void glProgram::render()
         m.render(m_objectProgram);
     }
 
+    m_fire->update();
+    m_fire->render(m_camera);
+
     glDisable(GL_DEPTH_TEST);
     glDepthFunc(GL_ALWAYS);
 
@@ -204,12 +223,17 @@ void glProgram::render()
     m_text.render(m_textProgram,glm::vec4(0.f, 0.f, 0.f, 1.f), std::string(buf, length), 20, 40);
 
 
+    length = std::sprintf(buf,"PC: %d", m_fire->count());
+    m_text.render(m_textProgram,glm::vec4(0.f, 0.f, 0.f, 1.f), std::string(buf, length), 20, 80);
+
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
 
-    m_part->update();
-    m_part->render(m_camera);
+
+//    m_smoke->update();
+//    m_smoke->render(m_camera);
 
     glfwSwapBuffers(m_window);
 }

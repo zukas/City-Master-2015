@@ -29,6 +29,7 @@ uniform vec3 vGenVelocityRange;
 
 uniform vec3 vGenColor;
 uniform float fGenSize; 
+uniform float fDim;
 
 uniform float fGenLifeMin, fGenLifeRange; // Life of new particle - from min to (min+range)
 uniform float fTimePassed; // Time passed since last frame
@@ -89,7 +90,7 @@ void main()
 
         for(int i = 0; i < iNumToGenerate; i++)
         {
-            vPositionOut = vGenPosition + rand_v3(vRandomSeed, rand_pos(vVelocityOut.xz) * 3);
+            vPositionOut = vGenPosition + rand_v3(vRandomSeed, rand_pos(vVelocityOut.xz) * fDim);
             vVelocityOut = vGenVelocityMin + (rand_v3_pos(vGenGravityVector, 0.01) * vGenVelocityRange) ;
             vColorOut = vGenColor;
             fLifeTimeOut = fGenLifeRange;// + fGenLifeMin*randZeroOne();

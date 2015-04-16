@@ -1,5 +1,6 @@
 #include "camera.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include "clock.h"
@@ -55,8 +56,23 @@ void Camera::calcViewport()
         vMoveBy -= vStrafe*deltaTime;
     }
 
+
     m_eye += vMoveBy;
     m_view += vMoveBy;
+
+
+    if (glfwGetKey( m_window, GLFW_KEY_A ) == GLFW_PRESS)
+    {
+        m_view -= m_eye;
+        m_view = glm::rotate(m_view, 2 * PI * m_sensitivity * deltaTime, glm::vec3(0.f, 1.f, 0.f));
+        m_view += m_eye;
+    }
+    else if (glfwGetKey( m_window, GLFW_KEY_D ) == GLFW_PRESS)
+    {
+        m_view -= m_eye;
+        m_view = glm::rotate(m_view, -2 * PI * m_sensitivity * deltaTime, glm::vec3(0.f, 1.f, 0.f));
+        m_view += m_eye;
+    }
 
     m_viewMat = glm::lookAt(m_eye, m_view, m_up);
     glm::vec3 tmp = m_view-m_eye;

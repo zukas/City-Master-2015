@@ -98,16 +98,16 @@ glProgram::glProgram()
     };
 
     Model mod = load("models/sphere.dae");
-    //    m_models.push_back(std::move(mod));
-    for(float i = -150.f; i <= 150.f; i += 50.f)
-    {
-        for(float j = -150.f; j <= 150.f; j += 50.f)
-        {
-            Model m = mod;
-            m.translate({i, 0.f, j});
-            m_models.push_back(std::move(m));
-        }
-    }
+        m_models.push_back(std::move(mod));
+//    for(float i = -150.f; i <= 150.f; i += 150.f)
+//    {
+//        for(float j = -150.f; j <= 150.f; j += 150.f)
+//        {
+//            Model m = mod;
+//            m.translate({i, 0.f, j});
+//            m_models.push_back(std::move(m));
+//        }
+//    }
 
     for(auto &m : m_models)
     {

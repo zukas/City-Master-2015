@@ -1,6 +1,6 @@
 #version 330
 
-layout(location = 0) smooth in vec3 inPosition;
+layout(location = 0) in vec3 inPosition;
 
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;

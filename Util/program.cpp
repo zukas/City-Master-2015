@@ -25,112 +25,11 @@ Program::Program(const std::string &vertex, const std::string &fragment, Program
     m_programID(0),
     m_type(type)
 {
-
     createShader(vertex, VERTEX);
     createShader(fragment, FRAGMENT);
     createProgram();
     linkProgram();
     resolveUniforms();
-//    std::string vertexCode;
-//    std::ifstream vertexFile(vertex);
-//    if(vertexFile.is_open()){
-//        std::string Line = "";
-//        while(getline(vertexFile, Line))
-//            vertexCode += "\n" + Line;
-//        vertexFile.close();
-//    }else{
-//        m_error.code = Error::FILE_NOT_FOUND;
-//        m_error.message = std::string("Cannot open: ").append(vertex);
-//        return;
-//    }
-
-//    std::string fragmentCode;
-//    std::ifstream fragmentFile(fragment);
-//    if(fragmentFile.is_open()){
-//        std::string Line = "";
-//        while(getline(fragmentFile, Line))
-//            fragmentCode += "\n" + Line;
-//        fragmentFile.close();
-//    }else{
-//        m_error.code = Error::FILE_NOT_FOUND;
-//        m_error.message = std::string("Cannot open: ").append(fragment);
-//        return;
-//    }
-
-
-//    printf("Vertex code\n%s\n\n", vertexCode.c_str());
-
-//    printf("Fragment code\n%s\n\n", fragmentCode.c_str());
-
-//    fflush(stdout);
-
-//    GLuint vertexID = glCreateShader(GL_VERTEX_SHADER);
-//    GLuint fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
-//    GLint res = GL_FALSE;
-//    int logLength;
-
-//    const char* dataPtr = vertexCode.c_str();
-//    glShaderSource(vertexID, 1, &dataPtr , nullptr);
-//    glCompileShader(vertexID);
-
-//    glGetShaderiv(vertexID, GL_COMPILE_STATUS, &res);
-//    glGetShaderiv(vertexID, GL_INFO_LOG_LENGTH, &logLength);
-//    if ( logLength > 0 ){
-//        m_error.code = Error::FAILED_COMPILE_VERTEX_SHADER;
-//        m_error.message.resize(logLength+1);
-//        glGetShaderInfoLog(fragmentID, logLength, nullptr, &m_error.message[0]);
-//        printf("Vertex shader compile error: %s\n",m_error.message.c_str());
-//    }
-
-//    dataPtr = fragmentCode.c_str();
-//    glShaderSource(fragmentID, 1, &dataPtr , nullptr);
-//    glCompileShader(fragmentID);
-
-//    glGetShaderiv(fragmentID, GL_COMPILE_STATUS, &res);
-//    glGetShaderiv(fragmentID, GL_INFO_LOG_LENGTH, &logLength);
-//    if ( logLength > 0 ){
-//        m_error.code = Error::FAILED_COMPILE_VERTEX_SHADER;
-//        m_error.message.resize(logLength+1);
-//        glGetShaderInfoLog(fragmentID, logLength, nullptr, &m_error.message[0]);
-//        printf("Fragment shader compile error: %s\n",m_error.message.c_str());
-//    }
-
-//    m_programID = glCreateProgram();
-//    glAttachShader(m_programID, vertexID);
-//    glAttachShader(m_programID, fragmentID);
-//    glLinkProgram(m_programID);
-
-//    glGetProgramiv(m_programID, GL_LINK_STATUS, &res);
-//    glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &logLength);
-//    if ( logLength > 0 ){
-//        m_error.code = Error::FAILED_LINK_PROGRAM;
-//        m_error.message.resize(logLength+1);
-//        glGetShaderInfoLog(fragmentID, logLength, nullptr, &m_error.message[0]);
-//        printf("Program link error: %s\n",m_error.message.c_str());
-//    }
-
-//    glDeleteShader(vertexID);
-//    glDeleteShader(fragmentID);
-
-//    g_counter+m_programID;
-
-//    {
-//        int total = -1;
-//        glGetProgramiv( m_programID, GL_ACTIVE_UNIFORMS, &total );
-//        printf("Number of uniforms: %d\n", total);
-//        for(int i=0; i<total; ++i)  {
-//            int name_len=-1, num=-1;
-//            GLenum type = GL_ZERO;
-//            char name[100];
-//            glGetActiveUniform( m_programID, GLuint(i), sizeof(name)-1,
-//                                &name_len, &num, &type, name );
-//            name[name_len] = 0;
-//            GLuint location = glGetUniformLocation( m_programID, name );
-//            printf("Uniform: %s, Localtion: %i\n", name, location);
-//        }
-//        fflush(stdout);
-//    }
-
 }
 
 Program::Program(Program &&other) :
@@ -229,7 +128,8 @@ void Program::createShader(const std::string &file, ShaderType t)
             if ( logLength > 0 ){
                 char *error = new char[logLength + 1];
                 glGetShaderInfoLog(shaderID, logLength, nullptr, error);
-                printf("Shader compile error: %s\n", error);
+                printf("Shader %s compile error: %s\n", file.c_str(), error);
+                exit(1);
             }
 
         }
@@ -256,11 +156,12 @@ void Program::linkProgram()
     if(!status)
     {
         int logLength { 0 };
-        glGetShaderiv(m_programID, GL_INFO_LOG_LENGTH, &logLength);
+        glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &logLength);
         if ( logLength > 0 ){
             char *error = new char[logLength + 1];
-            glGetShaderInfoLog(m_programID, logLength, nullptr, error);
+            glGetProgramInfoLog(m_programID, logLength, nullptr, error);
             printf("Program link error: %s\n", error);
+            exit(1);
         }
         cleanUp();
 
@@ -278,6 +179,9 @@ void Program::resolveUniforms()
     m_ids.glsl_view_matrix = glGetUniformLocation(m_programID, glsl_view_matrix);
     m_ids.glsl_projection_matrix = glGetUniformLocation(m_programID, glsl_projection_matrix);
     m_ids.glsl_camera_position = glGetUniformLocation(m_programID, glsl_camera_position);
+    m_ids.glsl_quad[0] = glGetUniformLocation(m_programID, glsl_quad[0]);
+    m_ids.glsl_quad[1] = glGetUniformLocation(m_programID, glsl_quad[1]);
+
     m_ids.glsl_light_position = glGetUniformLocation(m_programID, glsl_light_position);
     m_ids.glsl_light_strength = glGetUniformLocation(m_programID, glsl_light_strength);
 
@@ -300,106 +204,151 @@ GLID Program::program()
 
 void Program::setModelMatrix(const glm::mat4 &mat)
 {
-    glUniformMatrix4fv(m_ids.glsl_model_matrix, 1, GL_FALSE, &mat[0][0]);
+    glProgramUniformMatrix4fv(m_programID, m_ids.glsl_model_matrix, 1, GL_FALSE, &mat[0][0]);
 }
 
 void Program::setViewMatrix(const glm::mat4 &mat)
 {
-    glUniformMatrix4fv(m_ids.glsl_view_matrix, 1, GL_FALSE, &mat[0][0]);
+    glProgramUniformMatrix4fv(m_programID, m_ids.glsl_view_matrix, 1, GL_FALSE, &mat[0][0]);
 }
 
 void Program::setProjectionMatrix(const glm::mat4 &mat)
 {
-    glUniformMatrix4fv(m_ids.glsl_projection_matrix, 1, GL_FALSE, &mat[0][0]);
+    glProgramUniformMatrix4fv(m_programID, m_ids.glsl_projection_matrix, 1, GL_FALSE, &mat[0][0]);
 }
 
 void Program::setCameraPosition(const glm::vec3 &vec)
 {
-    glUniform3fv(m_ids.glsl_camera_position, 1, &vec[0]);
+    glProgramUniform3fv(m_programID, m_ids.glsl_camera_position, 1, &vec[0]);
+}
+
+void Program::setQuads(const glm::vec3 *quads)
+{
+    glProgramUniform3fv(m_programID, m_ids.glsl_quad[0], 1, &quads[0][0]);
+    glProgramUniform3fv(m_programID, m_ids.glsl_quad[1], 1, &quads[1][0]);
 }
 
 void Program::setLigthPosition(const glm::vec3 &vec)
 {
-    glUniform3fv(m_ids.glsl_light_position, 1, &vec[0]);
+    glProgramUniform3fv(m_programID, m_ids.glsl_light_position, 1, &vec[0]);
 }
 
 void Program::setLightStrength(float value)
 {
-    glUniform1f(m_ids.glsl_light_strength, value);
+    glProgramUniform1f(m_programID, m_ids.glsl_light_strength, value);
 }
 
-void Program::setSampers(GLID value)
+void Program::setSampers(GLSID value)
 {
-
-    for(unsigned i = 0; i < value; ++i)
+    for(int i = 0; i < value; ++i)
     {
-        glUniform1ui(m_ids.glsl_sampler[i], i);
+        glProgramUniform1i(m_programID, m_ids.glsl_sampler[i], i);
     }
 
-    glUniform1i(m_ids.glsl_texture_count, value);
+    glProgramUniform1i(m_programID, m_ids.glsl_texture_count, value);
 }
 
 void Program::setObjectID(const glm::vec4 &vec)
 {
-    glUniform4fv(m_ids.glsl_object_id, 1, &vec[0]);
+    glProgramUniform4fv(m_programID, m_ids.glsl_object_id, 1, &vec[0]);
 }
 
 void Program::setSelected(bool value)
 {
-    glUniform1i(m_ids.glsl_object_selected, value);
+    glProgramUniform1i(m_programID, m_ids.glsl_object_selected, value);
 }
 
 void Program::setColour(const glm::vec4 &vec)
 {
-    glUniform4fv(m_ids.glsl_colour, 1, &vec[0]);
+    glProgramUniform4fv(m_programID, m_ids.glsl_colour, 1, &vec[0]);
 }
 
 void Program::setUniform(const std::string &name, bool value)
 {
     GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glUniform1i(id, value);
+    glProgramUniform1i(m_programID, id, value);
 }
 
 void Program::setUniform(const std::string &name, GLID value)
 {
     GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glUniform1ui(id, value);
+    glProgramUniform1ui(m_programID, id, value);
 }
 
 void Program::setUniform(const std::string &name, GLSID value)
 {
     GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glUniform1i(id, value);
+    glProgramUniform1i(m_programID, id, value);
 }
 
 void Program::setUniform(const std::string &name, float value)
 {
     GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glUniform1f(id, value);
+    glProgramUniform1f(m_programID, id, value);
 }
 
 void Program::setUniform(const std::string &name, const glm::vec2 &vec)
 {
     GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glUniform2fv(id, 1, &vec[0]);
+    glProgramUniform2fv(m_programID, id, 1, &vec[0]);
 }
 
 void Program::setUniform(const std::string &name, const glm::vec3 &vec)
 {
     GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glUniform3fv(id, 1, &vec[0]);
+    glProgramUniform3fv(m_programID, id, 1, &vec[0]);
 }
 
 void Program::setUniform(const std::string &name, const glm::vec4 &vec)
 {
     GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glUniform4fv(id, 1, &vec[0]);
+    glProgramUniform4fv(m_programID, id, 1, &vec[0]);
 }
 
 void Program::setUniform(const std::string &name, const glm::mat4 &mat)
 {
     GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glUniformMatrix4fv(id, 1, GL_FALSE, &mat[0][0]);
+    glProgramUniformMatrix4fv(m_programID, id, 1, GL_FALSE, &mat[0][0]);
+}
+
+void Program::setUniform(GLID id, bool value)
+{
+    glProgramUniform1ui(m_programID, id, value);
+}
+
+void Program::setUniform(GLID id, GLID value)
+{
+    glProgramUniform1ui(m_programID, id, value);
+}
+
+void Program::setUniform(GLID id, GLSID value)
+{
+    glProgramUniform1i(m_programID, id, value);
+}
+
+void Program::setUniform(GLID id, float value)
+{
+    glProgramUniform1f(m_programID, id, value);
+}
+
+void Program::setUniform(GLID id, const glm::vec2 &vec)
+{
+    glProgramUniform2fv(m_programID, id, 1, &vec[0]);
+}
+
+void Program::setUniform(GLID id, const glm::vec3 &vec)
+{
+    glProgramUniform3fv(m_programID, id, 1, &vec[0]);
+}
+
+void Program::setUniform(GLID id, const glm::vec4 &vec)
+{
+    glProgramUniform4fv(m_programID, id, 1, &vec[0]);
+}
+
+void Program::setUniform(GLID id, const glm::mat4 &mat)
+{
+    glProgramUniformMatrix4fv(m_programID, id, 1, GL_FALSE, &mat[0][0]);
 }
 
 Viewport Program::getViewport() const

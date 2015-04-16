@@ -24,14 +24,22 @@ list(APPEND SHADERS
     shaders/skybox.frag
     shaders/text.vert
     shaders/text.frag
+    shaders/particles_update.vert
+    shaders/particles_update.frag
+    shaders/particles_update.geom
+    shaders/particles_render.vert
+    shaders/particles_render.geom
+    shaders/particles_render.frag
     )
 
 list(APPEND MODELS
     models/cube.dae
+    models/sphere.dae
     )
 
 list(APPEND TEXTURES
     textures/uv_map_texture.png
+    textures/sphere_uv.png
     textures/failed.png
     textures/front.jpg
     textures/back.jpg
@@ -57,6 +65,8 @@ list(APPEND TEXTURES
     textures/bluecloud_lf.jpg
     textures/bluecloud_rt.jpg
     textures/bluecloud_up.jpg
+    textures/fire.jpg
+    textures/particle.bmp
     )
 
 list(APPEND FONTS

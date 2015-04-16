@@ -21,6 +21,7 @@ list(APPEND HEADERS
     text.h
     mouse.h
     skybox.h
+    particlesystem.h
     )
 
 list(APPEND SOURCES
@@ -38,6 +39,7 @@ list(APPEND SOURCES
     text.cpp
     mouse.cpp
     skybox.cpp
+    particlesystem.cpp
     )
 
 add_library(${PROJECT_NAME} SHARED ${HEADERS} ${SOURCES})

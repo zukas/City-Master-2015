@@ -28,6 +28,7 @@ constexpr const char *glsl_model_matrix { "modelMatrix" };
 constexpr const char *glsl_view_matrix { "viewMatrix" };
 constexpr const char *glsl_projection_matrix { "projectionMatrix" };
 constexpr const char *glsl_camera_position { "cameraPosition" };
+constexpr const char *glsl_quad[2] { "vQuad1", "vQuad2" };
 constexpr const char *glsl_light_position { "lightPosition" };
 constexpr const char *glsl_light_strength { "lightStrength" };
 constexpr const char *glsl_transform_vector { "transform" };
@@ -43,7 +44,7 @@ class Program
     private:
         GLID m_programID;
         std::vector<GLID > m_shaders;
-        ProgramType m_type;
+        ProgramType m_type { Normal };
         Viewport m_viewport;
         struct
         {
@@ -51,6 +52,7 @@ class Program
             GLSID glsl_view_matrix { 0 };
             GLSID glsl_projection_matrix { 0 };
             GLSID glsl_camera_position { 0 };
+            GLSID glsl_quad[2] { 0 };
             GLSID glsl_light_position { 0 };
             GLSID glsl_light_strength { 0 };
             GLSID glsl_sampler[5] { 0 };
@@ -87,9 +89,10 @@ class Program
         void setViewMatrix(const glm::mat4 &mat);
         void setProjectionMatrix(const glm::mat4 &mat);
         void setCameraPosition(const glm::vec3 &vec);
+        void setQuads(const glm::vec3 *quads);
         void setLigthPosition(const glm::vec3 &vec);
         void setLightStrength(float value);
-        void setSampers(GLID value);
+        void setSampers(GLSID value);
         void setObjectID(const glm::vec4 &vec);
         void setSelected(bool value);
         void setColour(const glm::vec4 &vec);
@@ -103,6 +106,17 @@ class Program
         void setUniform(const std::string &name, const glm::vec3 &vec);
         void setUniform(const std::string &name, const glm::vec4 &vec);
         void setUniform(const std::string &name, const glm::mat4 &mat);
+
+        void setUniform(GLID id, bool value);
+        void setUniform(GLID id, GLID value);
+        void setUniform(GLID id, GLSID value);
+        void setUniform(GLID id, float value);
+        void setUniform(GLID id, const glm::vec2 &vec);
+        void setUniform(GLID id, const glm::vec3 &vec);
+        void setUniform(GLID id, const glm::vec4 &vec);
+        void setUniform(GLID id, const glm::mat4 &mat);
+
+
         Program &operator = (Program &&other);
         Program &operator = (const Program &other);
 

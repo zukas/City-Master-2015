@@ -9,6 +9,7 @@
 #include "text.h"
 #include "mouse.h"
 #include "skybox.h"
+#include "particlesystem.h"
 
 class glProgram
 {
@@ -30,6 +31,7 @@ class glProgram
         SkyBox m_box;
         Mouse m_mouse;
         Axis m_axis;
+        ParticleSystem * m_part { nullptr };
         std::vector<Model > m_models;
         class GLFWwindow *m_window { nullptr };
         float m_frameRate { 0 };

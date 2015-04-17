@@ -101,10 +101,11 @@ glProgram::glProgram()
     };
 
     Model mod = load("models/cube.dae");
+
 //    m_models.push_back(std::move(mod));
-    for(float i = -30.f; i <= 30.f; i += 10.f)
+    for(float i = -30.f; i <= 30.f; i += 30.f)
     {
-        for(float j = -30.f; j <= 30.f; j += 10.f)
+        for(float j = -30.f; j <= 30.f; j += 30.f)
         {
             Model m = mod;
             m.translate({i, 0.f, j});
@@ -121,8 +122,47 @@ glProgram::glProgram()
     m_text = { "fonts/FreeSans.ttf", 26 };
 
     m_mouse = { m_window };
+    m_keyboard = { m_window };
 
-    m_mouse.onclick(std::bind(&glProgram::handleSelection, this, std::placeholders::_1, std::placeholders::_2));
+
+    m_mouse.onclickLeft(std::bind(&glProgram::handleSelection, this, std::placeholders::_1, std::placeholders::_2));
+
+    m_mouse.onDragRight([=](MoveDirection event, float diff)
+    {
+        if(event == MOVE_Y)
+        {
+            m_camera.moveX(diff);
+        }
+        else if(event == MOVE_X)
+        {
+            m_camera.moveY(diff);
+        }
+        else if(event == MOVE_Z)
+        {
+            m_camera.moveZ(diff);
+        }
+    });
+
+    m_keyboard.moveX([=](float diff)
+    {
+
+        m_camera.moveX(diff);
+    });
+
+    m_keyboard.moveY([=](float diff)
+    {
+        m_camera.moveY(diff);
+    });
+
+    m_keyboard.moveZ([=](float diff)
+    {
+        m_camera.moveZ(diff);
+    });
+
+    m_keyboard.rotate([=](float diff)
+    {
+        m_camera.rotate(diff);
+    });
 
     glfwSwapInterval(0);
 
@@ -152,6 +192,7 @@ void glProgram::exec()
         }
 
         m_mouse.update();
+        m_keyboard.update();
         render();
         glfwPollEvents();
         ++frameCount;

@@ -20,6 +20,7 @@ list(APPEND HEADERS
     colourid.h
     text.h
     mouse.h
+    keyboard.h
     skybox.h
     )
 
@@ -37,6 +38,7 @@ list(APPEND SOURCES
     colourid.cpp
     text.cpp
     mouse.cpp
+    keyboard.cpp
     skybox.cpp
     )
 

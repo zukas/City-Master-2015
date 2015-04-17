@@ -5,23 +5,35 @@
 #include <GLFW/glfw3.h>
 #include <functional>
 
-typedef std::function<void(double x, double y) > MouseEvent;
+enum MoveDirection
+{
+    MOVE_X,
+    MOVE_Y,
+    MOVE_Z
+};
+
+typedef std::function<void(MoveDirection event, float deltaTime) > MouseRightEvent;
+typedef std::function<void(double x, double y) > MouseLeftEvent;
 
 class Mouse
 {
     private:
         GLFWwindow *m_window { nullptr };
-        double m_posX { 0 };
-        double m_posY { 0 };
-        MouseEvent m_events[3] { nullptr };
-
+        double m_pressPosX { 0 };
+        double m_pressPosY { 0 };
+        double m_currPosX { 0 };
+        double m_currPosY { 0 };
+        bool m_drag { false };
+        MouseLeftEvent m_eventsLeft[3] { nullptr };
+        MouseRightEvent m_eventsRight[1] { nullptr };
     public:
         Mouse(GLFWwindow *window = nullptr);
         ~Mouse();
         void update();
-        void onPress(MouseEvent e);
-        void onRelease(MouseEvent e);
-        void onclick(MouseEvent e);
+        void onPressLeft(MouseLeftEvent e);
+        void onReleaseLeft(MouseLeftEvent e);
+        void onclickLeft(MouseLeftEvent e);
+        void onDragRight(MouseRightEvent e);
 };
 
 #endif // MOUSE_H

@@ -8,6 +8,7 @@
 #include "axis.h"
 #include "text.h"
 #include "mouse.h"
+#include "keyboard.h"
 #include "skybox.h"
 
 class glProgram
@@ -29,6 +30,7 @@ class glProgram
         Lamp m_lamp;
         SkyBox m_box;
         Mouse m_mouse;
+        Keyboard m_keyboard;
         Axis m_axis;
         std::vector<Model > m_models;
         class GLFWwindow *m_window { nullptr };

@@ -1,5 +1,6 @@
 #include "mouse.h"
 #include <cmath>
+#include <iostream>
 
 constexpr int epsilon { 25 };
 
@@ -17,47 +18,93 @@ void Mouse::update()
 {
     if(m_window)
     {
-        if(m_posX == 0 && m_posY == 0 && glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+        static double lastTime = glfwGetTime();
+        double currentTime = glfwGetTime();
+        float deltaTime = float(currentTime - lastTime);
+        if(m_currPosX == 0 && m_currPosY == 0 && glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
-            glfwGetCursorPos(m_window, &m_posX, &m_posY);
-            if(m_events[0])
+            glfwGetCursorPos(m_window, &m_currPosX, &m_currPosY);
+            if(m_eventsLeft[0])
             {
-                m_events[0](m_posX, m_posY);
+                m_eventsLeft[0](m_currPosX, m_currPosY);
             }
 
         }
-        else if((m_posX || m_posY) && glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+        else if((m_currPosX || m_currPosY) && glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
         {
             double x { 0 }, y { 0 };
             glfwGetCursorPos(m_window, &x, &y);
 
-            if(m_events[1])
+            if(m_eventsLeft[1])
             {
-                m_events[1](x, y);
+                m_eventsLeft[1](x, y);
             }
 
-            if(m_events[2] && std::fabs(x - m_posX) < epsilon && std::fabs(y - m_posY) < epsilon)
+            if(m_eventsLeft[2] && std::fabs(x - m_currPosX) < epsilon && std::fabs(y - m_currPosY) < epsilon)
             {
-                m_events[2](x, y);
+                m_eventsLeft[2](x, y);
             }
 
-            m_posX = m_posY = 0;
+            m_currPosX = m_currPosY = 0;
+        }
+        else if(glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS )
+        {
+
+            double x { 0 }, y { 0 };
+            glfwGetCursorPos(m_window, &x, &y);
+            if (m_drag == false)
+            {
+                m_pressPosX = m_currPosX = x;
+                m_pressPosY = m_currPosY = y;
+                m_drag = true;
+            }
+            else
+            {
+                m_currPosX = x;
+                m_currPosY = y;
+
+                float diff = m_currPosX - m_pressPosX;
+                std::cout << diff << std::endl;
+                if (abs(diff) > 10)
+                {
+                    m_eventsRight[0](MOVE_X, diff/150);
+                }
+                diff = m_pressPosY - m_currPosY;
+                if (abs(diff) > 10)
+                {
+                    m_eventsRight[0](MOVE_Y, diff/150);
+                }
+            }
+        }
+
+    }
+    else if(glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE )
+    {
+        if (m_drag == true)
+        {
+            m_pressPosX = m_pressPosY = 0;
+            m_currPosX = m_currPosY = 0;
+            m_drag = false;
         }
     }
 }
 
-void Mouse::onPress(MouseEvent e)
+void Mouse::onPressLeft(MouseLeftEvent e)
 {
-    m_events[0] = std::move(e);
+    m_eventsLeft[0] = std::move(e);
 }
 
-void Mouse::onRelease(MouseEvent e)
+void Mouse::onReleaseLeft(MouseLeftEvent e)
 {
-    m_events[1] = std::move(e);
+    m_eventsLeft[1] = std::move(e);
 }
 
-void Mouse::onclick(MouseEvent e)
+void Mouse::onclickLeft(MouseLeftEvent e)
 {
-    m_events[2] = std::move(e);
+    m_eventsLeft[2] = std::move(e);
 }
 
+void Mouse::onDragRight(MouseRightEvent e)
+{
+    m_eventsRight[0] = std::move(e);
+}

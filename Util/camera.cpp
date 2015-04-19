@@ -34,6 +34,7 @@ void Camera::calcViewport()
     glm::vec3 vStrafe = glm::cross(m_view-m_eye, m_up);
     vStrafe = glm::normalize(vStrafe);
     vStrafe *= m_speed;
+
     glm::vec3 vMoveBy;
     // Get vector of move
 

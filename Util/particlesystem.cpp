@@ -7,10 +7,11 @@ struct Particle
 {
         glm::vec3 position;
         glm::vec3 velocity;
-        glm::vec3 volor;
+        glm::vec3 color;
         float lifeTime;
         float size;
         int type;
+        int reuse;
 };
 
 constexpr int max_num_particles { 100000 };
@@ -28,17 +29,18 @@ ParticleSystem::ParticleSystem()
     m_programs[0].createShader("shaders/particles_update.geom", GEOMETRY);
     m_programs[0].createProgram();
 
-    const char *varyings[6]
+    const char *varyings[7]
     {
         "vPositionOut",
         "vVelocityOut",
         "vColorOut",
         "fLifeTimeOut",
         "fSizeOut",
-        "iTypeOut"
+        "iTypeOut",
+        "reuseOut"
     };
 
-    glTransformFeedbackVaryings(m_programs[0].program(), 6, varyings, GL_INTERLEAVED_ATTRIBS);
+    glTransformFeedbackVaryings(m_programs[0].program(), 7, varyings, GL_INTERLEAVED_ATTRIBS);
 
     m_programs[0].linkProgram();
     m_programs[0].resolveUniforms();
@@ -59,6 +61,7 @@ ParticleSystem::ParticleSystem()
 
     Particle p;
     p.type = 0;
+    p.reuse = 0;
 
 
     for(int i = 0; i < 2; ++i)
@@ -80,6 +83,8 @@ ParticleSystem::ParticleSystem()
         glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)40); // Size
         glEnableVertexAttribArray(5);
         glVertexAttribPointer(5, 1, GL_INT, GL_TRUE, sizeof(Particle), (const GLvoid*)44); // Type
+        glEnableVertexAttribArray(6);
+        glVertexAttribPointer(6, 1, GL_INT, GL_FALSE, sizeof(Particle), (const GLvoid*)48); // Reuse
     }
     m_bufferCursor = 0;
     m_particleCount = 1;
@@ -148,6 +153,7 @@ void ParticleSystem::update()
     glBindVertexArray(m_vertexArrayID[m_bufferCursor]);
 
     glEnableVertexAttribArray(1); // Re-enable velocity
+    glEnableVertexAttribArray(6); // Re-enable velocity
 
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_buffers[1-m_bufferCursor]);
 
@@ -190,6 +196,7 @@ void ParticleSystem::render(Camera &camera)
     m_texture.bind(0);
 
     glDisableVertexAttribArray(1); // Disable velocity, because we don't need it for rendering
+    glDisableVertexAttribArray(6);
 
     glDrawArrays(GL_POINTS, 0, m_particleCount);
 

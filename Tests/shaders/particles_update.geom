@@ -12,6 +12,7 @@ in vec3 vColorPass[1];
 in float fLifeTimePass[1];
 in float fSizePass[1];
 in int iTypePass[1];
+in int reusePass[1];
 
 // All that we send further
 
@@ -21,6 +22,7 @@ out vec3 vColorOut;
 out float fLifeTimeOut;
 out float fSizeOut;
 out int iTypeOut;
+out int reuseOut;
 
 uniform vec3 vGenPosition; // Position where new particles are spawned
 uniform vec3 vGenGravityVector; // Gravity vector for particles - updates velocity of particles 
@@ -82,6 +84,7 @@ void main()
     fLifeTimeOut = fLifeTimePass[0] - fTimePassed;
     fSizeOut = fSizePass[0];
     iTypeOut = iTypePass[0];
+    reuseOut = reusePass[0];
 
     if(iTypeOut == 0)
     {
@@ -96,12 +99,25 @@ void main()
             fLifeTimeOut = fGenLifeRange;// + fGenLifeMin*randZeroOne();
             fSizeOut = fGenSize;
             iTypeOut = 1;
+            reuseOut = 0;
             EmitVertex();
             EndPrimitive();
         }
     }
     else if(fLifeTimeOut > 0.0)
     {
+        EmitVertex();
+        EndPrimitive();
+    }
+    else if(reuseOut < 10)
+    {
+        vPositionOut = vGenPosition + rand_v3(vRandomSeed, rand_pos(vVelocityOut.xz) * fDim);
+        vVelocityOut = vGenVelocityMin + (rand_v3_pos(vGenGravityVector, 0.01) * vGenVelocityRange) ;
+        vColorOut = vGenColor;
+        fLifeTimeOut = fGenLifeRange;// + fGenLifeMin*randZeroOne();
+        fSizeOut = fGenSize;
+        iTypeOut = 1;
+        reuseOut += 1;
         EmitVertex();
         EndPrimitive();
     }

@@ -15,7 +15,7 @@ in float fSizePass[1];
 in int iTypePass[1];
 
 smooth out vec2 vTexCoord;
-flat out vec4 vColorPart;
+smooth out vec4 vColorPart;
 
 void main()
 {

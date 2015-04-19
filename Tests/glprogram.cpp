@@ -72,7 +72,7 @@ glProgram::glProgram()
     m_skyProgram = { "shaders/skybox.vert", "shaders/skybox.frag" };
 
     m_fire = new ParticleSystem;
-    Texture pt { GL_TEXTURE_2D, "textures/particle.bmp"};
+    Texture pt { GL_TEXTURE_2D, "textures/fire.jpg"};
     pt.setSamplerParameter(GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
     m_fire->setTexture(pt);
     m_fire->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -81,12 +81,12 @@ glProgram::glProgram()
                 glm::vec3(0.0, -0.005, 0.0), // Minimal velocity
                 glm::vec3(0.0, -0.008, 0.0), // Maximal velocity
                 glm::vec3(0.0, -0.009, 0.0), // Gravity force applied to particles
-                glm::vec3(1.0f, 0.415f, 0.1215f), // Color (light blue)
+                glm::vec3(0.5f, 0.5f, 0.5f), // Color (light blue)
                 1000.f, // Minimum lifetime in seconds
                 1500.0f, // Maximum lifetime in seconds
-                0.35f, // Rendered size
+                0.50f, // Rendered size
                 6.f, // Spawn every 0.05 seconds
-                15); // And spawn 30 particles
+                30); // And spawn 30 particles
 
     m_smoke = new ParticleSystem;
     m_smoke->setTexture(std::move(pt));

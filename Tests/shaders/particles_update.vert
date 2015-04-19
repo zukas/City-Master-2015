@@ -6,6 +6,7 @@ layout (location = 2) in vec3 vColor;
 layout (location = 3) in float fLifeTime;
 layout (location = 4) in float fSize;
 layout (location = 5) in int iType;
+layout (location = 6) in int reuse;
 
 out vec3 vPositionPass;
 out vec3 vVelocityPass;
@@ -13,6 +14,7 @@ out vec3 vColorPass;
 out float fLifeTimePass;
 out float fSizePass;
 out int iTypePass;
+out int reusePass;
 
 void main()
 {
@@ -22,4 +24,5 @@ void main()
     fLifeTimePass = fLifeTime;
     fSizePass = fSize;
     iTypePass = iType;
+    reusePass = reuse;
 }

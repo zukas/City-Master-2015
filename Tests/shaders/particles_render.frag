@@ -4,7 +4,7 @@ uniform sampler2D tsampler[1];
 uniform int tcount;
 
 smooth in vec2 vTexCoord;
-flat in vec4 vColorPart;
+smooth in vec4 vColorPart;
 //in vec4 gl_FragCoord;
 
 out vec4 FragColor;
@@ -29,7 +29,6 @@ void main()
     else
     {
         alpha -= gl_FragCoord.z * 0.01;
-
         FragColor = vec4(vTexColor, alpha) * vColorPart;
     }
 

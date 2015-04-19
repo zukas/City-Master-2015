@@ -22,6 +22,7 @@ class Camera
         float m_speed { 25.f };
         float m_sensitivity { 0.1f };
         float m_velocity { m_speed * m_sensitivity };
+        float m_fov { 45.f };
 
 //        glm::vec3 m_position { startPosition[0], startPosition[1], startPosition[2] };
 //        glm::vec3 m_direction { -startPosition[0], -startPosition[1], -startPosition[2] };

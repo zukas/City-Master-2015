@@ -29,13 +29,13 @@ Camera::Camera(GLFWwindow *window) :
                     m_view,
                     m_up);
 
-    m_projectionMat = glm::perspective(45.f, 16.0f / 9.0f, 0.001f, 200.0f);
+    m_projectionMat = glm::perspective(m_fov, 16.0f / 9.0f, 0.001f, 200.0f);
     calcQuads();
 }
 
 void Camera::calcViewport()
 {
-    if(m_window == nullptr) return;
+    if(m_window == nullptr || m_update == 0) return;
 
     m_viewMat = glm::lookAt(m_eye, m_view, m_up);
     if(m_update != 0)
@@ -94,16 +94,14 @@ void Camera::strafe(float delta)
 
 void Camera::zoom(float delta)
 {
-    auto dir = m_eye * m_up;
-    auto tmp = glm::normalize(dir) * delta * m_speed;
-    printf("%f, %f\n", m_eye.y, tmp.y);
-    fflush(stdout);
-    if(m_eye.y - tmp.y < min_height || m_eye.y - tmp.y > max_height)
+
+    auto tmp = glm::normalize(m_view - m_eye) * delta * m_speed;
+    if(m_eye.y + tmp.y < min_height || m_eye.y + tmp.y > max_height)
         return;
 
     m_update = 1;
-//    m_view += tmp;
-    m_eye -= tmp;
+    m_view += tmp;
+    m_eye += tmp;
 }
 
 glm::mat4 Camera::view() const

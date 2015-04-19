@@ -140,7 +140,7 @@ void ParticleSystem::update()
 
 //        m_elapsedTime -= m_nextGenTime;
 
-        glm::vec3 vRandomSeed = glm::vec3(grandf(-2.0f,3.0f), grandf(-2.0f,3.0f), grandf(-2.0f,3.0f));
+        glm::vec3 vRandomSeed = glm::vec3(grandf(-1.0f,1.0f), grandf(0.f,.1f), grandf(-1.0f,1.0f));
         m_programs[0].setUniform("vRandomSeed", vRandomSeed);
 
 //    }

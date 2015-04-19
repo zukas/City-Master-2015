@@ -75,10 +75,11 @@ vec3 rand_v3_pos(vec3 co, float axel)
 
 void main()
 {
+    float update = fTimePassed / 1000.0;
     vPositionOut = vPositionPass[0];
     vVelocityOut = vVelocityPass[0];
-    if(iTypePass[0] != 0)vPositionOut += vVelocityOut;
-    if(iTypePass[0] != 0)vVelocityOut -= (rand_v3_pos(vPositionOut, 0.1) * vGenGravityVector);
+    if(iTypePass[0] != 0)vPositionOut += vVelocityOut * update;
+    if(iTypePass[0] != 0)vVelocityOut -= (rand_v3_pos(vPositionOut, 1) * vGenGravityVector) * update;
 
     vColorOut = vColorPass[0];
     fLifeTimeOut = fLifeTimePass[0] - fTimePassed;
@@ -93,8 +94,8 @@ void main()
 
         for(int i = 0; i < iNumToGenerate; i++)
         {
-            vPositionOut = vGenPosition + rand_v3(vRandomSeed, rand_pos(vVelocityOut.xz) * fDim);
-            vVelocityOut = vGenVelocityMin + (rand_v3_pos(vGenGravityVector, 0.01) * vGenVelocityRange) ;
+            vPositionOut = vGenPosition + rand_v3(vRandomSeed, rand_pos(vGenGravityVector.xz) * fDim);
+            vVelocityOut = vGenVelocityMin + (rand_v3_pos(vGenGravityVector, 1) * vGenVelocityRange) ;
             vColorOut = vGenColor;
             fLifeTimeOut = fGenLifeRange;// + fGenLifeMin*randZeroOne();
             fSizeOut = fGenSize;
@@ -111,8 +112,8 @@ void main()
     }
     else if(reuseOut < 10)
     {
-        vPositionOut = vGenPosition + rand_v3(vRandomSeed, rand_pos(vVelocityOut.xz) * fDim);
-        vVelocityOut = vGenVelocityMin + (rand_v3_pos(vGenGravityVector, 0.01) * vGenVelocityRange) ;
+        vPositionOut = vGenPosition + rand_v3(vRandomSeed, rand_pos(vGenGravityVector.xz) * fDim);
+        vVelocityOut = vGenVelocityMin + (rand_v3_pos(vGenGravityVector, 1) * vGenVelocityRange) ;
         vColorOut = vGenColor;
         fLifeTimeOut = fGenLifeRange;// + fGenLifeMin*randZeroOne();
         fSizeOut = fGenSize;

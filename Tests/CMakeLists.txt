@@ -66,7 +66,9 @@ list(APPEND TEXTURES
     textures/bluecloud_rt.jpg
     textures/bluecloud_up.jpg
     textures/fire.jpg
+    textures/fire2.jpg
     textures/particle.bmp
+    textures/particle.png
     )
 
 list(APPEND FONTS

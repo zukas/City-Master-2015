@@ -27,51 +27,64 @@ void Keyboard::update()
         {
             m_events[0](deltaTime);
         }
-        else if (glfwGetKey( m_window, GLFW_KEY_UP ) == GLFW_PRESS)
-        {
-            m_events[1](deltaTime);
-        }
-        else if (glfwGetKey( m_window, GLFW_KEY_DOWN ) == GLFW_PRESS)
+        else if (glfwGetKey( m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
             m_events[1](-deltaTime);
         }
-        else if (glfwGetKey( m_window, GLFW_KEY_LEFT ) == GLFW_PRESS)
+        else if (glfwGetKey( m_window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            m_events[1](deltaTime);
+        }
+        else if (glfwGetKey( m_window, GLFW_KEY_UP ) == GLFW_PRESS)
+        {
+            m_events[2](deltaTime);
+        }
+        else if (glfwGetKey( m_window, GLFW_KEY_DOWN ) == GLFW_PRESS)
         {
             m_events[2](-deltaTime);
         }
+        else if (glfwGetKey( m_window, GLFW_KEY_LEFT ) == GLFW_PRESS)
+        {
+            m_events[3](-deltaTime);
+        }
         else if (glfwGetKey( m_window, GLFW_KEY_RIGHT ) == GLFW_PRESS)
         {
-            m_events[2](deltaTime);
+            m_events[3](deltaTime);
         }
         else if(glfwGetKey(m_window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
         {
             std::cout << deltaTime << std::endl;
-            m_events[3](deltaTime*100);
+            m_events[4](deltaTime*100);
         }
         else if(glfwGetKey(m_window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
         {
-            m_events[3](-deltaTime);
+            m_events[4](-deltaTime);
         }
         lastTime = currentTime;
     }
 }
 
-void Keyboard::rotate(KeyboardEvent e)
+void Keyboard::rotateHorizontal(KeyboardEvent e)
 {
     m_events[0] = std::move(e);
 }
 
-void Keyboard::moveX(KeyboardEvent e)
+void Keyboard::rotateVertical(KeyboardEvent e)
 {
     m_events[1] = std::move(e);
 }
 
-void Keyboard::moveY(KeyboardEvent e)
+void Keyboard::moveX(KeyboardEvent e)
 {
     m_events[2] = std::move(e);
 }
 
-void Keyboard::moveZ(KeyboardEvent e)
+void Keyboard::moveY(KeyboardEvent e)
 {
     m_events[3] = std::move(e);
+}
+
+void Keyboard::moveZ(KeyboardEvent e)
+{
+    m_events[4] = std::move(e);
 }

@@ -17,7 +17,6 @@ class Camera
         glm::mat4 m_projection;
         glm::mat4 m_rotation;
 
-        glm::vec3 m_right {0, 0, 0};
         glm::vec3 m_up {0, 0, 0};
         glm::vec3 m_position { startPosition[0], startPosition[1], startPosition[2] };
         glm::vec3 m_direction { -startPosition[0], -startPosition[1], -startPosition[2] };
@@ -29,7 +28,8 @@ class Camera
     public:
         Camera(GLFWwindow *window = nullptr);
         void calcViewport();
-        void rotate(float diff);
+        void rotateHorizontal(float diff);
+        void rotateVertical(float diff);
         void moveX(float diff);
         void moveY(float diff);
         void moveZ(float diff);

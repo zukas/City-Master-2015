@@ -159,11 +159,15 @@ glProgram::glProgram()
         m_camera.moveZ(diff);
     });
 
-    m_keyboard.rotate([=](float diff)
+    m_keyboard.rotateHorizontal([=](float diff)
     {
-        m_camera.rotate(diff);
+        m_camera.rotateHorizontal(diff);
     });
 
+    m_keyboard.rotateVertical([=](float diff)
+    {
+        m_camera.rotateVertical(diff);
+    });
     glfwSwapInterval(0);
 
 }

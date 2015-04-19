@@ -18,7 +18,8 @@ class Keyboard
         Keyboard(GLFWwindow *window = nullptr);
         ~Keyboard();
         void update();
-        void rotate(KeyboardEvent e);
+        void rotateHorizontal(KeyboardEvent e);
+        void rotateVertical(KeyboardEvent e);
         void moveX(KeyboardEvent e);
         void moveY(KeyboardEvent e);
         void moveZ(KeyboardEvent e);

@@ -64,15 +64,19 @@ void Mouse::update()
                 m_currPosY = y;
 
                 float diff = m_currPosX - m_pressPosX;
-                std::cout << diff << std::endl;
+                float absDiff = fabs(diff);
+                std::cout << diff << " " << log(abs(diff)) << std::endl;
+                float diffScale = 100.f*diff/absDiff;
                 if (abs(diff) > 10)
                 {
-                    m_eventsRight[0](MOVE_X, diff/150);
+                    m_eventsRight[0](MOVE_X, log(absDiff)/diffScale);
                 }
                 diff = m_pressPosY - m_currPosY;
+                absDiff = fabs(diff);
+                diffScale = 100.f*diff/absDiff;
                 if (abs(diff) > 10)
                 {
-                    m_eventsRight[0](MOVE_Y, diff/150);
+                    m_eventsRight[0](MOVE_Y, log(absDiff)/diffScale);
                 }
             }
         }

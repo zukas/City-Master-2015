@@ -80,12 +80,12 @@ glProgram::glProgram()
                 glm::vec3(0.0, -0.005, 0.0), // Minimal velocity
                 glm::vec3(0.0, -0.008, 0.0), // Maximal velocity
                 glm::vec3(0.0, -0.009, 0.0), // Gravity force applied to particles
-                glm::vec3(0.5f, 0.5f, 0.5f), // Color (light blue)
+                glm::vec3(1.f, 0.42f, 0.12f), // Color (light blue)
                 1000.f, // Minimum lifetime in seconds
                 1500.0f, // Maximum lifetime in seconds
-                0.50f, // Rendered size
+                0.45f, // Rendered size
                 6.f, // Spawn every 0.05 seconds
-                30); // And spawn 30 particles
+                20); // And spawn 30 particles
 
     m_smoke = new ParticleSystem;
     m_smoke->setTexture(std::move(pt));
@@ -143,32 +143,32 @@ glProgram::glProgram()
     {
         if(event == MOVE_Y)
         {
-            m_camera.moveX(diff);
+            m_camera.move(diff);
         }
         else if(event == MOVE_X)
         {
-            m_camera.moveY(diff);
+            m_camera.strafe(diff);
         }
         else if(event == MOVE_Z)
         {
-            m_camera.moveZ(diff);
+            m_camera.zoom(diff);
         }
     });
 
     m_keyboard.moveX([=](float diff)
     {
 
-        m_camera.moveX(diff);
+        m_camera.move(diff);
     });
 
     m_keyboard.moveY([=](float diff)
     {
-        m_camera.moveY(diff);
+        m_camera.strafe(diff);
     });
 
     m_keyboard.moveZ([=](float diff)
     {
-        m_camera.moveZ(diff);
+        m_camera.zoom(diff);
     });
 
     m_keyboard.rotateHorizontal([=](float diff)
@@ -180,7 +180,8 @@ glProgram::glProgram()
     {
         m_camera.rotateVertical(diff);
     });
-    glfwSwapInterval(0);
+
+    glfwSwapInterval(1);
 
 }
 

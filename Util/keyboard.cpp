@@ -27,7 +27,8 @@ void Keyboard::update()
         {
             m_events[0](deltaTime);
         }
-        else if (glfwGetKey( m_window, GLFW_KEY_W) == GLFW_PRESS)
+
+        if (glfwGetKey( m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
             m_events[1](-deltaTime);
         }
@@ -35,7 +36,8 @@ void Keyboard::update()
         {
             m_events[1](deltaTime);
         }
-        else if (glfwGetKey( m_window, GLFW_KEY_UP ) == GLFW_PRESS)
+
+        if (glfwGetKey( m_window, GLFW_KEY_UP ) == GLFW_PRESS)
         {
             m_events[2](deltaTime);
         }
@@ -43,7 +45,8 @@ void Keyboard::update()
         {
             m_events[2](-deltaTime);
         }
-        else if (glfwGetKey( m_window, GLFW_KEY_LEFT ) == GLFW_PRESS)
+
+        if (glfwGetKey( m_window, GLFW_KEY_LEFT ) == GLFW_PRESS)
         {
             m_events[3](-deltaTime);
         }
@@ -51,10 +54,10 @@ void Keyboard::update()
         {
             m_events[3](deltaTime);
         }
-        else if(glfwGetKey(m_window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
+
+        if(glfwGetKey(m_window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
         {
-            std::cout << deltaTime << std::endl;
-            m_events[4](deltaTime*100);
+            m_events[4](deltaTime);
         }
         else if(glfwGetKey(m_window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
         {

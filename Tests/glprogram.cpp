@@ -70,25 +70,37 @@ glProgram::glProgram()
     m_textProgram = { "shaders/text.vert", "shaders/text.frag" };
     m_skyProgram = { "shaders/skybox.vert", "shaders/skybox.frag" };
 
-//    m_box =
-//    {
-//        "textures/left.jpg",
-//        "textures/right.jpg",
-//        "textures/down.jpg",
-//        "textures/up.jpg",
-//        "textures/front.jpg",
-//        "textures/back.jpg"
-//    };
+    m_fire = new ParticleSystem;
+    Texture pt { GL_TEXTURE_2D, "textures/fire.jpg"};
+    pt.setSamplerParameter(GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
+    m_fire->setTexture(pt);
+    m_fire->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    m_fire->setProperties(
+                glm::vec3(-.75f, 5.f, -.75f), // Where the particles are generated
+                glm::vec3(0.0, -0.005, 0.0), // Minimal velocity
+                glm::vec3(0.0, -0.008, 0.0), // Maximal velocity
+                glm::vec3(0.0, -0.009, 0.0), // Gravity force applied to particles
+                glm::vec3(0.5f, 0.5f, 0.5f), // Color (light blue)
+                1000.f, // Minimum lifetime in seconds
+                1500.0f, // Maximum lifetime in seconds
+                0.50f, // Rendered size
+                6.f, // Spawn every 0.05 seconds
+                30); // And spawn 30 particles
 
-//    m_box =
-//    {
-//        "textures/desertsky_lf.tga",
-//        "textures/desertsky_rt.tga",
-//        "textures/desertsky_dn.tga",
-//        "textures/desertsky_up.tga",
-//        "textures/desertsky_ft.tga",
-//        "textures/desertsky_bk.tga"
-//    };
+    m_smoke = new ParticleSystem;
+    m_smoke->setTexture(std::move(pt));
+    m_smoke->setBlendFunc(GL_ONE, GL_SRC_ALPHA);
+    m_smoke->setProperties(
+                glm::vec3(-2.f, 5.f, -2.f), // Where the particles are generated
+                glm::vec3(0.0, -0.01, 0.0), // Minimal velocity
+                glm::vec3(0.0, -0.005, 0.0), // Maximal velocity
+                glm::vec3(0.0, -0.008, 0.0), // Gravity force applied to particles
+                glm::vec3(1.f, 1.f, 1.f), // Color (light blue)
+                2000.f, // Minimum lifetime in seconds
+                2500.0f, // Maximum lifetime in seconds
+                0.25f, // Rendered size
+                6.f, // Spawn every 0.05 seconds
+                30); // And spawn 30 particles
 
     m_box =
     {
@@ -100,18 +112,17 @@ glProgram::glProgram()
         "textures/bluecloud_bk.jpg"
     };
 
-    Model mod = load("models/cube.dae");
-
-//    m_models.push_back(std::move(mod));
-    for(float i = -30.f; i <= 30.f; i += 30.f)
-    {
-        for(float j = -30.f; j <= 30.f; j += 30.f)
-        {
-            Model m = mod;
-            m.translate({i, 0.f, j});
-            m_models.push_back(std::move(m));
-        }
-    }
+    Model mod = load("models/sphere.dae");
+        m_models.push_back(std::move(mod));
+//    for(float i = -150.f; i <= 150.f; i += 150.f)
+//    {
+//        for(float j = -150.f; j <= 150.f; j += 150.f)
+//        {
+//            Model m = mod;
+//            m.translate({i, 0.f, j});
+//            m_models.push_back(std::move(m));
+//        }
+//    }
 
     for(auto &m : m_models)
     {
@@ -124,6 +135,7 @@ glProgram::glProgram()
     m_mouse = { m_window };
     m_keyboard = { m_window };
 
+   
 
     m_mouse.onclickLeft(std::bind(&glProgram::handleSelection, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -222,15 +234,12 @@ void glProgram::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_camera.calcViewport();
 
-    m_axisProgram.use();
-    m_camera.update(m_axisProgram);
-    m_axis.render(m_axisProgram);
+//    m_axisProgram.use();
+//    m_camera.update(m_axisProgram);
+//    m_axis.render(m_axisProgram);
 
     m_skyProgram.use();
     m_camera.update(m_skyProgram);
-//    m_skyProgram.setViewMatrix(glm::inverse(m_camera.view()));
-//    m_skyProgram.setProjectionMatrix(glm::ortho(0.0f, float(windowWidth), 0.0f, float(windowHeight)));
-//    m_skyProgram.setCameraPosition(m_camera.position());
     m_box.render(m_skyProgram);
 
 
@@ -242,6 +251,9 @@ void glProgram::render()
     {
         m.render(m_objectProgram);
     }
+
+    m_fire->update();
+    m_fire->render(m_camera);
 
     glDisable(GL_DEPTH_TEST);
     glDepthFunc(GL_ALWAYS);
@@ -255,8 +267,17 @@ void glProgram::render()
     m_text.render(m_textProgram,glm::vec4(0.f, 0.f, 0.f, 1.f), std::string(buf, length), 20, 40);
 
 
+    length = std::sprintf(buf,"PC: %d", m_fire->count());
+    m_text.render(m_textProgram,glm::vec4(0.f, 0.f, 0.f, 1.f), std::string(buf, length), 20, 80);
+
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+
+
+//    m_smoke->update();
+//    m_smoke->render(m_camera);
 
     glfwSwapBuffers(m_window);
 }

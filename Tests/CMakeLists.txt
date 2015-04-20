@@ -68,7 +68,7 @@ list(APPEND TEXTURES
     textures/fire.jpg
     textures/fire2.jpg
     textures/particle.bmp
-    textures/particle.png
+#    textures/particle.png
     )
 
 list(APPEND FONTS

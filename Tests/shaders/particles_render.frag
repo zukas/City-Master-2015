@@ -31,5 +31,4 @@ void main()
         alpha -= gl_FragCoord.z * 0.01;
         FragColor = vec4(vTexColor, alpha) * vColorPart;
     }
-
 }

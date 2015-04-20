@@ -110,7 +110,7 @@ void main()
         EmitVertex();
         EndPrimitive();
     }
-    else if(reuseOut < 10)
+    else if(reuseOut < iNumToGenerate)
     {
         vPositionOut = vGenPosition + rand_v3(vRandomSeed, rand_pos(vGenGravityVector.xz) * fDim);
         vVelocityOut = vGenVelocityMin + (rand_v3_pos(vGenGravityVector, 1) * vGenVelocityRange) ;

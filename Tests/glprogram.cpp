@@ -76,14 +76,14 @@ glProgram::glProgram()
     m_fire->setTexture(pt);
     m_fire->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
     m_fire->setProperties(
-                glm::vec3(-.75f, 5.f, -.75f), // Where the particles are generated
+                glm::vec3(-.75f, 4.8f, -.75f), // Where the particles are generated
                 glm::vec3(0.f, -0.2, 0.f), // Minimal velocity
                 glm::vec3(0.f, -0.4, 0.f), // Maximal velocity
-                glm::vec3(0.f, -4.1, 0.f), // Gravity force applied to particles
+                glm::vec3(0.f, -4.0, 0.f), // Gravity force applied to particles
                 glm::vec3(1.f, 0.42f, 0.12f), // Color (light blue)
                 1000.f, // Minimum lifetime in seconds
                 1500.0f, // Maximum lifetime in seconds
-                0.45f, // Rendered size
+                0.55f, // Rendered size
                 6.f, // Spawn every 0.05 seconds
                 10); // And spawn 30 particles
 
@@ -113,16 +113,16 @@ glProgram::glProgram()
     };
 
     Model mod = load("models/sphere.dae");
-        m_models.push_back(std::move(mod));
-//    for(float i = -150.f; i <= 150.f; i += 150.f)
-//    {
-//        for(float j = -150.f; j <= 150.f; j += 150.f)
-//        {
-//            Model m = mod;
-//            m.translate({i, 0.f, j});
-//            m_models.push_back(std::move(m));
-//        }
-//    }
+    m_models.push_back(std::move(mod));
+    //    for(float i = -150.f; i <= 150.f; i += 150.f)
+    //    {
+    //        for(float j = -150.f; j <= 150.f; j += 150.f)
+    //        {
+    //            Model m = mod;
+    //            m.translate({i, 0.f, j});
+    //            m_models.push_back(std::move(m));
+    //        }
+    //    }
 
     for(auto &m : m_models)
     {
@@ -135,7 +135,7 @@ glProgram::glProgram()
     m_mouse = { m_window };
     m_keyboard = { m_window };
 
-   
+
 
     m_mouse.onclickLeft(std::bind(&glProgram::handleSelection, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -214,9 +214,9 @@ void glProgram::exec()
         glfwPollEvents();
         ++frameCount;
         m_frameRate = frameCount /
-                      ( std::chrono::duration_cast<std::chrono::duration<float> >(
-                            std::chrono::high_resolution_clock::now() -
-                            startTime).count());
+                ( std::chrono::duration_cast<std::chrono::duration<float> >(
+                      std::chrono::high_resolution_clock::now() -
+                      startTime).count());
         if(frameCount == 600)
         {
             startTime = std::chrono::high_resolution_clock::now();
@@ -235,9 +235,9 @@ void glProgram::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_camera.calcViewport();
 
-//    m_axisProgram.use();
-//    m_camera.update(m_axisProgram);
-//    m_axis.render(m_axisProgram);
+    //    m_axisProgram.use();
+    //    m_camera.update(m_axisProgram);
+    //    m_axis.render(m_axisProgram);
 
     m_skyProgram.use();
     m_camera.update(m_skyProgram);
@@ -277,8 +277,8 @@ void glProgram::render()
 
 
 
-//    m_smoke->update();
-//    m_smoke->render(m_camera);
+    //    m_smoke->update();
+    //    m_smoke->render(m_camera);
 
     glfwSwapBuffers(m_window);
 }

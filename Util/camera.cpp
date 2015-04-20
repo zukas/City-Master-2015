@@ -57,18 +57,23 @@ void Camera::rotateHorizontal(float diff)
 void Camera::rotateVertical(float delta)
 {
     auto diff = m_view-m_eye;
-    auto dir = glm::sin( glm::normalize(diff));
-    auto tmp = dir.y * delta;
+    auto norm = glm::normalize(diff);
+    auto dir = glm::cos(norm);
+    auto tmp = delta;
     if(tmp > 0)
         tmp = 0.05;
     else
         tmp = -0.05;
-    if(dir.x - tmp >= 0.0 && dir.z - tmp >= 0.0)
+
+    printf("norm: %f, %f, %f\n", norm.x, norm.y, norm.z);
+    printf("tmp: %f\n", tmp);
+    fflush(stdout);
+    if(norm.y - tmp <= -1.f || norm.y - tmp >= 1.f)
         return;
 
     m_update = 1;
     m_view -= m_eye;
-    m_view = glm::rotate(m_view, 2 * PI * m_sensitivity * delta, glm::cross(glm::vec3(diff.x * dir.x, 0.f, diff.z * dir.z), m_up));
+    m_view = glm::rotate(m_view, -2 * PI * m_sensitivity * delta, glm::cross(glm::vec3(diff.x * dir.x, 0.f, diff.z * dir.z), m_up));
     m_view += m_eye;
 }
 

@@ -12,8 +12,8 @@ enum MoveDirection
     MOVE_Z
 };
 
-typedef std::function<void(MoveDirection event, float deltaTime) > MouseRightEvent;
-typedef std::function<void(double x, double y) > MouseLeftEvent;
+typedef std::function<void(MoveDirection event, float deltaTime) > MouseDragEvent;
+typedef std::function<void(double x, double y) > MouseClickEvent;
 
 class Mouse
 {
@@ -23,17 +23,20 @@ class Mouse
         double m_pressPosY { 0 };
         double m_currPosX { 0 };
         double m_currPosY { 0 };
-        bool m_drag { false };
-        MouseLeftEvent m_eventsLeft[3] { nullptr };
-        MouseRightEvent m_eventsRight[1] { nullptr };
+        bool m_rDrag { false };
+        bool m_lDrag { false };
+        bool m_lClick { false };
+        MouseClickEvent m_eventsClick[3] { nullptr };
+        MouseDragEvent m_eventsDrag[2] { nullptr };
     public:
         Mouse(GLFWwindow *window = nullptr);
         ~Mouse();
         void update();
-        void onPressLeft(MouseLeftEvent e);
-        void onReleaseLeft(MouseLeftEvent e);
-        void onclickLeft(MouseLeftEvent e);
-        void onDragRight(MouseRightEvent e);
+        void onPressLeft(MouseClickEvent e);
+        void onReleaseLeft(MouseClickEvent e);
+        void onclickLeft(MouseClickEvent e);
+        void onDragLeft(MouseDragEvent e);
+        void onDragRight(MouseDragEvent e);
 };
 
 #endif // MOUSE_H

@@ -21,28 +21,61 @@ void Mouse::update()
         static double lastTime = glfwGetTime();
         double currentTime = glfwGetTime();
         float deltaTime = float(currentTime - lastTime);
-        if(m_currPosX == 0 && m_currPosY == 0 && glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+        if(glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
-            glfwGetCursorPos(m_window, &m_currPosX, &m_currPosY);
-            if(m_eventsLeft[0])
+            double x { 0 }, y { 0 };
+            glfwGetCursorPos(m_window, &x, &y);
+            if (m_rDrag == false)
             {
-                m_eventsLeft[0](m_currPosX, m_currPosY);
+                m_pressPosX = m_currPosX = x;
+                m_pressPosY = m_currPosY = y;
+                m_rDrag = true;
+                m_lClick = true;
             }
+            else
+            {
 
+                m_currPosX = x;
+                m_currPosY = y;
+
+                float diff = m_currPosX - m_pressPosX;
+                float absDiff = fabs(diff);
+                std::cout << diff << " " << log(abs(diff)) << std::endl;
+                float diffScale = 350.f*diff/absDiff;
+                if (abs(diff) > 20)
+                {
+                    m_lClick = false;
+                    m_eventsDrag[0](MOVE_X, log(absDiff)/diffScale);
+                }
+                diff = m_pressPosY - m_currPosY;
+                absDiff = fabs(diff);
+                diffScale = 350.f*diff/absDiff;
+                if (abs(diff) > 20)
+                {
+                    m_lClick = false;
+                    m_eventsDrag[0](MOVE_Y, log(absDiff)/diffScale);
+                }
+            }
         }
         else if((m_currPosX || m_currPosY) && glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
         {
             double x { 0 }, y { 0 };
             glfwGetCursorPos(m_window, &x, &y);
 
-            if(m_eventsLeft[1])
+            if (m_lClick)
             {
-                m_eventsLeft[1](x, y);
-            }
-
-            if(m_eventsLeft[2] && std::fabs(x - m_currPosX) < epsilon && std::fabs(y - m_currPosY) < epsilon)
-            {
-                m_eventsLeft[2](x, y);
+                if (m_eventsClick[0])
+                {
+                    m_eventsClick[0](m_currPosX, m_currPosY);
+                }
+                if (m_eventsClick[1])
+                {
+                    m_eventsClick[1](x, y);
+                }
+                if(m_eventsClick[2] && std::fabs(x - m_currPosX) < epsilon && std::fabs(y - m_currPosY) < epsilon)
+                {
+                    m_eventsClick[2](x, y);
+                }
             }
 
             m_currPosX = m_currPosY = 0;
@@ -52,11 +85,11 @@ void Mouse::update()
 
             double x { 0 }, y { 0 };
             glfwGetCursorPos(m_window, &x, &y);
-            if (m_drag == false)
+            if (m_rDrag == false)
             {
                 m_pressPosX = m_currPosX = x;
                 m_pressPosY = m_currPosY = y;
-                m_drag = true;
+                m_rDrag = true;
             }
             else
             {
@@ -69,46 +102,51 @@ void Mouse::update()
                 float diffScale = 250.f*diff/absDiff;
                 if (abs(diff) > 10)
                 {
-                    m_eventsRight[0](MOVE_X, log(absDiff)/diffScale);
+                    m_eventsDrag[1](MOVE_X, -log(absDiff)/diffScale);
                 }
                 diff = m_pressPosY - m_currPosY;
                 absDiff = fabs(diff);
                 diffScale = 250.f*diff/absDiff;
                 if (abs(diff) > 10)
                 {
-                    m_eventsRight[0](MOVE_Y, log(absDiff)/diffScale);
+                    m_eventsDrag[1](MOVE_Y, -log(absDiff)/diffScale);
                 }
             }
         }
-
-    }
-    else if(glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE )
-    {
-        if (m_drag == true)
+        else if(glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE )
         {
-            m_pressPosX = m_pressPosY = 0;
-            m_currPosX = m_currPosY = 0;
-            m_drag = false;
+            if (m_rDrag == true)
+            {
+                m_pressPosX = m_pressPosY = 0;
+                m_currPosX = m_currPosY = 0;
+                m_rDrag = false;
+            }
         }
     }
 }
 
-void Mouse::onPressLeft(MouseLeftEvent e)
+
+void Mouse::onPressLeft(MouseClickEvent e)
 {
-    m_eventsLeft[0] = std::move(e);
+    m_eventsClick[0] = std::move(e);
 }
 
-void Mouse::onReleaseLeft(MouseLeftEvent e)
+void Mouse::onReleaseLeft(MouseClickEvent e)
 {
-    m_eventsLeft[1] = std::move(e);
+    m_eventsClick[1] = std::move(e);
 }
 
-void Mouse::onclickLeft(MouseLeftEvent e)
+void Mouse::onclickLeft(MouseClickEvent e)
 {
-    m_eventsLeft[2] = std::move(e);
+    m_eventsClick[2] = std::move(e);
 }
 
-void Mouse::onDragRight(MouseRightEvent e)
+void Mouse::onDragLeft(MouseDragEvent e)
 {
-    m_eventsRight[0] = std::move(e);
+    m_eventsDrag[0] = std::move(e);
+}
+
+void Mouse::onDragRight(MouseDragEvent e)
+{
+    m_eventsDrag[1] = std::move(e);
 }

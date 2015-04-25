@@ -65,8 +65,8 @@ void Camera::rotateVertical(float delta)
     else
         tmp = -0.05;
 
-    printf("norm: %f, %f, %f\n", norm.x, norm.y, norm.z);
-    printf("tmp: %f\n", tmp);
+//    printf("norm: %f, %f, %f\n", norm.x, norm.y, norm.z);
+//    printf("tmp: %f\n", tmp);
     fflush(stdout);
     if(norm.y - tmp <= -1.f || norm.y - tmp >= 1.f)
         return;
@@ -88,7 +88,7 @@ void Camera::move(float delta)
 }
 void Camera::strafe(float delta)
 {
-    m_update = 1;
+    m_update = 1;printf("tmp:\n");
     auto diff = glm::cross(m_view - m_eye, m_up);
     auto dir = glm::cos(glm::normalize(diff));
     auto tmp = glm::vec3(diff.x * dir.x , 0.f, diff.z * dir.z) * delta * m_velocity;

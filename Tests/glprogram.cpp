@@ -139,7 +139,7 @@ glProgram::glProgram()
 
     m_mouse.onclickLeft(std::bind(&glProgram::handleSelection, this, std::placeholders::_1, std::placeholders::_2));
 
-    m_mouse.onDragRight([=](MoveDirection event, float diff)
+    m_mouse.onDragLeft([=](MoveDirection event, float diff)
     {
         if(event == MOVE_Y)
         {
@@ -155,9 +155,24 @@ glProgram::glProgram()
         }
     });
 
+    m_mouse.onDragRight([=](MoveDirection event, float diff)
+    {
+        if(event == MOVE_Y)
+        {
+            m_camera.rotateVertical(diff);
+        }
+        else if(event == MOVE_X)
+        {
+            m_camera.rotateHorizontal(diff);
+        }
+        else if(event == MOVE_Z)
+        {
+            m_camera.zoom(diff);
+        }
+    });
+
     m_keyboard.moveX([=](float diff)
     {
-
         m_camera.move(diff);
     });
 

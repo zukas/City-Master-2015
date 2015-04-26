@@ -131,19 +131,19 @@ void ParticleSystem::update()
 
     m_programs[0].setUniform("iNumToGenerate", 0);
 
-//    m_elapsedTime += timePassed;
+    m_elapsedTime += timePassed;
 
-//    if(m_elapsedTime > m_nextGenTime)
-//    {
+    if(m_elapsedTime > m_nextGenTime)
+    {
 
         m_programs[0].setUniform("iNumToGenerate", m_genCount);
 
-//        m_elapsedTime -= m_nextGenTime;
+        m_elapsedTime -= m_nextGenTime;
 
         glm::vec3 vRandomSeed = glm::vec3(grandf(-1.0f,1.0f), grandf(0.f,.1f), grandf(-1.0f,1.0f));
         m_programs[0].setUniform("vRandomSeed", vRandomSeed);
 
-//    }
+    }
 
 
     glEnable(GL_RASTERIZER_DISCARD);
@@ -177,8 +177,10 @@ void ParticleSystem::update()
 
 void ParticleSystem::render(Camera &camera)
 {
-    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
 
+    glEnable(GL_BLEND);
     glBlendFunc(m_blendKey, m_blendFunc);
 
     glDepthMask(0);
@@ -201,8 +203,10 @@ void ParticleSystem::render(Camera &camera)
     glDrawArrays(GL_POINTS, 0, m_particleCount);
 
     glDepthMask(1);
-
     glDisable(GL_BLEND);
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
 }
 
 void ParticleSystem::setTexture(Texture t)

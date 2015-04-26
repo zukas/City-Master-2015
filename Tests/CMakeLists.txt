@@ -67,6 +67,7 @@ list(APPEND TEXTURES
     textures/bluecloud_up.jpg
     textures/fire.jpg
     textures/fire2.jpg
+    textures/fire2.png
     textures/particle.bmp
     textures/particle.png
     )

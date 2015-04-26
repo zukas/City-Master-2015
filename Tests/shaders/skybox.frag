@@ -4,7 +4,7 @@ uniform samplerCube tsampler[1];
 
 smooth in vec3 UV;
 
-smooth out vec4 outColour;
+out vec4 outColour;
 
 void main()
 {

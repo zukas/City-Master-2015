@@ -12,10 +12,10 @@ out vec4 FragColor;
 void main()
 {
     vec2 uv = vTexCoord.xy;
-    uv.y *= -1.0;
-    vec3 vTexColor = texture2D(tsampler[0], uv).rgb;
+//    uv.y *= -1.0;
+    vec3 vTexColor = texture2D(tsampler[0], uv).xyz;
     float alpha = 0.0;
-    for(float i = 0.01; i < 1.0; i+=i)
+    for(float i = 0.001; i < 1.0; i+=i)
     {
         if(vTexColor.r > i && vTexColor.g > i && vTexColor.b > i)
         {
@@ -29,7 +29,7 @@ void main()
     else
     {
         alpha -= gl_FragCoord.z * 0.01;
-        FragColor = vec4(vTexColor, alpha) * vColorPart;
+        FragColor = vec4(vColorPart.xyz, vColorPart.w * alpha);
     }
 
 }

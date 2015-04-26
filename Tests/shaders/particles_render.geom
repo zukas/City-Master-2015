@@ -23,25 +23,26 @@ void main()
         float fSize = fSizePass[0];
         mat4 mVP = projectionMatrix* viewMatrix;
 
-        float val = fLifeTimePass[0] / 1000.0;
+//        float fdiv = fSize * (vQuad1+vQuad2).x / 2;
+        float val = fLifeTimePass[0] / 500.0;
         vColorPart = vec4(vColorPass[0], val);
 
-        vec3 vPos = vPosOld+(-vQuad1-vQuad2) * fSize;
+        vec3 vPos = vPosOld + ((-vQuad1-vQuad2) * fSize);
         vTexCoord = vec2(0.0, 0.0);
         gl_Position = mVP * vec4(vPos, 1.0);
         EmitVertex();
 
-        vPos = vPosOld + (-vQuad1+vQuad2) * fSize;
+        vPos = vPosOld + ((-vQuad1+vQuad2) * fSize);
         vTexCoord = vec2(0.0, 1.0);
         gl_Position = mVP * vec4(vPos, 1.0);
         EmitVertex();
 
-        vPos = vPosOld + (vQuad1-vQuad2) * fSize;
+        vPos = vPosOld + ((vQuad1-vQuad2) * fSize);
         vTexCoord = vec2(1.0, 0.0);
         gl_Position = mVP * vec4(vPos, 1.0);
         EmitVertex();
 
-        vPos = vPosOld + (vQuad1+vQuad2) * fSize;
+        vPos = vPosOld + ((vQuad1+vQuad2) * fSize);
         vTexCoord = vec2(1.0, 1.0);
         gl_Position = mVP * vec4(vPos, 1.0);
         EmitVertex();

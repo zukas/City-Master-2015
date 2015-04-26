@@ -47,7 +47,7 @@ glProgram::glProgram()
     m_camera = { m_window };
     m_lamp = { glm::vec3(46.6, 77.2, 54.7), 82.4 };
 
-    glClearColor(0.9f, 0.9f, 0.9f, 0.1f);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
     glDepthFunc(GL_LESS);
 
@@ -72,20 +72,20 @@ glProgram::glProgram()
 
     m_fire = new ParticleSystem;
     Texture pt { GL_TEXTURE_2D, "textures/fire2.jpg"};
-    pt.setSamplerParameter(GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
+//    pt.setSamplerParameter(GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
     m_fire->setTexture(pt);
     m_fire->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
     m_fire->setProperties(
                 glm::vec3(-.75f, 5.f, -.75f), // Where the particles are generated
                 glm::vec3(0.f, -0.2, 0.f), // Minimal velocity
                 glm::vec3(0.f, -0.4, 0.f), // Maximal velocity
-                glm::vec3(0.f, -4.1, 0.f), // Gravity force applied to particles
-                glm::vec3(1.f, 0.42f, 0.12f), // Color (light blue)
-                1000.f, // Minimum lifetime in seconds
-                1500.0f, // Maximum lifetime in seconds
-                0.45f, // Rendered size
-                6.f, // Spawn every 0.05 seconds
-                10); // And spawn 30 particles
+                glm::vec3(0.f, -1.1, 0.f), // Gravity force applied to particles
+                glm::vec3(0.f, 0.28235f, 1.f), // Color (light blue)
+                4000.f, // Minimum lifetime in seconds
+                8000.0f, // Maximum lifetime in seconds
+                0.02f, // Rendered size
+                1.f, // Spawn every 0.05 seconds
+                40); // And spawn 30 particles
 
     m_smoke = new ParticleSystem;
     m_smoke->setTexture(std::move(pt));
@@ -239,19 +239,19 @@ void glProgram::render()
 //    m_camera.update(m_axisProgram);
 //    m_axis.render(m_axisProgram);
 
-    m_skyProgram.use();
-    m_camera.update(m_skyProgram);
-    m_box.render(m_skyProgram);
+//    m_skyProgram.use();
+//    m_camera.update(m_skyProgram);
+//    m_box.render(m_skyProgram);
 
 
-    m_objectProgram.use();
-    m_lamp.update(m_objectProgram);
-    m_camera.update(m_objectProgram);
+//    m_objectProgram.use();
+//    m_lamp.update(m_objectProgram);
+//    m_camera.update(m_objectProgram);
 
-    for(auto &m : m_models)
-    {
-        m.render(m_objectProgram);
-    }
+//    for(auto &m : m_models)
+//    {
+//        m.render(m_objectProgram);
+//    }
 
     m_fire->update();
     m_fire->render(m_camera);

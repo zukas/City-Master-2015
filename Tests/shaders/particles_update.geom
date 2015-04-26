@@ -2,7 +2,7 @@
 
 layout(points) in;
 layout(points) out;
-layout(max_vertices = 30) out;
+layout(max_vertices = 40) out;
 
 // All that we get from vertex shader
 
@@ -73,36 +73,61 @@ vec3 rand_v3_pos(vec3 co, float axel)
     return vec3(rand_pos(co.xz), rand_pos(co.yz), rand_pos(co.xy)) * axel;
 }
 
+#define PI 3.14159
+#define PI2 PI * 2.0
+#define INC PI / 8.0
+#define INC2 PI2 / 8.0
+
 void main()
 {
+    float radius = 2;
+
     float update = fTimePassed / 1000.0;
     vPositionOut = vPositionPass[0];
     vVelocityOut = vVelocityPass[0];
-    if(iTypePass[0] != 0)vPositionOut += vVelocityOut * update;
-    if(iTypePass[0] != 0)vVelocityOut -= (rand_v3_pos(vPositionOut, 1) * vGenGravityVector) * update;
+
+    vPositionOut = vGenPosition + vec3(vVelocityOut.z * cos(vVelocityOut.x) * sin(vVelocityOut.y),
+                        vVelocityOut.z * sin(vVelocityOut.x) * sin(vVelocityOut.y),
+                        vVelocityOut.z * cos(vVelocityOut.y));
+    vVelocityOut.x += rand_pos(vRandomSeed.xy) * 0.5 * update;
+    vVelocityOut.y += rand_pos(vRandomSeed.xy) * 0.5 * update;
 
     vColorOut = vColorPass[0];
+
+
     fLifeTimeOut = fLifeTimePass[0] - fTimePassed;
     fSizeOut = fSizePass[0];
     iTypeOut = iTypePass[0];
     reuseOut = reusePass[0];
+
+    vColorOut.x = (fGenLifeRange - fLifeTimeOut) / fGenLifeRange;
+    vColorOut.y = (fGenLifeRange - fLifeTimeOut) / fGenLifeRange;
+    vColorOut.z =  fLifeTimeOut / fGenLifeRange;
 
     if(iTypeOut == 0)
     {
         EmitVertex();
         EndPrimitive();
 
-        for(int i = 0; i < iNumToGenerate; i++)
+
+        for(int i = 0; i < iNumToGenerate; ++i)
         {
-            vPositionOut = vGenPosition + rand_v3(vRandomSeed, rand_pos(vGenGravityVector.xz) * fDim);
-            vVelocityOut = vGenVelocityMin + (rand_v3_pos(vGenGravityVector, 1) * vGenVelocityRange) ;
-            vColorOut = vGenColor;
-            fLifeTimeOut = fGenLifeRange;// + fGenLifeMin*randZeroOne();
-            fSizeOut = fGenSize;
-            iTypeOut = 1;
-            reuseOut = 0;
-            EmitVertex();
-            EndPrimitive();
+
+            float a = (PI2 / iNumToGenerate ) * (iNumToGenerate + 1 - i) * PI2;
+            float b = (PI / iNumToGenerate) * (iNumToGenerate + 1 - i) * PI;
+
+            float rand_xy = rand_pos(vRandomSeed.xy) * a;
+            float rand_z = rand_pos(vRandomSeed.xy) * b;
+
+                vPositionOut = vGenPosition + vec3(radius * cos(rand_xy) * sin(rand_z), radius * sin(rand_xy) * sin(rand_z), radius * cos(rand_z));
+                vVelocityOut = vec3(rand_xy ,rand_z, radius);
+                vColorOut = vGenColor;
+                fLifeTimeOut = fGenLifeRange;// + fGenLifeMin*randZeroOne();
+                fSizeOut = fGenSize;
+                iTypeOut = 1;
+                reuseOut = 0;
+                EmitVertex();
+                EndPrimitive();
         }
     }
     else if(fLifeTimeOut > 0.0)
@@ -112,14 +137,23 @@ void main()
     }
     else if(reuseOut < 10)
     {
-        vPositionOut = vGenPosition + rand_v3(vRandomSeed, rand_pos(vGenGravityVector.xz) * fDim);
-        vVelocityOut = vGenVelocityMin + (rand_v3_pos(vGenGravityVector, 1) * vGenVelocityRange) ;
-        vColorOut = vGenColor;
-        fLifeTimeOut = fGenLifeRange;// + fGenLifeMin*randZeroOne();
-        fSizeOut = fGenSize;
-        iTypeOut = 1;
-        reuseOut += 1;
-        EmitVertex();
-        EndPrimitive();
+
+
+            float a = PI2 * rand_pos(vRandomSeed.xy);
+            float b = PI * rand_pos(vRandomSeed.xy);
+
+            float rand_xy = rand_pos(vRandomSeed.xy) * a;
+            float rand_z = rand_pos(vRandomSeed.xy) * b;
+
+                vPositionOut = vGenPosition + vec3(radius * cos(rand_xy) * sin(rand_z), radius * sin(rand_xy) * sin(rand_z), radius * cos(rand_z));
+                vVelocityOut = vec3(rand_xy ,rand_z, radius);
+                vColorOut = vGenColor;
+                fLifeTimeOut = fGenLifeRange;// + fGenLifeMin*randZeroOne();
+                fSizeOut = fGenSize;
+                iTypeOut = 1;
+                reuseOut += 1;
+                EmitVertex();
+                EndPrimitive();
+
     }
 }

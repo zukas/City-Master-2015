@@ -85,7 +85,7 @@ glProgram::glProgram()
                 8000.0f, // Maximum lifetime in seconds
                 0.02f, // Rendered size
                 1.f, // Spawn every 0.05 seconds
-                40); // And spawn 30 particles
+                5); // And spawn 30 particles
 
     m_smoke = new ParticleSystem;
     m_smoke->setTexture(std::move(pt));
@@ -135,7 +135,7 @@ glProgram::glProgram()
     m_mouse = { m_window };
     m_keyboard = { m_window };
 
-   
+
 
     m_mouse.onclickLeft(std::bind(&glProgram::handleSelection, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -148,6 +148,22 @@ glProgram::glProgram()
         else if(event == MOVE_X)
         {
             m_camera.strafe(diff);
+        }
+        else if(event == MOVE_Z)
+        {
+            m_camera.zoom(diff);
+        }
+    });
+
+    m_mouse.onDragRight([=](MoveDirection event, float diff)
+    {
+        if(event == MOVE_Y)
+        {
+            m_camera.rotateVertical(diff);
+        }
+        else if(event == MOVE_X)
+        {
+            m_camera.rotateHorizontal(diff);
         }
         else if(event == MOVE_Z)
         {

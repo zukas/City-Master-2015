@@ -1,5 +1,6 @@
 #include "particlesystem.h"
 #include "clock.h"
+#include "gldebugger.h"
 
 #include <GL/glew.h>
 
@@ -24,11 +25,13 @@ float grandf(float min, float max)
 
 ParticleSystem::ParticleSystem()
 {
-
+    GLCLEAR();
     m_programs[0].createShader("shaders/particles_update.vert", VERTEX);
+    GLCHECK();
     m_programs[0].createShader("shaders/particles_update.geom", GEOMETRY);
+    GLCHECK();
     m_programs[0].createProgram();
-
+    GLCHECK();
     const char *varyings[7]
     {
         "vPositionOut",
@@ -41,22 +44,34 @@ ParticleSystem::ParticleSystem()
     };
 
     glTransformFeedbackVaryings(m_programs[0].program(), 7, varyings, GL_INTERLEAVED_ATTRIBS);
+    GLCHECK();
 
     m_programs[0].linkProgram();
+    GLCHECK();
     m_programs[0].resolveUniforms();
-
+    GLCHECK();
     m_programs[1].createShader("shaders/particles_render.vert", VERTEX);
+    GLCHECK();
     m_programs[1].createShader("shaders/particles_render.geom", GEOMETRY);
+    GLCHECK();
     m_programs[1].createShader("shaders/particles_render.frag", FRAGMENT);
+    GLCHECK();
     m_programs[1].createProgram();
+    GLCHECK();
     m_programs[1].linkProgram();
+    GLCHECK();
     m_programs[1].resolveUniforms();
+    GLCHECK();
 
     glGenBuffers(2, m_buffers);
+    GLCHECK();
 
     glGenTransformFeedbacks(1, &m_transformBuffer);
+    GLCHECK();
     glGenQueries(1, &m_query);
+    GLCHECK();
     glGenVertexArrays(2, m_vertexArrayID);
+    GLCHECK();
 
 
     Particle p;
@@ -82,7 +97,7 @@ ParticleSystem::ParticleSystem()
         glEnableVertexAttribArray(4);
         glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)40); // Size
         glEnableVertexAttribArray(5);
-        glVertexAttribPointer(5, 1, GL_INT, GL_TRUE, sizeof(Particle), (const GLvoid*)44); // Type
+        glVertexAttribPointer(5, 1, GL_INT, GL_FALSE, sizeof(Particle), (const GLvoid*)44); // Type
         glEnableVertexAttribArray(6);
         glVertexAttribPointer(6, 1, GL_INT, GL_FALSE, sizeof(Particle), (const GLvoid*)48); // Reuse
     }
@@ -104,109 +119,113 @@ int ParticleSystem::count() const
 
 void ParticleSystem::update()
 {
-
+    GLCLEAR();
     float timePassed = (Clock::getDuration() - m_startTime);
     m_startTime = Clock::getDuration();
 
     m_programs[0].use();
-
+    GLCHECK();
     m_programs[0].setUniform("fTimePassed", timePassed);
-
+    GLCHECK();
     m_programs[0].setUniform("vGenPosition", m_genPosition);
-
+    GLCHECK();
     m_programs[0].setUniform("vGenVelocityMin", m_minGenVelocity);
-
+    GLCHECK();
     m_programs[0].setUniform("vGenVelocityRange", m_maxGenVelocity);
-
+    GLCHECK();
     m_programs[0].setUniform("vGenColor", m_genColor);
-
+    GLCHECK();
     m_programs[0].setUniform("vGenGravityVector", m_gravityGen);
-
+    GLCHECK();
     m_programs[0].setUniform("fGenLifeMin", m_minGenLife);
-
+    GLCHECK();
     m_programs[0].setUniform("fGenLifeRange", m_maxGenLife);
-
+    GLCHECK();
     m_programs[0].setUniform("fGenSize", m_genSize);
+    GLCHECK();
     m_programs[0].setUniform("fDim", 3.f);
-
+    GLCHECK();
     m_programs[0].setUniform("iNumToGenerate", 0);
-
+    GLCHECK();
     m_elapsedTime += timePassed;
 
     if(m_elapsedTime > m_nextGenTime)
     {
 
         m_programs[0].setUniform("iNumToGenerate", m_genCount);
-
+        GLCHECK();
         m_elapsedTime -= m_nextGenTime;
 
         glm::vec3 vRandomSeed = glm::vec3(grandf(-1.0f,1.0f), grandf(0.f,.1f), grandf(-1.0f,1.0f));
         m_programs[0].setUniform("vRandomSeed", vRandomSeed);
-
+        GLCHECK();
     }
 
 
     glEnable(GL_RASTERIZER_DISCARD);
-
+    GLCHECK();
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, m_transformBuffer);
-
+    GLCHECK();
     glBindVertexArray(m_vertexArrayID[m_bufferCursor]);
-
+    GLCHECK();
     glEnableVertexAttribArray(1); // Re-enable velocity
+    GLCHECK();
     glEnableVertexAttribArray(6); // Re-enable velocity
-
+    GLCHECK();
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_buffers[1-m_bufferCursor]);
-
+    GLCHECK();
     glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, m_query);
-
+    GLCHECK();
     glBeginTransformFeedback(GL_POINTS);
-
+    GLCHECK();
     glDrawArrays(GL_POINTS, 0, m_particleCount);
-
+    GLCHECK();
     glEndTransformFeedback();
-
+    GLCHECK();
     glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
-
+    GLCHECK();
     glGetQueryObjectiv(m_query, GL_QUERY_RESULT, &m_particleCount);
-
+    GLCHECK();
     m_bufferCursor = 1-m_bufferCursor;
 
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
-
+    GLCHECK();
 }
 
 void ParticleSystem::render(Camera &camera)
 {
+    GLCLEAR();
     glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
 
     glEnable(GL_BLEND);
+    GLCHECK();
     glBlendFunc(m_blendKey, m_blendFunc);
-
+    GLCHECK();
     glDepthMask(0);
-
+    GLCHECK();
     glDisable(GL_RASTERIZER_DISCARD);
-
+    GLCHECK();
     m_programs[1].use();
-
+    GLCHECK();
     glBindVertexArray(m_vertexArrayID[m_bufferCursor]);
-
+    GLCHECK();
     camera.update(m_programs[1]);
-
+    GLCHECK();
     m_programs[1].setSampers(1);
-
+    GLCHECK();
     m_texture.bind(0);
-
+    GLCHECK();
     glDisableVertexAttribArray(1); // Disable velocity, because we don't need it for rendering
+    GLCHECK();
     glDisableVertexAttribArray(6);
-
+    GLCHECK();
     glDrawArrays(GL_POINTS, 0, m_particleCount);
-
+    GLCHECK();
     glDepthMask(1);
+    GLCHECK();
     glDisable(GL_BLEND);
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    GLCHECK();
 }
 
 void ParticleSystem::setTexture(Texture t)

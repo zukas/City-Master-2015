@@ -135,7 +135,7 @@ void main()
         EmitVertex();
         EndPrimitive();
     }
-    else if(reuseOut < 10)
+    else if(reuseOut < iNumToGenerate)
     {
 
 

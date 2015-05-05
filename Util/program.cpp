@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <fstream>
 
+
 RefCount Program::g_counter;
 
 void Program::cleanUp()
@@ -77,7 +78,53 @@ ProgramType Program::type() const
 
 void Program::type(ProgramType t)
 {
-    m_type = t;
+	m_type = t;
+}
+
+void Program::createShader(const Shader &shader)
+{
+	if(shader.source)
+	{
+		GLuint shaderID { 0 };
+		switch (shader.type) {
+			case VERTEX:
+				shaderID = glCreateShader(GL_VERTEX_SHADER);
+				break;
+			case GEOMETRY:
+				shaderID = glCreateShader(GL_GEOMETRY_SHADER);
+				break;
+			case FRAGMENT:
+				shaderID = glCreateShader(GL_FRAGMENT_SHADER);
+				break;
+			default:
+				break;
+		}
+
+		GLint status { GL_FALSE };
+
+		const char *data = shader.source;
+
+		glShaderSource(shaderID, 1, &data , nullptr);
+		glCompileShader(shaderID);
+		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
+
+		if(status)
+		{
+			m_shaders.push_back(shaderID);
+		}
+		else
+		{
+			int logLength { 0 };
+			glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &logLength);
+			if ( logLength > 0 ){
+				char *error = new char[logLength + 1];
+				glGetShaderInfoLog(shaderID, logLength, nullptr, error);
+				printf("Failed to compile shader\n%s\nCompile error: %s\n", shader.source, error);
+				exit(1);
+			}
+
+		}
+	}
 }
 
 void Program::createShader(const std::string &file, ShaderType t)
@@ -93,46 +140,7 @@ void Program::createShader(const std::string &file, ShaderType t)
 
     if(!code.empty())
     {
-
-        GLuint shaderID { 0 };
-        switch (t) {
-            case VERTEX:
-                shaderID = glCreateShader(GL_VERTEX_SHADER);
-                break;
-            case GEOMETRY:
-                shaderID = glCreateShader(GL_GEOMETRY_SHADER);
-                break;
-            case FRAGMENT:
-                shaderID = glCreateShader(GL_FRAGMENT_SHADER);
-                break;
-            default:
-                break;
-        }
-
-        GLint status { GL_FALSE };
-
-
-        const char* dataPtr = code.c_str();
-        glShaderSource(shaderID, 1, &dataPtr , nullptr);
-        glCompileShader(shaderID);
-        glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
-
-        if(status)
-        {
-            m_shaders.push_back(shaderID);
-        }
-        else
-        {
-            int logLength { 0 };
-            glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &logLength);
-            if ( logLength > 0 ){
-                char *error = new char[logLength + 1];
-                glGetShaderInfoLog(shaderID, logLength, nullptr, error);
-                printf("Shader %s compile error: %s\n", file.c_str(), error);
-                exit(1);
-            }
-
-        }
+		createShader({ t, code.c_str() });
     }
 }
 
@@ -375,4 +383,3 @@ Program &Program::operator = (const Program &other)
     g_counter+m_programID;
     return *this;
 }
-

@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "loader.h"
 #include "clock.h"
+#include "gldebugger.h"
 
 #include <chrono>
 
@@ -87,20 +88,20 @@ glProgram::glProgram()
                 1.f, // Spawn every 0.05 seconds
                 5); // And spawn 30 particles
 
-    m_smoke = new ParticleSystem;
-    m_smoke->setTexture(std::move(pt));
-    m_smoke->setBlendFunc(GL_ONE, GL_SRC_ALPHA);
-    m_smoke->setProperties(
-                glm::vec3(-2.f, 5.f, -2.f), // Where the particles are generated
-                glm::vec3(0.0, -0.01, 0.0), // Minimal velocity
-                glm::vec3(0.0, -0.005, 0.0), // Maximal velocity
-                glm::vec3(0.0, -0.008, 0.0), // Gravity force applied to particles
-                glm::vec3(1.f, 1.f, 1.f), // Color (light blue)
-                2000.f, // Minimum lifetime in seconds
-                2500.0f, // Maximum lifetime in seconds
-                0.25f, // Rendered size
-                6.f, // Spawn every 0.05 seconds
-                30); // And spawn 30 particles
+//    m_smoke = new ParticleSystem;
+//    m_smoke->setTexture(std::move(pt));
+//    m_smoke->setBlendFunc(GL_ONE, GL_SRC_ALPHA);
+//    m_smoke->setProperties(
+//                glm::vec3(-2.f, 5.f, -2.f), // Where the particles are generated
+//                glm::vec3(0.0, -0.01, 0.0), // Minimal velocity
+//                glm::vec3(0.0, -0.005, 0.0), // Maximal velocity
+//                glm::vec3(0.0, -0.008, 0.0), // Gravity force applied to particles
+//                glm::vec3(1.f, 1.f, 1.f), // Color (light blue)
+//                2000.f, // Minimum lifetime in seconds
+//                2500.0f, // Maximum lifetime in seconds
+//                0.25f, // Rendered size
+//                6.f, // Spawn every 0.05 seconds
+//                30); // And spawn 30 particles
 
     m_box =
     {
@@ -132,14 +133,16 @@ glProgram::glProgram()
     m_axis = Axis(1000.f);
     m_text = { "fonts/FreeSans.ttf", 26 };
 
+	glDebugger::init({ "fonts/FreeSans.ttf", 14 });
+
     m_mouse = { m_window };
     m_keyboard = { m_window };
 
 
 
-    m_mouse.onclickLeft(std::bind(&glProgram::handleSelection, this, std::placeholders::_1, std::placeholders::_2));
+	m_mouse.onClickLeft(std::bind(&glProgram::handleSelection, this, std::placeholders::_1, std::placeholders::_2));
 
-    m_mouse.onDragRight([=](MoveDirection event, float diff)
+	m_mouse.onDragLeft([=](MoveDirection event, float diff)
     {
         if(event == MOVE_Y)
         {
@@ -255,42 +258,30 @@ void glProgram::render()
 //    m_camera.update(m_axisProgram);
 //    m_axis.render(m_axisProgram);
 
-//    m_skyProgram.use();
-//    m_camera.update(m_skyProgram);
-//    m_box.render(m_skyProgram);
+	m_skyProgram.use();
+	m_camera.update(m_skyProgram);
+	m_box.render(m_skyProgram);
 
 
-//    m_objectProgram.use();
-//    m_lamp.update(m_objectProgram);
-//    m_camera.update(m_objectProgram);
+	m_objectProgram.use();
+	m_lamp.update(m_objectProgram);
+	m_camera.update(m_objectProgram);
 
-//    for(auto &m : m_models)
-//    {
-//        m.render(m_objectProgram);
-//    }
+	for(auto &m : m_models)
+	{
+		m.render(m_objectProgram);
+	}
 
     m_fire->update();
     m_fire->render(m_camera);
 
-    glDisable(GL_DEPTH_TEST);
-    glDepthFunc(GL_ALWAYS);
-
-    m_textProgram.use();
-    //    m_textProgram.setUniform(glsl_projection_matrix, glm::ortho(0.0f, float(windowWidth), 0.0f, float(windowHeight)));
-    m_textProgram.setProjectionMatrix(glm::ortho(0.0f, float(windowWidth), 0.0f, float(windowHeight)));
-
     char buf[128];
-    int length = std::sprintf(buf,"FPS: %.2f", m_frameRate);
-    m_text.render(m_textProgram,glm::vec4(0.f, 0.f, 0.f, 1.f), std::string(buf, length), 20, 40);
+	std::sprintf(buf,"FPS: %.2f", m_frameRate);
+	m_text.render(buf, glm::vec4(0.f, 0.f, 0.f, 1.f), 20, 40);
+	std::sprintf(buf,"PC: %d", m_fire->count());
+	m_text.render(buf, glm::vec4(0.f, 0.f, 0.f, 1.f), 20, 80);
 
-
-    length = std::sprintf(buf,"PC: %d", m_fire->count());
-    m_text.render(m_textProgram,glm::vec4(0.f, 0.f, 0.f, 1.f), std::string(buf, length), 20, 80);
-
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
+	glDebugger::flush();
 
 
 //    m_smoke->update();

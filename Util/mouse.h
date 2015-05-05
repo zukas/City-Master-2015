@@ -34,7 +34,7 @@ class Mouse
         void update();
         void onPressLeft(MouseClickEvent e);
         void onReleaseLeft(MouseClickEvent e);
-        void onclickLeft(MouseClickEvent e);
+        void onClickLeft(MouseClickEvent e);
         void onDragLeft(MouseDragEvent e);
         void onDragRight(MouseDragEvent e);
 };

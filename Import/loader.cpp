@@ -92,7 +92,6 @@ Mesh processMesh(const aiScene *scene, aiMesh *mesh)
         aiMaterial *m = scene->mMaterials[mesh->mMaterialIndex];
         aiString path;
         m->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-        printf("Texture path: %s\n", path.C_Str());
         std::string _path = std::string("textures/") + path.C_Str();
         std::fstream file(_path);
         if(file)

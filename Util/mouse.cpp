@@ -1,6 +1,6 @@
 #include "mouse.h"
+#include "gldebugger.h"
 #include <cmath>
-#include <iostream>
 
 constexpr int epsilon { 25 };
 
@@ -18,9 +18,6 @@ void Mouse::update()
 {
     if(m_window)
     {
-//        static double lastTime = glfwGetTime();
-//        double currentTime = glfwGetTime();
-//        float deltaTime = float(currentTime - lastTime);
         if(glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         {
             double x { 0 }, y { 0 };
@@ -40,17 +37,17 @@ void Mouse::update()
 
                 float diff = m_currPosX - m_pressPosX;
                 float absDiff = fabs(diff);
-                std::cout << diff << " " << log(abs(diff)) << std::endl;
-                float diffScale = 350.f*diff/absDiff;
-                if (abs(diff) > 20)
+				LOG("Left button move X - diff: %f, log: %f", diff, log(abs(diff)));
+				float diffScale = 500.f*diff/absDiff;
+				if (abs(diff) > 20 && m_eventsDrag[0])
                 {
                     m_lClick = false;
                     m_eventsDrag[0](MOVE_X, log(absDiff)/diffScale);
                 }
                 diff = m_pressPosY - m_currPosY;
                 absDiff = fabs(diff);
-                diffScale = 350.f*diff/absDiff;
-                if (abs(diff) > 20)
+				diffScale = 500.f*diff/absDiff;
+				if (abs(diff) > 20 && m_eventsDrag[0])
                 {
                     m_lClick = false;
                     m_eventsDrag[0](MOVE_Y, log(absDiff)/diffScale);
@@ -98,15 +95,15 @@ void Mouse::update()
 
                 float diff = m_currPosX - m_pressPosX;
                 float absDiff = fabs(diff);
-                std::cout << diff << " " << log(abs(diff)) << std::endl;
-                float diffScale = 250.f*diff/absDiff;
+				LOG("Right button move X - diff: %f, log: %f", diff, log(abs(diff)));
+				float diffScale = 500.f*diff/absDiff;
                 if (abs(diff) > 10)
                 {
                     m_eventsDrag[1](MOVE_X, -log(absDiff)/diffScale);
                 }
                 diff = m_pressPosY - m_currPosY;
                 absDiff = fabs(diff);
-                diffScale = 250.f*diff/absDiff;
+				diffScale = 500.f*diff/absDiff;
                 if (abs(diff) > 10)
                 {
                     m_eventsDrag[1](MOVE_Y, -log(absDiff)/diffScale);
@@ -136,7 +133,7 @@ void Mouse::onReleaseLeft(MouseClickEvent e)
     m_eventsClick[1] = std::move(e);
 }
 
-void Mouse::onclickLeft(MouseClickEvent e)
+void Mouse::onClickLeft(MouseClickEvent e)
 {
     m_eventsClick[2] = std::move(e);
 }

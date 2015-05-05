@@ -22,23 +22,28 @@ struct char_data
 
 class Text
 {
+	private:
+		static  constexpr int char_data_set { 128 };
     private:
         GLID m_vertexArray { 0 };
-        std::array<char_data, 256 > m_data;
+		Program m_program {};
+		std::array<char_data, char_data_set > m_data;
         int m_newLine { 0 };
         int m_fontSize { 0 };
-
         static RefCount g_counter;
 
     public:
         Text();
-        Text(const std::string &font, int size);
+		Text(const char *font, int size);
         Text(Text &&other);
         ~Text();
 
         Text &operator = (Text &&other);
 
-        void render(Program &program, const glm::vec4 &colour,  const std::string &text, int x, int y, int size = -1);
+		void render(const char *text, const glm::vec4 &colour, int x, int y, int size = -1);
+
+		int lineHeight() const;
+		Program &program();
 
         Text(const Text&) = delete;
         Text &operator = (const Text&) = delete;

@@ -6,6 +6,7 @@
 #include <map>
 
 
+
 class Texture
 {
     private:
@@ -29,7 +30,8 @@ class Texture
         Texture(Texture &&other);
         void setSamplerParameter(GLID parameter, GLID value);
         ~Texture();
-        bool bind(GLID unit);
+		bool bind(GLID unit) const;
+		void unbind(GLID unit) const;
         Texture &operator = (const Texture &other);
         Texture &operator = (Texture &&other);
 };

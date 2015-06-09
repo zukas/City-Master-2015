@@ -4,6 +4,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include "clock.h"
+#include "utils.h"
 #include "gldebugger.h"
 
 
@@ -27,7 +28,7 @@ Camera::Camera(GLFWwindow *window) :
 					m_view,
 					m_up);
 
-	m_projectionMat = glm::perspective(m_fov, 16.0f / 9.0f, 0.001f, 200.0f);
+	m_projectionMat = glm::perspective(m_fov, 16.0f / 9.0f, 0.0001f, 20000.0f);
 	calcQuads();
 }
 
@@ -48,10 +49,10 @@ void Camera::rotateHorizontal(float delta)
 	auto diff = m_view-m_eye;
 	auto norm = glm::normalize(diff);
 	auto dir = glm::cos(norm);
+
 	m_update = 1;
 	m_view -= m_eye;
-	auto offset = -4 * m_velocity * delta * m_sensitivity;
-	LOG("H rotation offset: %f", offset);
+	auto offset =  (m_view.y > 0 ? PI : -PI) *  m_velocity * delta * m_sensitivity;
 	m_view = glm::rotate(m_view, offset, glm::vec3(0.f, diff.y * dir.y, 0.f));
 	m_view += m_eye;
 
@@ -79,11 +80,9 @@ void Camera::rotateVertical(float delta)
 
 	m_update = 1;
 	m_view -= m_eye;
-	auto offset = -4 * m_velocity * delta * m_sensitivity;
-	LOG("V rotation offset: %f", offset);
+	auto offset = -PI * m_velocity * delta * m_sensitivity;
 	m_view = glm::rotate(m_view, offset, glm::cross(glm::vec3(diff.x * dir.x, 0.f, diff.z * dir.z), m_up) );
 	m_view += m_eye;
-
 }
 
 void Camera::move(float delta)

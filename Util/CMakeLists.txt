@@ -24,6 +24,8 @@ list(APPEND HEADERS
     skybox.h
     particlesystem.h
     gldebugger.h
+    utils.h
+    shapes.h
     )
 
 list(APPEND SOURCES
@@ -44,6 +46,8 @@ list(APPEND SOURCES
     skybox.cpp
     particlesystem.cpp
     gldebugger.cpp
+    utils.cpp
+    shapes.cpp
     )
 
 add_library(${PROJECT_NAME} SHARED ${HEADERS} ${SOURCES})

@@ -35,6 +35,7 @@ list(APPEND SHADERS
 list(APPEND MODELS
     models/cube.dae
     models/sphere.dae
+    models/moving_ball.dae
     )
 
 list(APPEND TEXTURES
@@ -69,7 +70,13 @@ list(APPEND TEXTURES
     textures/fire2.jpg
     textures/fire2.png
     textures/particle.bmp
-#    textures/particle.png
+    textures/moving_ball.png
+    textures/sun.jpg
+    textures/earth.dds
+    textures/moon.dds
+    textures/mercury.jpg
+    textures/mercurymap.jpg
+    textures/venusmap.jpg
     )
 
 list(APPEND FONTS

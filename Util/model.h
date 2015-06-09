@@ -7,33 +7,47 @@
 
 class Model
 {
-    private:
-        std::vector<Mesh> m_meshes;
-        ColourID m_id { 0 };
-        bool m_selectable { true };
-        bool m_selected { false };
+	private:
+		glm::mat4 m_modelMatrix;
 
-    public:
-        Model();
-        ~Model();
-        Model(Model &&other);
-        Model(const Model &other);
-        Model(std::vector<Mesh > meshes);
+		std::vector<Model> m_children;
+		std::vector<Mesh> m_meshes;
 
-        void translate(glm::vec3 axis);
-        void rotate(float radiants, glm::vec3 axis);
-        void scale(glm::vec3 axis);
-        void setAnimation(int id);
-        void setSelectable(bool isSelectable = false);
-        void select(bool selected = true);
-        bool selected() const;
+		std::vector<Animation > m_animations;
+		int m_animIndex { -1 };
 
-        void render(Program &program);
+		ColourID m_id { 0 };
+		bool m_selectable { true };
+		bool m_selected { false };
 
-        Model &operator = (Model &&other);
-        Model &operator = (const Model &other);
+	public:
+		Model();
+		~Model();
+		Model(Model &&other);
+		Model(const Model &other);
+		Model(std::vector<Mesh > meshes);
 
-        bool operator == (int id) const;
+		void addChild(Model &&child);
+		void translate(glm::vec3 axis);
+		void rotate(float radiants, glm::vec3 axis);
+		void scale(glm::vec3 axis);
+		void setSelectable(bool isSelectable = false);
+		void select(bool selected = true);
+		bool selected() const;
+		int meshCount() const;
+		Mesh *mesh(int index);
+		void addAnimation(Animation animation);
+		void setAnimation(int id);
+		int animationCount() const;
+		Animation *animation(int index);
+
+
+		void render(Program &program, const glm::mat4 &parent_transform = glm::mat4(1.f));
+
+		Model &operator = (Model &&other);
+		Model &operator = (const Model &other);
+
+		bool operator == (int id) const;
 
 };
 

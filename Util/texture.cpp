@@ -119,10 +119,17 @@ Texture::~Texture()
         {
             g_data.erase(m_id);
         }
-    }
+	}
 }
 
-bool Texture::bind(GLenum unit)
+void Texture::unbind(GLID unit) const
+{
+	glActiveTexture(GL_TEXTURE0+unit);
+	glBindTexture(m_data.m_textureType, 0);
+	glBindSampler(unit, m_data.m_samplerID);
+}
+
+bool Texture::bind(GLenum unit) const
 {
     if(m_data.m_textureID == 0) return false;
     glActiveTexture(GL_TEXTURE0+unit);

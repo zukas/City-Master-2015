@@ -195,15 +195,13 @@ void ParticleSystem::update()
 void ParticleSystem::render(Camera &camera)
 {
     GLCLEAR();
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
-
-    glEnable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+	GLCHECK();
+	glEnable(GL_BLEND);
     GLCHECK();
     glBlendFunc(m_blendKey, m_blendFunc);
     GLCHECK();
-    glDepthMask(0);
-    GLCHECK();
+	glDepthMask(0);
     glDisable(GL_RASTERIZER_DISCARD);
     GLCHECK();
     m_programs[1].use();
@@ -222,9 +220,10 @@ void ParticleSystem::render(Camera &camera)
     GLCHECK();
     glDrawArrays(GL_POINTS, 0, m_particleCount);
     GLCHECK();
-    glDepthMask(1);
-    GLCHECK();
-    glDisable(GL_BLEND);
+	glDepthMask(1);
+	glDisable(GL_BLEND);
+	GLCHECK();
+	glEnable(GL_CULL_FACE);
     GLCHECK();
 }
 

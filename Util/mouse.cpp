@@ -2,7 +2,9 @@
 #include "gldebugger.h"
 #include <cmath>
 
-constexpr int epsilon { 25 };
+constexpr float epsilon { 25.f };
+constexpr float scaler { 750.f };
+
 
 Mouse::Mouse(GLFWwindow *window) :
     m_window(window)
@@ -38,19 +40,19 @@ void Mouse::update()
                 float diff = m_currPosX - m_pressPosX;
                 float absDiff = fabs(diff);
 				LOG("Left button move X - diff: %f, log: %f", diff, log(abs(diff)));
-				float diffScale = 500.f*diff/absDiff;
-				if (abs(diff) > 20 && m_eventsDrag[0])
+				float diffScale = scaler*diff/absDiff;
+				if (abs(diff) > epsilon && m_eventsDrag[0])
                 {
                     m_lClick = false;
-                    m_eventsDrag[0](MOVE_X, log(absDiff)/diffScale);
+					m_eventsDrag[0](MOVE_X, std::log2(absDiff)/diffScale);
                 }
                 diff = m_pressPosY - m_currPosY;
                 absDiff = fabs(diff);
-				diffScale = 500.f*diff/absDiff;
-				if (abs(diff) > 20 && m_eventsDrag[0])
+				diffScale = scaler*diff/absDiff;
+				if (abs(diff) > epsilon && m_eventsDrag[0])
                 {
                     m_lClick = false;
-                    m_eventsDrag[0](MOVE_Y, log(absDiff)/diffScale);
+					m_eventsDrag[0](MOVE_Y, std::log2(absDiff)/diffScale);
                 }
             }
         }
@@ -96,17 +98,17 @@ void Mouse::update()
                 float diff = m_currPosX - m_pressPosX;
                 float absDiff = fabs(diff);
 				LOG("Right button move X - diff: %f, log: %f", diff, log(abs(diff)));
-				float diffScale = 500.f*diff/absDiff;
-                if (abs(diff) > 10)
+				float diffScale = scaler*diff/absDiff;
+				if (abs(diff) > epsilon)
                 {
-                    m_eventsDrag[1](MOVE_X, -log(absDiff)/diffScale);
+					m_eventsDrag[1](MOVE_X, -std::log2(absDiff)/diffScale);
                 }
                 diff = m_pressPosY - m_currPosY;
                 absDiff = fabs(diff);
-				diffScale = 500.f*diff/absDiff;
-                if (abs(diff) > 10)
+				diffScale = scaler*diff/absDiff;
+				if (abs(diff) > epsilon)
                 {
-                    m_eventsDrag[1](MOVE_Y, -log(absDiff)/diffScale);
+					m_eventsDrag[1](MOVE_Y, -std::log2(absDiff)/diffScale);
                 }
             }
         }

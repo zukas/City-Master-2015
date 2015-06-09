@@ -54,7 +54,7 @@ void main()
     float LightPower = length( lightPosition ) * lightStrength;
 
     vec3 MaterialDiffuseColor = tmpc.rgb;
-    vec3 MaterialAmbientColor = vec3(0.12,0.12,0.12) * MaterialDiffuseColor;
+    vec3 MaterialAmbientColor = vec3(0.82,0.82,0.82) * MaterialDiffuseColor;
     vec3 MaterialSpecularColor = vec3(0.25,0.25,0.25);
 
     float distance = length( lightPosition - Position_worldspace );
@@ -67,9 +67,9 @@ void main()
     vec3 R = reflect(-l,n);
     float cosAlpha = clamp(dot( E,R ), 0, 1);
 
-    colour = MaterialAmbientColor +
-            MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
-            MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+    colour = MaterialAmbientColor * LightColor +
+            MaterialDiffuseColor * LightColor  * cosTheta / (distance*distance) +
+            MaterialSpecularColor * LightColor  * pow(cosAlpha,5) / (distance*distance);
 
 
 }

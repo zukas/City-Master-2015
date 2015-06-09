@@ -80,7 +80,7 @@ vec3 rand_v3_pos(vec3 co, float axel)
 
 void main()
 {
-    float radius = 2;
+    float radius = fDim;
 
     float update = fTimePassed / 1000.0;
     vPositionOut = vPositionPass[0];
@@ -100,9 +100,9 @@ void main()
     iTypeOut = iTypePass[0];
     reuseOut = reusePass[0];
 
-    vColorOut.x = (fGenLifeRange - fLifeTimeOut) / fGenLifeRange;
-    vColorOut.y = (fGenLifeRange - fLifeTimeOut) / fGenLifeRange;
-    vColorOut.z =  fLifeTimeOut / fGenLifeRange;
+//    vColorOut.x = (fGenLifeRange - fLifeTimeOut) / fGenLifeRange;
+//    vColorOut.y = (fGenLifeRange - fLifeTimeOut) / fGenLifeRange;
+//    vColorOut.z =  fLifeTimeOut / fGenLifeRange;
 
     if(iTypeOut == 0)
     {

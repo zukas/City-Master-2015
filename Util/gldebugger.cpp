@@ -47,9 +47,9 @@ void glDebugger::flush()
 	auto &obj = glDebugger::get();
 	auto viewport = obj.m_text.program().getViewport();
 	auto next = obj.m_first;
-	for(int i = 0; i < viewport.h - 50 && next; i += (obj.m_text.lineHeight() + 5))
+	for(int i = 0; i < viewport.h - 50 && next; i += (obj.m_text.lastDimentions().y + 5))
 	{
-		obj.m_text.render(next->text, { 0.1, 0.1, 0.1, 1.0 }, viewport.w - 400, viewport.h - 25 - i);
+		obj.m_text.render(next->text, { 0.1, 0.1, 0.1, 1.0 }, viewport.w - 600, 25 + i);
 		next = next->next;
 	}
 }

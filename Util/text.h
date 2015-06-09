@@ -29,7 +29,8 @@ class Text
 		Program m_program {};
 		std::array<char_data, char_data_set > m_data;
         int m_newLine { 0 };
-        int m_fontSize { 0 };
+		int m_fontSize { 0 };
+		glm::vec2 m_last {};
         static RefCount g_counter;
 
     public:
@@ -42,6 +43,7 @@ class Text
 
 		void render(const char *text, const glm::vec4 &colour, int x, int y, int size = -1);
 
+		glm::vec2 lastDimentions() const;
 		int lineHeight() const;
 		Program &program();
 

@@ -12,7 +12,7 @@ class Keyboard
         GLFWwindow *m_window { nullptr };
         double m_posX { 0 };
         double m_posY { 0 };
-        KeyboardEvent m_events[4] { nullptr };
+		KeyboardEvent m_events[5] { nullptr };
 
     public:
         Keyboard(GLFWwindow *window = nullptr);

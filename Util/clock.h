@@ -5,13 +5,13 @@
 class Clock
 {
     private:
-        static double m_time;
+		static float m_time;
 
     public:
         Clock() = delete;
 
         static void update();
-        static double getDuration();
+		static float getDuration();
 };
 
 #endif // CLOCK_H

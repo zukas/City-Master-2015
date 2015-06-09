@@ -1,3 +1,6 @@
+#set(CMAKE_C_COMPILER /usr/bin/clang-3.6)
+#set(CMAKE_CXX_COMPILER /usr/bin/clang++-3.6)
+
 cmake_minimum_required(VERSION 2.8)
 project(City-Master-2015 CXX)
 

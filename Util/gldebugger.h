@@ -32,7 +32,7 @@ class glDebugger
 
 #define GLCLEAR() glDebugger::clear();
 #define GLCHECK() glDebugger::inspect(__FILE__, __func__, __LINE__)
-#define LOG(format, ...) glDebugger::log(format, __VA_ARGS__)
+#define LOG(...) glDebugger::log(__VA_ARGS__)
 
 
 #endif //GLDEBUGGER_H

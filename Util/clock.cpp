@@ -1,7 +1,7 @@
 #include "clock.h"
 #include <chrono>
 
-double Clock::m_time { 0.0 };
+float Clock::m_time { 0.0 };
 
 void Clock::update()
 {
@@ -9,7 +9,7 @@ void Clock::update()
     m_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - first).count();
 }
 
-double Clock::getDuration()
+float Clock::getDuration()
 {
     return m_time;
 }

@@ -9,7 +9,7 @@
 
 class Camera
 {
-		static constexpr float max_distance { 75.f };
+		static constexpr float max_distance { 5000.f };
 		static constexpr float min_height { 5.f };
 
     private:

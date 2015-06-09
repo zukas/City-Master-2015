@@ -19,19 +19,19 @@ void main()
 {
     UV = inUV;
 
-    vec4 tmpPos = modelMatrix * vec4(inPosition,1);
+    vec4 tmpPos = modelMatrix * viewMatrix * vec4(inPosition,1);
     Position_worldspace = tmpPos.xyz;
 
-    vec4 tmpPosCam = viewMatrix * modelMatrix * vec4(inPosition,1);
+    vec4 tmpPosCam = modelMatrix * viewMatrix * vec4(inPosition,1);
     vec3 PosCam = tmpPosCam.xyz;
 
-    EyeDirection_cameraspace = vec3(0,0,0) - PosCam;
+    EyeDirection_cameraspace = vec3(tmpPosCam - tmpPos).xyz;
 
-    vec4 tmpLightPos = viewMatrix * vec4(lightPosition ,1);
-    LightDirection_cameraspace = tmpLightPos.xyz + PosCam;
+    vec4 tmpLightPos = modelMatrix * viewMatrix * vec4(lightPosition ,1);
+    LightDirection_cameraspace = (tmpLightPos - tmpPosCam).xyz;
 
-    vec4 tmpNormal = viewMatrix * modelMatrix * vec4(inNormal,0);
-    Normal_cameraspace = tmpNormal.xyz;
+    vec4 tmpNormal = modelMatrix * vec4(inNormal,0);
+    Normal_cameraspace = normalize(tmpNormal).xyz;
 
     mat4 MVP = projectionMatrix * viewMatrix * modelMatrix;
     gl_Position = MVP * vec4(inPosition, 1.0);

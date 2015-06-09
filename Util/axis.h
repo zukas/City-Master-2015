@@ -2,19 +2,24 @@
 #define AXIS_H
 
 #include "types.h"
-#include "model.h"
+#include "program.h"
+#include "camera.h"
 
 class Axis
 {
     private:
-        Mesh m_axis;
+		GLID m_vertexArray { 0 };
+		Program m_program {};
     public:
-        Axis();
-        Axis(float size);
-        Axis(Axis &&other);
-        void render(Program &program);
+		Axis();
+		~Axis();
 
-        Axis &operator = (Axis &&other);
+
+		void init();
+		void render(Camera &camera);
+
+		Axis(Axis &&other) = delete;
+		Axis &operator = (Axis &&other) = delete;
 
         Axis(const Axis&) = delete;
         Axis &operator = (const Axis&) = delete;

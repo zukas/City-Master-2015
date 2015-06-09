@@ -14,7 +14,7 @@
 
 #include <chrono>
 
-constexpr float year { 360000.f };
+constexpr float year { 60000.f };
 constexpr float size_div { 6371.f };
 constexpr float distance_div { 14959.78707f };
 constexpr float rat { distance_div / size_div };
@@ -55,7 +55,7 @@ glm::mat4 __moon_motion(const glm::mat4 &model, const glm::mat4 &parent, float c
 	glm::mat4 tr = glm::translate(glm::mat4(1.f), glm::vec3(parent[3])) * mat;
 	glm::mat4 mod = (tr * model_trans * glm::translate(glm::mat4(1.f), -glm::vec3(parent[3]))) * mat;
 
-	mod = glm::rotate(mod, parent_rot, parent_rot_vec);
+//	mod = glm::rotate(mod, parent_rot, parent_rot_vec);
 
 	return mod;
 }
@@ -113,7 +113,7 @@ glProgram::glProgram()
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
 	glClearDepth(1.0f);
-	glDepthFunc(GL_LEQUAL);
+	glDepthFunc(GL_LESS);
 
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
@@ -124,7 +124,7 @@ glProgram::glProgram()
 	glEnable(GL_POLYGON_SMOOTH);
 
 	glEnable(GL_MULTISAMPLE);
-//	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 

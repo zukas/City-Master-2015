@@ -28,7 +28,7 @@ Camera::Camera(GLFWwindow *window) :
 					m_view,
 					m_up);
 
-	m_projectionMat = glm::perspective(m_fov, 16.0f / 9.0f, 0.0001f, 20000.0f);
+	m_projectionMat = glm::perspective(m_fov, 16.0f / 9.0f, 0.005f, 5000.0f);
 	calcQuads();
 }
 

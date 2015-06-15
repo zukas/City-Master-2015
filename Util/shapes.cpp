@@ -24,7 +24,7 @@ shape sphare::create(float radius, int slices, int stacks)
 			float X = cos(theta) * sin(phi);
 			float Y = cos(phi);
 			float Z = sin(theta) * sin(phi);
-			res.data.push_back(uv_point{ vec3{ X, Y, Z } * radius, vec3{ X, Y, Z }, vec2{ U, V } });
+			res.data.push_back(uv_vertex{ vec3{ X, Y, Z } * radius, vec3{ X, Y, Z }, vec2{ U, V } });
 
 		}
 	}

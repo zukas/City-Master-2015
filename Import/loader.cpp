@@ -67,7 +67,7 @@ Model processNode(const aiScene *scene, aiNode *node, glm::mat4 parentTransform)
 Mesh processMesh(const aiScene *scene, aiMesh *mesh)
 {
     int faceCount = mesh->mNumFaces;
-	std::vector<uv_point > points(faceCount * 3);
+	std::vector<uv_vertex > points(faceCount * 3);
 
 
     for(int n = 0; n < faceCount; ++n)

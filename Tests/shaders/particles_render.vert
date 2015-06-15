@@ -4,14 +4,14 @@ layout (location = 0) in vec3 vPosition;
 layout (location = 2) in vec3 vColor;
 layout (location = 3) in float fLifeTime;
 layout (location = 4) in float fSize;
-layout (location = 5) in int iType;
+layout (location = 5) in float iType;
 
 uniform mat4 viewMatrix;
 
 out vec3 vColorPass;
 out float fLifeTimePass;
 out float fSizePass;
-out int iTypePass;
+out float iTypePass;
 
 void main()
 {

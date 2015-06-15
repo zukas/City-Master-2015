@@ -77,6 +77,22 @@ list(APPEND TEXTURES
     textures/mercury.jpg
     textures/mercurymap.jpg
     textures/venusmap.jpg
+    textures/mars.dds
+    textures/jupiter.jpg
+    textures/ganymede.dds
+    textures/io.png
+    textures/europa.dds
+    textures/callisto.dds
+    textures/saturn.png
+    textures/titan.png
+    textures/enceladus.png
+    textures/rhea.jpg
+    textures/dione.jpg
+    textures/tethys.jpg
+    textures/iapetus.jpg
+    textures/mimas.jpg
+    textures/uranus.jpg
+    textures/neptune.dds
     )
 
 list(APPEND FONTS

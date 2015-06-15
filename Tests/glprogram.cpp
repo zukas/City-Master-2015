@@ -11,65 +11,199 @@
 #include "utils.h"
 #include "gldebugger.h"
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 #include <chrono>
 
-constexpr float year { 60000.f };
+constexpr float year { 60 *	 60 * 1000.f };
 constexpr float size_div { 6371.f };
 constexpr float distance_div { 14959.78707f };
 constexpr float rat { distance_div / size_div };
 constexpr float days_in_year { 365.256f };
 constexpr float day { year / days_in_year };
+constexpr float hour { day / 23.9344722f };
+constexpr float degree { 0.0174532925f };
 
 //glm::mat4 rot(const glm::mat4 &parent, )
 
-
-glm::mat4 __planet_motion(const glm::mat4 &model, const glm::mat4 &parent, float current, float duration)
+struct planet_data
 {
-	glm::mat4 mat = glm::mat4_cast(glm::angleAxis(PI2 * (current / duration ), glm::vec3(0.f, 1.f, 0.f)));
+		float orbiral_speed;
+		float rotation_speed;
+		glm::vec3 axis_tilt;
+};
 
 
-	glm::mat4 tr = glm::translate(glm::mat4(1.f), glm::vec3(parent[3])) * mat;
-	glm::mat4 mod = (tr * model * glm::translate(glm::mat4(1.f), -glm::vec3(parent[3])));
+glm::mat4 __preproc_motion(const transform &t, model_data data)
+{
 
-	return  mod;
+	float current = Clock::getDuration();
+	planet_data *info = static_cast<planet_data*>(data);
+	glm::mat4 mat = t;
+	glm::mat4 rot = info->orbiral_speed > 0.f ? glm::mat4_cast(glm::angleAxis(PI2 * (current / info->orbiral_speed), glm::vec3(0.f, 1.f, 0.f))) : glm::mat4(1.f);
+	glm::mat4 tilt = glm::inverse(rot) * glm::eulerAngleYXZ(info->axis_tilt.y, info->axis_tilt.x, info->axis_tilt.z);
+
+	glm::mat4 res = rot * mat * tilt;
+	return  res;
 }
 
-glm::mat4 __planet_rotation(const glm::mat4 &model, const glm::mat4 &, float current, float duration)
+glm::mat4 __postproc_motion(const glm::mat4 &t, model_data data)
 {
-	return model * glm::mat4_cast(glm::angleAxis(PI2 * current  / duration, glm::vec3(0.f, 1.f, 0.f)));
+	float current = Clock::getDuration();
+	planet_data *info = static_cast<planet_data*>(data);
+	glm::mat4 res = t * (info->rotation_speed > 0.f ? glm::mat4_cast(glm::angleAxis(PI2 * (current / info->rotation_speed), glm::vec3(0.f, 1.f, 0.f))) : glm::mat4(1.f));
+	return res;
 }
 
-glm::mat4 __moon_motion(const glm::mat4 &model, const glm::mat4 &parent, float current, float duration)
+
+//float scaling(float amp, float distance)
+//{
+////	float pw = std::pow(distance, 2.f);
+
+////	return (pw / std::exp(pw * 0.001f)) * amp * 750.f;
+
+//	return std::pow(std::exp(amp / distance), 2.f) * std::log10(distance) * amp;
+//}
+
+
+constexpr float system_size =  143.73 * pow(10, 9);
+constexpr float system_scale = system_size / 50000000.f;
+
+float size_scaling(float amp, float x)
 {
-	glm::vec3 parent_rot_vec;
-	float parent_rot;
-	glm::axisAngle(parent, parent_rot_vec, parent_rot);
+	return std::sqrt((x / (amp * 2) ) + std::sqrt(amp/25));
+	//	return (std::sqrt(std::pow(x, 3) * std::log10(x)) /(10000.f * amp));
+	//	return x / (1.f/100000000.f * std::sqrt(std::pow(x, 4)) + amp);
+}
 
-	glm::mat4 model_trans = glm::rotate(model, -parent_rot, parent_rot_vec);
+float distance_scaling(float amp, float x)
+{
+	return std::sqrt((x / (amp * 2) ) +  std::sqrt(amp/25));
+	//return std::sqrt(std::pow(x, 4)/(125000000.f * amp)) / x;
+}
 
+enum PlanetType
+{
+	SUN,
+	PLANET,
+	MOON,
+	SHALLOW_MOON
+};
 
-	glm::mat4 mat = glm::mat4_cast(glm::angleAxis(PI2 * (current / duration ), glm::vec3(0.f, 1.f, 0.f)));
-//	glm::mat4 mat2 = glm::mat4_cast(glm::angleAxis(PI2 * current  / (duration / days_in_year), glm::vec3(0.f, 1.f, 0.f)));
+class Planet
+{
+	public:
+		const char *name;
+		float size;
+		float distance;
+		float orbital_period;
+		float rotation_period;
+		glm::vec3 axis_tilt;
+		PlanetType type;
+		const char *texture;
 
-	glm::mat4 tr = glm::translate(glm::mat4(1.f), glm::vec3(parent[3])) * mat;
-	glm::mat4 mod = (tr * model_trans * glm::translate(glm::mat4(1.f), -glm::vec3(parent[3]))) * mat;
+		float calc_size;
+		float calc_distance;
+		int children_count { 0 };
+		Planet **children { nullptr };
 
-//	mod = glm::rotate(mod, parent_rot, parent_rot_vec);
+	public:
+		void setup(const char *_name,
+				   float _size,
+				   float _distance,
+				   float _orbtal_period,
+				   float _rotation_period,
+				   glm::vec3 _axis_tilt,
+				   PlanetType _type,
+				   const char *_texture);
+		void setChildrenCount(int size);
+		void setChild(int pos, Planet *chiled);
+		void calc();
+		Model generate(float parent_size = 0.f);
+};
+
+void Planet::setup(const char *_name, float _size, float _distance, float _orbtal_period, float _rotation_period, glm::vec3 _axis_tilt, PlanetType _type, const char *_texture)
+{
+	name = _name;
+	size = _size;
+	distance = _distance;
+	orbital_period = _orbtal_period;
+	rotation_period = _rotation_period;
+	axis_tilt = _axis_tilt;
+	type = _type;
+	texture = _texture;
+}
+
+void Planet::setChildrenCount(int size)
+{
+	children_count = size;
+	children = new Planet*[size];
+}
+
+void Planet::setChild(int pos, Planet *chiled)
+{
+	children[pos] = chiled;
+}
+
+void Planet::calc()
+{
+	switch (type) {
+		case SUN:
+			calc_size = size_scaling(115.f ,size);
+			calc_distance = distance > 0.f ? distance_scaling(100000.f, distance) : 0.f;
+			break;
+		case PLANET:
+			calc_size = size_scaling(40.f ,size);
+			calc_distance = distance_scaling(1500.f, distance);
+			break;
+		case MOON:
+		case SHALLOW_MOON:
+			calc_size = size_scaling(155.f ,size);
+			calc_distance = distance_scaling(8000.f, distance);
+			break;
+		default:
+			break;
+	}
+}
+
+Model Planet::generate(float parent_size)
+{
+	calc();
+	float parts;
+	switch (type) {
+		case SUN:
+			parts = 256;
+			break;
+		case PLANET:
+			parts = 256;
+			break;
+		case MOON:
+			parts = 128;
+			break;
+		case SHALLOW_MOON:
+			parts = 16;
+			break;
+		default:
+			parts = 4;
+			break;
+	}
+
+	Mesh m { sphare::create(calc_size / 2.f, parts, parts) };
+	m.addTexture({GL_TEXTURE_2D, texture});
+
+	Model mod { { std::move(m) } };
+	mod.setLocation({ parent_size + (calc_distance > 0.f ? calc_size + calc_distance : 0.f), 0.f, 0.f });
+	mod.setModelData(new planet_data { orbital_period, rotation_period, axis_tilt });
+	mod.setModelPreProcFunction(__preproc_motion);
+	mod.setModelPostProcFunction(__postproc_motion);
+
+	for(int i = 0; i < children_count; ++i)
+	{
+		mod.addChild(children[i]->generate(type == SUN ? calc_size * 2 : calc_size));
+	}
 
 	return mod;
-}
 
-float galactic_scale(float parent, float size, float distance)
-{
-	return (std::log2(size) * ((std::cos(size) + 1) / 2) - std::log10(parent)) * std::log10(distance / distance_div);
-}
-
-float scaling(float amp, float distance)
-{
-	float pw = std::pow(distance, 2.f);
-	return (pw / std::exp(pw * 0.001f)) * amp * 750.f;
-//	return (std::cos(std::sqrt(pw)) / std::exp(pw*0.1f)) * amp + amp * distance;
 }
 
 glProgram::glProgram()
@@ -110,7 +244,7 @@ glProgram::glProgram()
 	m_camera = { m_window };
 	m_lamp = { glm::vec3(0.f, 0.f, 5.f), 500.f };
 
-	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.05f, 0.075f, 0.1f, 1.0f);
 
 	glClearDepth(1.0f);
 	glDepthFunc(GL_LESS);
@@ -140,17 +274,7 @@ glProgram::glProgram()
 	//    pt.setSamplerParameter(GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
 	m_fire->setTexture(pt);
 	m_fire->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	m_fire->setProperties(
-				glm::vec3(-2.5f, 5.f, -2.5f), // Where the particles are generated
-				glm::vec3(0.f, -0.2, 0.f), // Minimal velocity
-				glm::vec3(0.f, -0.4, 0.f), // Maximal velocity
-				glm::vec3(0.f, -1.1, 0.f), // Gravity force applied to particles
-				glm::vec3(1.f, 0.549f, 0.15686f), // Color (light blue)
-				12000.f, // Minimum lifetime in seconds
-				15000.0f, // Maximum lifetime in seconds
-				0.08f, // Rendered size
-				1.f, // Spawn every 0.05 seconds
-				10); // And spawn 30 particles
+
 
 	//    m_smoke = new ParticleSystem;
 	//    m_smoke->setTexture(std::move(pt));
@@ -177,133 +301,504 @@ glProgram::glProgram()
 		"textures/bluecloud_bk.jpg"
 	};
 
-//	for(float i = 0.f; i < 100; i+=0.01f)
-//	{
-//		std::printf("ripple x: %f, z: %f\n", i, ripple_z(i, 0.f));
-//	}
 
-//	fflush(stdout);
-
-	float system =  143.73 * std::pow(10, 9);
+	//	float system =  143.73 * std::pow(10, 9);
+	//	float system_scale = system / 50000000.f;
 	float mercury_distance = 57910000.f;
 	float venus_distance = 108200000.f;
 	float earth_distance = 149597870.691f;
 	float moon_distance = 384400.f;
+	float mars_distance = 227900000.f;
+	float jupiter_distance = 778500000.f;
+	float europa_distance = 670900.f;
+	float io_distance = 421700.f;
+	float callisto_distance = 1882700.f;
+	float ganymede_distance = 1070400.f;
+	float saturn_distance = 1433000000.f;
 
 	float sun_size = 696000.f;
 	float mercury_size = 2440.f;
 	float venus_size = 6052.f;
 	float earth_size = 6371.f;
 	float moon_size = 1737.1f;
+	float mars_size = 3390.f;
+	float jupiter_size = 69911.f;
+	float europa_size = 1560.8f;
+	float io_size = 1821.6f;
+	float callisto_size = 2410.3f;
+	float ganymede_size = 2634.1f;
+	float saturn_size = 58232.f;
 
 
-	float mercury_scaler = mercury_distance * 100/ system;
-	float mercury_ratio = sun_size / mercury_size;
+	Planet sun;
+	sun.setup("sun",
+			  sun_size,
+			  0.f,
+			  0.f,
+			  25.6f * day,
+	{ 0.f, 0.f, 7.25f * degree },
+			  SUN,
+			  "textures/sun.jpg");
 
-	float venus_scaler = venus_distance * 100 / system;
-	float venus_ratio = sun_size / venus_size;
+	Planet mercury;
+	mercury.setup("mercury",
+				  mercury_size,
+				  mercury_distance,
+				  day * 88.f,
+				  day * 58.6f,
+	{0.f, 0.f, 0.1 * degree},
+				  PLANET,
+				  "textures/mercurymap.jpg");
 
+	Planet venus;
+	venus.setup("venus",
+				venus_size,
+				venus_distance,
+				day * 224.701f,
+				day * 116.75f,
+	{0.f, 0.f, 177.f * degree},
+				PLANET,
+				"textures/venusmap.jpg");
 
-	float earth_scaler = earth_distance * 100 / system;
-	float earth_ratio = sun_size / earth_size;
-
-	float moon_scaler =  std::pow(std::log10(moon_distance), 2.f) / std::pow(std::log2(moon_distance), 2.f) ;
-	float moon_ratio = earth_size /  moon_size;
-
-
-	float mercury_distance_calc = scaling(mercury_ratio, mercury_scaler);
-	float venus_distance_calc = scaling(venus_ratio, venus_scaler);
-	float earth_distance_calc = scaling(earth_ratio, earth_scaler);
-	float moon_distance_calc = scaling(moon_ratio, moon_scaler);
-
-	float log_size_sun = std::log10(sun_size) * std::log2(sun_size);
-	float log_size_mercury = std::log10(mercury_ratio) * std::log2(mercury_ratio) * mercury_scaler * 15.f;
-	float log_size_venus = std::log10(venus_ratio) * std::log2(venus_ratio) * venus_scaler * 15.f;
-	float log_size_earth = std::log10(earth_ratio) * std::log2(earth_ratio) * earth_scaler * 15.f;
-	float log_moon_size =  std::log10(moon_ratio) * std::log2(moon_ratio) * moon_scaler * 75.f;
-
-
-
-	float sun_size_scale =  log_size_sun; //scaling(sun_size / 10000.f, 100.f);
-	float mercury_size_scale = log_size_mercury; //scaling(15, mercury_size * 100.f / sun_size);
-	float venus_size_scale = log_size_venus; //scaling(35, venus_size * 100.f / sun_size);
-	float earth_size_scale = log_size_earth;//scaling(earth_ratio, earth_size * 100.f / sun_size);
-	float moon_size_scale = log_moon_size;//scaling(moon_ratio, moon_size * 100.f / earth_size);
-
-
-	Mesh sun(sphare::create(sun_size_scale, 256, 256));
-	sun.addTexture(Texture(GL_TEXTURE_2D, "textures/sun.jpg"));
-
-	Model sun_model( { sun });
-//	sun_model.translate({50.f, 50.f, 50.f});
-
-	Mesh mercury(sphare::create(mercury_size_scale, 256, 256));
-	mercury.addTexture(Texture(GL_TEXTURE_2D, "textures/mercurymap.jpg"));
-
-	Model mercury_model ({ mercury });
-	mercury_model.translate({sun_size_scale + mercury_size_scale + mercury_distance_calc, 0.f, 0.f});
-
-	Animation anim0 { __planet_motion, day * 88.f};
-	anim0.setSequence(AnimationSequence::REPEAT);
-	Animation *mercury_rot = new Animation( __planet_rotation, day * 58.6f );
-	mercury_rot->setSequence(AnimationSequence::REPEAT);
-	anim0.setNext(mercury_rot);
-	mercury_model.addAnimation(std::move(anim0));
-
-	Mesh venus(sphare::create(venus_size_scale, 256, 256));
-	venus.addTexture(Texture(GL_TEXTURE_2D, "textures/venusmap.jpg"));
-
-	Model venus_model ({ venus });
-	venus_model.translate({sun_size_scale + venus_size_scale + venus_distance_calc, 0.f, 0.f});
-
-	Animation anim01 { __planet_motion, day * 224.701f };
-	anim01.setSequence(AnimationSequence::REPEAT);
-	Animation *venus_rot = new Animation( __planet_rotation, day * 116.75f);
-	venus_rot->setSequence(AnimationSequence::REPEAT);
-	anim01.setNext(venus_rot);
-
-	venus_model.addAnimation(std::move(anim01));
-
-
-	Mesh earth(sphare::create(earth_size_scale, 256, 256));
-	earth.addTexture(Texture(GL_TEXTURE_2D, "textures/earth.dds"));
-
-	Model earth_model ({ earth });
-	earth_model.translate({sun_size_scale + earth_size_scale + earth_distance_calc, 0.f, 0.f});
-//	earth_model.rotate(0.34906585f, glm::vec3(0.f, 0.f, 1.f));
-
-	Animation anim { __planet_motion, year };
-	anim.setSequence(AnimationSequence::REPEAT);
-	Animation *earth_rot = new Animation( __planet_rotation, day);
-	earth_rot->setSequence(AnimationSequence::REPEAT);
-	anim.setNext(earth_rot);
-
-
-	earth_model.addAnimation(std::move(anim));
+	Planet earth;
+	earth.setup("earth",
+				earth_size,
+				earth_distance,
+				year,
+				day,
+	{0.f, 0.f, 23.f * degree},
+				PLANET,
+				"textures/earth.dds");
 
 
 
-	Mesh moon(sphare::create( moon_size_scale, 128, 128));
-	moon.addTexture(Texture(GL_TEXTURE_2D, "textures/moon.dds"));
+	Planet moon;
+	moon.setup("moon",
+			   moon_size,
+			   moon_distance,
+			   day * 29.530589f,
+			   0.f,
+	{0.f, 0.f, 6.687f * degree},
+			   MOON,
+			   "textures/moon.dds");
 
-	Model moon_model ({ moon });
-	moon_model.translate({earth_size_scale + moon_size_scale +  moon_distance_calc, 0.f, 0.f});
-
-	Animation anim2 (__moon_motion, day * 27.322f);
-	anim2.setSequence(AnimationSequence::REPEAT);
-	moon_model.addAnimation(std::move(anim2));
-
-	earth_model.addChild(std::move(moon_model));
-
-
-	sun_model.addChild(std::move(mercury_model));
-
-	sun_model.addChild(std::move(venus_model));
-
-	sun_model.addChild(std::move(earth_model));
+	earth.setChildrenCount(1);
+	earth.setChild(0, &moon);
 
 
-	m_models.push_back(std::move(sun_model));
+	Planet mars;
+	mars.setup("mars",
+			   mars_size,
+			   mars_distance,
+			   686.971f * day,
+			   1.02876421707f * day,
+	{0.f, 0.f, 25.f * degree},
+			   PLANET,
+			   "textures/mars.dds");
+
+
+
+	Planet jupiter;
+	jupiter.setup("jupiter",
+				  jupiter_size,
+				  jupiter_distance,
+				  11.86f * year,
+				  9.97f * hour,
+	{0.f, 0.f, 3.f * degree},
+				  PLANET,
+				  "textures/jupiter.jpg");
+
+
+	Planet europa;
+	europa.setup("europa",
+				 europa_size,
+				 europa_distance,
+				 3.551181f * day,
+				 0.f,
+	{0.f, 0.f, 0.1f * degree},
+				 MOON,
+				 "textures/europa.dds");
+
+
+	Planet io;
+	io.setup("io",
+			 io_size,
+			 io_distance,
+			 1.769137786f * day,
+			 0.f,
+	{0.f, 0.f, 0.05f * degree},
+			 MOON,
+			 "textures/io.png");
+
+
+	Planet ganymede;
+	ganymede.setup("ganymede",
+				   ganymede_size,
+				   ganymede_distance,
+				   7.15455296f * day,
+				   0.f,
+	{0.f, 0.f, 2.214f * degree},
+				   MOON,
+				   "textures/ganymede.dds");
+
+
+
+	Planet callisto;
+	callisto.setup("callisto",
+				   callisto_size,
+				   callisto_distance,
+				   16.6890184f * day,
+				   0.f,
+	{0.f, 0.f, 2.017f * degree},
+				   MOON,
+				   "textures/callisto.dds");
+
+	jupiter.setChildrenCount(4);
+	jupiter.setChild(0, &europa);
+	jupiter.setChild(1, &io);
+	jupiter.setChild(2, &ganymede);
+	jupiter.setChild(3, &callisto);
+
+
+	Planet saturn;
+	saturn.setup("saturn",
+				 saturn_size,
+				 saturn_distance,
+				 29.f * year,
+				 10.65f * hour,
+	{0.f, 0.f, 26.7f * degree},
+				 PLANET,
+				 "textures/saturn.png");
+
+	Planet titan;
+	titan.setup("titan",
+				2576.f,
+				1221870.f,
+				15.945f * day,
+				0.f,
+	{0.f, 0.f, 0.f * degree},
+				MOON,
+				"textures/titan.png");
+
+	Planet enceladus;
+	enceladus.setup("enceladus",
+					252.f,
+					238020.f,
+					1.370218f * day,
+					0.f,
+	{0.f, 0.f, 0.017f * degree},
+					MOON,
+					"textures/enceladus.png");
+
+	Planet rhea;
+	rhea.setup("rhea",
+			   763.8f,
+			   527108.f,
+			   4.518212f * day,
+			   0.f,
+	{0.f, 0.f, 0.f * degree},
+			   MOON,
+			   "textures/rhea.jpg");
+
+	Planet dione;
+	dione.setup("dione",
+				561.4f,
+				377400.f,
+				2.736915f * day,
+				0.f,
+	{0.f, 0.f, 0.f * degree},
+				MOON,
+				"textures/dione.jpg");
+
+	Planet tethys;
+	tethys.setup("tethys",
+				 531.1f,
+				 294619.f,
+				 1.887802f * day,
+				 0.f,
+	{0.f, 0.f, 0.f * degree},
+				 MOON,
+				 "textures/tethys.jpg");
+
+	Planet iapetus;
+	iapetus.setup("iapetus",
+				  734.5f,
+				  3560820.f,
+				  79.3215f * day,
+				  0.f,
+	{0.f, 0.f, 0.f * degree},
+				  MOON,
+				  "textures/iapetus.jpg");
+
+	Planet mimas;
+	mimas.setup("mimas",
+				198.2f,
+				185539.f,
+				0.942f * day,
+				0.f,
+	{0.f, 0.f, 0.f * degree},
+				MOON,
+				"textures/mimas.jpg");
+
+	saturn.setChildrenCount(7);
+	saturn.setChild(0, &titan);
+	saturn.setChild(1, &enceladus);
+	saturn.setChild(2, &rhea);
+	saturn.setChild(3, &dione);
+	saturn.setChild(4, &tethys);
+	saturn.setChild(5, &iapetus);
+	saturn.setChild(6, &mimas);
+
+
+	Planet uranus;
+	uranus.setup("uranus",
+				 25362.f,
+				 2870671400.f,
+				 84.016846f * year,
+				 17.233333333f * hour,
+	{0.f, 0.f, 97.77f * degree},
+				 PLANET,
+				 "textures/uranus.jpg");
+
+	Planet neptune;
+	neptune.setup("neptune",
+				  24622.f,
+				  4503000000.f,
+				  165 * year,
+				  16.266666667f * hour,
+	{0.f, 0.f, 28.32f * degree},
+				  PLANET,
+				  "textures/neptune.dds");
+
+
+	sun.setChildrenCount(8);
+	sun.setChild(0, &mercury);
+	sun.setChild(1, &venus);
+	sun.setChild(2, &earth);
+	sun.setChild(3, &mars);
+	sun.setChild(4, &jupiter);
+	sun.setChild(5, &saturn);
+	sun.setChild(6, &uranus);
+	sun.setChild(7, &neptune);
+
+
+//	m_models.push_back(sun.generate());
+
+
+	m_fire->setProperties(
+				glm::vec3(0.f, 0.f, 0.f), // Where the particles are generated
+				glm::vec3(0.f, -0.2, 0.f), // Minimal velocity
+				glm::vec3(0.f, -0.4, 0.f), // Maximal velocity
+				glm::vec3(0.f, -1.1, 0.f), // Gravity force applied to particles
+				glm::vec3(0.f, 1.f, 0.f), // Color (light blue)
+				2000.f, // Minimum lifetime in seconds
+				5000.0f, // Maximum lifetime in seconds
+				0.5f, // Rendered size
+				jupiter.calc_size / 2,
+				1.f, // Spawn every 0.05 seconds
+				20); // And spawn 30 particles
+
+
+
+
+	//	float mercury_scaler = mercury_distance * 100/ system_size;
+	//	float mercury_ratio = sun_size / mercury_size;
+
+	//	float venus_scaler = venus_distance * 100 / system_size;
+	//	float venus_ratio = sun_size / venus_size;
+
+
+	//	float earth_scaler = earth_distance * 100 / system_size;
+	//	float earth_ratio = sun_size / earth_size;
+
+	//	float moon_scaler =  moon_distance * 100 / system_size;// std::pow(std::log10(moon_distance), 2.f) / std::pow(std::log2(moon_distance), 2.f) ;
+	//	float moon_ratio = earth_size /  moon_size;
+
+	//	float mars_scaler = mars_distance * 100 / system_size;
+	//	float mars_ratio = sun_size / mars_size;
+
+	//	float jupiter_scaler = jupiter_distance * 100 / system_size;
+	//	float jupiter_ratio = sun_size / jupiter_size;
+
+	//	float europa_scaler = europa_distance * 100.f / system_size;// std::pow(std::log10(europa_distance), 2.f) / std::pow(std::log2(europa_distance), 2.f) ;
+	//	float europa_ratio = jupiter_size / europa_size;
+
+
+	//	float mercury_distance_calc = mercury_scaler * system_scale;
+	//	float venus_distance_calc = venus_scaler * system_scale; //scaling(venus_ratio, venus_scaler);
+	//	float earth_distance_calc = earth_scaler * system_scale; //scaling(earth_ratio, earth_scaler);
+	//	float moon_distance_calc = moon_scaler * earth_ratio; //scaling(moon_ratio, moon_scaler);
+	//	float mars_distance_calc = mars_scaler * system_scale; //scaling(mars_ratio, mars_scaler);
+	//	float jupiter_distance_calc = jupiter_scaler * system_scale;
+	//	float europa_distance_calc = europa_scaler * jupiter_ratio;
+
+	//	float log_size_sun =  system_scale / sun_size * 35000.f;
+	//	float log_size_mercury = 800.f / mercury_ratio ; //std::log10(mercury_ratio) * std::log2(mercury_ratio) * mercury_scaler * 15.f;
+	//	float log_size_venus = 800.f / venus_ratio;//std::log10(venus_ratio) * std::log2(venus_ratio) * venus_scaler * 15.f;
+	//	float log_size_earth = 800.f / earth_ratio;//std::log10(earth_ratio) * std::log2(earth_ratio) * earth_scaler * 15.f;
+	//	float log_moon_size =  8.f /  moon_ratio;//std::log10(moon_ratio) * std::log2(moon_ratio) * moon_scaler * 75.f;
+	//	float log_size_mars = 800.f / mars_ratio; //std::log10(mars_ratio) * std::log2(mars_ratio) * mars_scaler * 15.f;
+	//	float log_size_jupiter = 800.f / jupiter_ratio;
+	//	float log_size_europa = 8.f / europa_ratio;
+
+
+	//	float sun_size_scale =  log_size_sun; //scaling(sun_size / 10000.f, 100.f);
+	//	float mercury_size_scale = log_size_mercury; //scaling(15, mercury_size * 100.f / sun_size);
+	//	float venus_size_scale = log_size_venus; //scaling(35, venus_size * 100.f / sun_size);
+	//	float earth_size_scale = log_size_earth;//scaling(earth_ratio, earth_size * 100.f / sun_size);
+	//	float moon_size_scale = log_moon_size;//scaling(moon_ratio, moon_size * 100.f / earth_size);
+
+
+	//	Mesh sun(sphare::create(sun_size_scale, 256, 256));
+	//	sun.addTexture(Texture(GL_TEXTURE_2D, "textures/sun.jpg"));
+
+	//	Model sun_model( { sun });
+	////	sun_model.translate({50.f, 50.f, 50.f});
+
+	//	Mesh mercury(sphare::create(mercury_size_scale, 256, 256));
+	//	mercury.addTexture(Texture(GL_TEXTURE_2D, "textures/mercurymap.jpg"));
+
+	//	Model mercury_model ({ mercury });
+	//	mercury_model.setLocation({sun_size_scale + mercury_size_scale + mercury_distance_calc, 0.f, 0.f});
+
+	//	planet_data *mercury_data = new planet_data;
+	//	mercury_data->orbiral_speed = day * 88.f;
+	//	mercury_data->axis_rot_speed = day * 58.6f;
+	//	mercury_data->axis_tilt.z = 0.1f * degree;
+
+	//	mercury_model.setModelPreProcFunction(__preproc_motion);
+	//	mercury_model.setModelPostProcFunction(__postproc_motion);
+	//	mercury_model.setModelData(mercury_data);
+
+
+	//	Mesh venus(sphare::create(venus_size_scale, 256, 256));
+	//	venus.addTexture(Texture(GL_TEXTURE_2D, "textures/venusmap.jpg"));
+
+	//	Model venus_model ({ venus });
+	//	venus_model.setLocation({sun_size_scale + venus_size_scale + venus_distance_calc, 0.f, 0.f});
+
+	//	planet_data *venus_data = new planet_data;
+	//	venus_data->orbiral_speed = day * 224.701f ;
+	//	venus_data->axis_rot_speed = day * 116.75f;
+	//	venus_data->axis_tilt.z = 177.f * degree;
+
+	//	venus_model.setModelPreProcFunction(__preproc_motion);
+	//	venus_model.setModelPostProcFunction(__postproc_motion);
+	//	venus_model.setModelData(venus_data);
+
+
+	//	Mesh earth(sphare::create(earth_size_scale, 256, 256));
+	//	earth.addTexture(Texture(GL_TEXTURE_2D, "textures/earth.dds"));
+
+	//	Model earth_model ({ earth });
+	//	earth_model.setLocation({sun_size_scale + earth_size_scale + earth_distance_calc, 0.f, 0.f});
+
+
+	//	planet_data *earth_data = new planet_data;
+	//	earth_data->orbiral_speed = year ;
+	//	earth_data->axis_rot_speed = day;
+	//	earth_data->axis_tilt.z = 23.f * degree;
+
+	//	earth_model.setModelPreProcFunction(__preproc_motion);
+	//	earth_model.setModelPostProcFunction(__postproc_motion);
+	//	earth_model.setModelData(earth_data);
+
+	//	Mesh moon(sphare::create( moon_size_scale, 128, 128));
+	//	moon.addTexture(Texture(GL_TEXTURE_2D, "textures/moon.dds"));
+
+	//	Model moon_model ({ moon });
+	//	moon_model.setLocation({earth_size_scale + moon_size_scale +  moon_distance_calc, 0.f, 0.f});
+
+	//	planet_data *moon_data = new planet_data;
+	//	moon_data->orbiral_speed = day * 29.530589f;
+	//	moon_data->axis_rot_speed = day * 27.321582f;
+
+	//	moon_model.setModelPreProcFunction(__preproc_motion);
+	//	moon_model.setModelPostProcFunction(__postproc_motion);
+	//	moon_model.setModelData(moon_data);
+
+	//	Mesh mars(sphare::create(log_size_mars, 256, 256));
+	//	mars.addTexture(Texture(GL_TEXTURE_2D, "textures/mars.dds"));
+
+	//	Model mars_model ({ mars });
+	//	mars_model.setLocation({sun_size_scale + log_size_mars + mars_distance_calc, 0.f, 0.f});
+
+
+	//	planet_data *mars_data = new planet_data;
+	//	mars_data->orbiral_speed = 686.971f * day;
+	//	mars_data->axis_rot_speed = 1.02876421707f * day;
+	//	mars_data->axis_tilt.z = 25.f * degree;
+
+	//	mars_model.setModelPreProcFunction(__preproc_motion);
+	//	mars_model.setModelPostProcFunction(__postproc_motion);
+	//	mars_model.setModelData(mars_data);
+
+	//	Mesh jupiter(sphare::create(log_size_jupiter, 256, 256));
+	//	jupiter.addTexture(Texture(GL_TEXTURE_2D, "textures/jupiter.jpg"));
+
+	//	Model jupiter_model ({ jupiter });
+	//	jupiter_model.setLocation({sun_size_scale + log_size_jupiter + jupiter_distance_calc, 0.f, 0.f});
+
+
+	//	planet_data *jupiter_data = new planet_data;
+	//	jupiter_data->orbiral_speed =  11.86f * year;
+	//	jupiter_data->axis_rot_speed = 9.97f * hour;
+	//	jupiter_data->axis_tilt.z = 3.f * degree;
+
+	//	jupiter_model.setModelPreProcFunction(__preproc_motion);
+	//	jupiter_model.setModelPostProcFunction(__postproc_motion);
+	//	jupiter_model.setModelData(jupiter_data);
+
+
+	//	Mesh europa(sphare::create(log_size_europa, 256, 256));
+	//	europa.addTexture(Texture(GL_TEXTURE_2D, "textures/io.dds"));
+
+	//	Model europa_model ({ europa });
+	//	europa_model.setLocation({log_size_jupiter + log_size_europa + europa_distance_calc, 0.f, 0.f});
+
+	//	planet_data *europa_data = new planet_data;
+	//	europa_data->orbiral_speed =  3.551181f * day;
+	//	europa_data->axis_rot_speed = 3.551181f * day;
+	//	europa_data->axis_tilt.z = 0.1f * degree;
+
+
+	//	europa_model.setModelPreProcFunction(__preproc_motion);
+	//	europa_model.setModelPostProcFunction(__postproc_motion);
+	//	europa_model.setModelData(europa_data);
+
+	//	planet_data *lo_data = new planet_data;
+	//	lo_data->orbiral_speed =  1.769137786f * day;
+	//	lo_data->axis_rot_speed = 1.769137786f * day;
+	//	lo_data->axis_tilt.z = 0.05f * degree;
+
+
+	//	planet_data *callisto_data = new planet_data;
+	//	callisto_data->orbiral_speed =  16.6890184f * day;
+	//	callisto_data->axis_rot_speed = 16.6890184f * day;
+	//	callisto_data->axis_tilt.z = 2.017f * degree;
+
+	//	planet_data *ganymede_data = new planet_data;
+	//	ganymede_data->orbiral_speed =  7.15455296f * day;
+	//	ganymede_data->axis_rot_speed = 7.15455296f * day;
+	//	ganymede_data->axis_tilt.z = 2.214f * degree;
+
+
+
+
+	//	sun_model.addChild(std::move(mercury_model));
+
+	//	sun_model.addChild(std::move(venus_model));
+
+	//	earth_model.addChild(std::move(moon_model));
+	//	sun_model.addChild(std::move(earth_model));
+
+	//	sun_model.addChild(std::move(mars_model));
+
+	//	jupiter_model.addChild(std::move(europa_model));
+	//	sun_model.addChild(std::move(jupiter_model));
+
+
+	//	m_models.push_back(std::move(sun_model));
 
 	m_text = { "fonts/FreeSans.ttf", 26 };
 
@@ -436,7 +931,7 @@ void glProgram::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_camera.calcViewport();
 
-	m_axis.render(m_camera);
+	//		m_axis.render(m_camera);
 
 	//    m_axisProgram.use();
 	//    m_camera.update(m_axisProgram);
@@ -458,8 +953,8 @@ void glProgram::render()
 		m.render(m_objectProgram);
 	}
 
-	//	m_fire->update();
-	//	m_fire->render(m_camera);
+	m_fire->update();
+	m_fire->render(m_camera);
 
 	char buf[128];
 	std::sprintf(buf,"FPS: %.2f", m_frameRate);
@@ -467,7 +962,7 @@ void glProgram::render()
 	std::sprintf(buf,"PC: %d", m_fire->count());
 	m_text.render(buf, glm::vec4(0.f, 0.f, 0.f, 1.f), 20, 80);
 
-	glDebugger::flush();
+	//	glDebugger::flush();
 
 
 	//    m_smoke->update();

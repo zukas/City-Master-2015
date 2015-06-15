@@ -23,6 +23,7 @@ class Texture
 
     public:
         Texture();
+		Texture(int size);
         Texture(GLID type, const std::string &file);
         Texture(GLID type, const std::vector<unsigned char > &buffer, int width, int height, GLID format);
         Texture(const std::string &right, const std::string &left, const std::string &bottom, const std::string &top, const std::string &front, const std::string &back);

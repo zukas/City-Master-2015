@@ -12,7 +12,7 @@ layout(max_vertices = 4) out;
 in vec3 vColorPass[1];
 in float fLifeTimePass[1];
 in float fSizePass[1];
-in int iTypePass[1];
+in float iTypePass[1];
 
 smooth out vec2 vTexCoord;
 smooth out vec4 vColorPart;
@@ -24,8 +24,8 @@ void main()
         mat4 mVP = projectionMatrix* viewMatrix;
 
 //        float fdiv = fSize * (vQuad1+vQuad2).x / 2;
-        float val = fLifeTimePass[0] / 500.0;
-        vColorPart = vec4(vColorPass[0], val);
+        float val = fLifeTimePass[0];// / 500.0;
+        vColorPart = vec4(vColorPass[0], 1.0);
 
         vec3 vPos = vPosOld + ((-vQuad1-vQuad2) * fSize);
         vTexCoord = vec2(0.0, 0.0);

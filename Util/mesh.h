@@ -14,7 +14,7 @@ class Mesh
         GLID m_vertexArray { 0 };
 
     private:
-		std::vector<uv_point> m_data;
+		std::vector<uv_vertex> m_data;
 		std::vector<GLID> m_indexes;
 		std::vector<Texture > m_textures;
     private:
@@ -25,7 +25,7 @@ class Mesh
         Mesh();
         Mesh(Mesh &&other);
         Mesh(const Mesh &other);
-		Mesh(std::vector<uv_point> &&data);
+		Mesh(std::vector<uv_vertex> &&data);
 		Mesh(shape &&s);
         ~Mesh();
 

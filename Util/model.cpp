@@ -1,11 +1,13 @@
 #include "model.h"
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include "gldebugger.h"
 
-Model::Model() :
-	m_modelMatrix(1.f)
+
+glm::mat4 __basic_model_matrix_func(const transform &t, model_data)
 {
+	return t;
 }
 
 Model::~Model()
@@ -15,6 +17,9 @@ Model::~Model()
 
 Model::Model(Model &&other) :
 	m_modelMatrix(std::move(other.m_modelMatrix)),
+	m_preprocFunc(other.m_preprocFunc),
+	m_postprocFunc(other.m_postprocFunc),
+	m_data(other.m_data),
 	m_children(std::move(other.m_children)),
 	m_meshes(std::move(other.m_meshes)),
 	m_animations(std::move(other.m_animations)),
@@ -22,12 +27,18 @@ Model::Model(Model &&other) :
 	m_selectable(other.m_selectable),
 	m_selected(other.m_selected)
 {
+	other.m_preprocFunc = __basic_model_matrix_func;
+	other.m_postprocFunc = nullptr;
+	other.m_data = nullptr;
 	other.m_id = 0;
 	other.m_selected = false;
 }
 
 Model::Model(const Model &other) :
 	m_modelMatrix(other.m_modelMatrix),
+	m_preprocFunc(other.m_preprocFunc),
+	m_postprocFunc(other.m_postprocFunc),
+	m_data(other.m_data),
 	m_children(other.m_children),
 	m_meshes(other.m_meshes),
 	m_animations(other.m_animations),
@@ -38,7 +49,6 @@ Model::Model(const Model &other) :
 }
 
 Model::Model(std::vector<Mesh> meshes) :
-	m_modelMatrix(1.f),
 	m_meshes(std::move(meshes)),
 	m_id(ColourID::aquireID())
 {
@@ -49,19 +59,34 @@ void Model::addChild(Model &&child)
 	m_children.push_back(std::forward<Model>(child));
 }
 
-void Model::translate(glm::vec3 axis)
+void Model::setLocation(const glm::vec3 &loc)
 {
-	m_modelMatrix = glm::translate(m_modelMatrix, axis);
+	m_modelMatrix.loc = loc;// = glm::translate(m_modelMatrix, axis);
 }
 
-void Model::rotate(float radiants, glm::vec3 axis)
+void Model::setRotation(const glm::quat &rot)
 {
-	m_modelMatrix = glm::rotate(m_modelMatrix, radiants, axis);
+	m_modelMatrix.rot = rot;//  = glm::rotate(m_modelMatrix, radiants, axis);
 }
 
-void Model::scale(glm::vec3 axis)
+void Model::setScale(const glm::vec3 &scale)
 {
-	m_modelMatrix = glm::scale(m_modelMatrix, axis);
+	m_modelMatrix.scale = scale;// = glm::scale(m_modelMatrix, axis);
+}
+
+void Model::setModelPreProcFunction(model_matrix_preproc_func func)
+{
+	m_preprocFunc = func;
+}
+
+void Model::setModelPostProcFunction(model_matrix_postproc_func func)
+{
+	m_postprocFunc = func;
+}
+
+void Model::setModelData(model_data data)
+{
+	m_data = data;
 }
 
 void Model::setSelectable(bool isSelectable)
@@ -129,20 +154,29 @@ void Model::render(Program &program, const glm::mat4 &parent_transform)
 		program.setSelected(m_selected);
 	}
 
-	glm::mat4 tmp = m_modelMatrix * parent_transform;// glm::translate(m_modelMatrix, glm::vec3(parent_transform[3]));
+	glm::mat4 tmp = m_preprocFunc(m_modelMatrix, m_data) ;// glm::translate(m_modelMatrix, glm::vec3(parent_transform[3]));
 //	glm::mat4 transform = tmp;
 
-	if(m_animIndex != -1 && (int)m_animations.size() > m_animIndex)
-	{
-		tmp = m_animations[m_animIndex].transform(tmp, parent_transform);
-	}
+//	if(m_animIndex != -1 && (int)m_animations.size() > m_animIndex)
+//	{
+//		tmp = m_animations[m_animIndex].transform(tmp, parent_transform);
+//	}
+
+//	tmp = parent_transform * tmp;
 
 //	tmp = glm::translate(glm::translate(tmp, -glm::vec3(tmp[3])), glm::vec3(transform[3]));
 
 	for(auto &m : m_children)
 	{
-		m.render(program, tmp);
+		m.render(program, parent_transform * tmp);
 	}
+
+	if(m_postprocFunc)
+	{
+		tmp = m_postprocFunc(tmp, m_data);
+	}
+	tmp = parent_transform * tmp;
+
 //	tmp *= parent_transform;
 //	tmp = glm::translate(tmp, glm::vec3(parent_transform[3]));
 
@@ -155,9 +189,61 @@ void Model::render(Program &program, const glm::mat4 &parent_transform)
 
 }
 
+//void Model::render(Program &program, const Transformation &parent_transform, const glm::mat4 &parent_matrix)
+//{
+//	if(program.type() == Selection)
+//	{
+//		if(!m_selectable) return;
+//		program.setObjectID(m_id);
+//	}
+//	else
+//	{
+//		program.setSelected(m_selected);
+//	}
+
+//	Transformation tmp { glm::vec3(m_modelMatrix[3]), {}, {}, { 1.f, 1.f, 1.f } };
+
+//	if(m_animIndex != -1 && (int)m_animations.size() > m_animIndex)
+//	{
+//		tmp = m_animations[m_animIndex].transform(tmp, parent_transform);
+//	}
+
+////	tmp = glm::translate(glm::translate(tmp, -glm::vec3(tmp[3])), glm::vec3(transform[3]));
+//	glm::mat4 model(1.f);
+
+//	glm::mat4 translate_to_parent_space = glm::translate(model, parent_transform.location);
+//	glm::mat4 translate_to_model_space = glm::translate(model, -parent_transform.location);
+//	glm::mat4 rot_parent_space = glm::eulerAngleYXZ(tmp.parent_space_euler_angle.y, tmp.parent_space_euler_angle.x, tmp.parent_space_euler_angle.z);
+//	glm::mat4 rot_model_space = glm::eulerAngleYXZ(tmp.model_space_euler_angle.y, tmp.model_space_euler_angle.x, tmp.model_space_euler_angle.z);
+//	glm::mat4 mod = glm::translate(glm::scale(model, tmp.scale), parent_transform.location + tmp.location);
+
+//	model = translate_to_parent_space * rot_parent_space * mod * translate_to_model_space * rot_model_space;
+
+
+//	for(auto &m : m_children)
+//	{
+//		m.render(program, tmp, model);
+//	}
+////	tmp *= parent_transform;
+////	tmp = glm::translate(tmp, glm::vec3(parent_transform[3]));
+
+
+
+//	program.setModelMatrix(model);
+
+//	for(auto &m : m_meshes)
+//	{
+//		m.render(program);
+//	}
+
+//}
+
 Model &Model::operator = (Model &&other)
 {
 	m_modelMatrix = std::move(other.m_modelMatrix);
+	m_preprocFunc = other.m_preprocFunc;
+	m_postprocFunc = other.m_postprocFunc;
+	m_data = other.m_data;
 	m_children = std::move(other.m_children);
 	m_meshes = std::move(other.m_meshes);
 	m_animations = std::move(other.m_animations);
@@ -165,6 +251,9 @@ Model &Model::operator = (Model &&other)
 	m_selectable = other.m_selectable;
 	m_selected = other.m_selected;
 
+	other.m_preprocFunc = __basic_model_matrix_func;
+	other.m_postprocFunc = nullptr;
+	other.m_data = nullptr;
 	other.m_id = 0;
 	other.m_selected = false;
 	return *this;
@@ -175,6 +264,9 @@ Model &Model::operator = (const Model &other)
 	ColourID::releaseID(m_id);
 
 	m_modelMatrix = other.m_modelMatrix;
+	m_preprocFunc = other.m_preprocFunc;
+	m_postprocFunc = other.m_postprocFunc;
+	m_data = other.m_data;
 	m_children = other.m_children;
 	m_meshes = other.m_meshes;
 	m_animations = other.m_animations;

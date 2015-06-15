@@ -14,7 +14,8 @@ class ParticleSystem
         GLID m_transformBuffer { 0 };
         GLID m_query { 0 };
 
-        Texture m_texture {};
+		Texture m_texture { };
+		Texture m_random { };
 
         int m_bufferCursor { 0 };
         int m_particleCount { 0 };
@@ -26,6 +27,7 @@ class ParticleSystem
         float m_minGenLife { 0.f };
         float m_maxGenLife { 0.f };
         float m_genSize { 0.f };
+		float m_radius { 0.f };
 
         glm::vec3 m_genPosition;
         glm::vec3 m_minGenVelocity;
@@ -46,7 +48,7 @@ class ParticleSystem
         void render(Camera &camera);
         void setTexture(Texture t);
         void setBlendFunc(int key, int func);
-        void setProperties(glm::vec3 position, glm::vec3 minVelocity, glm::vec3 maxValocity, glm::vec3 gravity, glm::vec3 colour, float minLife, float maxLife, float size, float period, int count);
+		void setProperties(glm::vec3 position, glm::vec3 minVelocity, glm::vec3 maxValocity, glm::vec3 gravity, glm::vec3 colour, float minLife, float maxLife, float size, float radius, float period, int count);
 };
 
 #endif // PARTICLESYSTEM_H

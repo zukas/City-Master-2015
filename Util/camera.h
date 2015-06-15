@@ -9,14 +9,14 @@
 
 class Camera
 {
-		static constexpr float max_distance { 5000.f };
+		static constexpr float max_distance { 500000.f };
 		static constexpr float min_height { 5.f };
 
     private:
         GLFWwindow *m_window;
         glm::mat4 m_viewMat;
         glm::mat4 m_projectionMat;
-        glm::vec3 m_eye { 12.f, 16.f, 14.f };
+		glm::vec3 m_eye { 12.f, 8.f, 14.f };
         glm::vec3 m_view { 1.f, 1.f, 1.f };
         glm::vec3 m_up { 0.f, 1.f, 0.f };
 		glm::vec3 m_quads[2];

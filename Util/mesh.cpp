@@ -14,14 +14,14 @@ void Mesh::bindData()
 	glGenBuffers(m_indexes.empty() ? 1 : 2, buffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-	glBufferData(GL_ARRAY_BUFFER, m_data.size() * sizeof(uv_point), &m_data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_data.size() * sizeof(uv_vertex), &m_data[0], GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(
 				0,                  // attribute
 				3,                  // size
 				GL_FLOAT,           // type
 				GL_FALSE,           // normalized?
-				sizeof(uv_point),                  // stride
+				sizeof(uv_vertex),                  // stride
 				0           // array buffer offset
 				);
 
@@ -31,7 +31,7 @@ void Mesh::bindData()
 				3,                  // size
 				GL_FLOAT,           // type
 				GL_FALSE,           // normalized?
-				sizeof(uv_point),                  // stride
+				sizeof(uv_vertex),                  // stride
 				reinterpret_cast<void* >(sizeof(vec3))            // array buffer offset
 				);
 
@@ -41,7 +41,7 @@ void Mesh::bindData()
 				2,                  // size
 				GL_FLOAT,           // type
 				GL_FALSE,           // normalized?
-				sizeof(uv_point),                  // stride
+				sizeof(uv_vertex),                  // stride
 				reinterpret_cast<void* >(sizeof(vec3)  * 2)            // array buffer offset
 				);
 	if(!m_indexes.empty())
@@ -82,7 +82,7 @@ Mesh::Mesh(const Mesh &other) :
 	bindData();
 }
 
-Mesh::Mesh(std::vector<uv_point> &&data) :
+Mesh::Mesh(std::vector<uv_vertex> &&data) :
 	m_data(std::move(data))
 {
 	bindData();

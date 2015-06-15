@@ -37,6 +37,8 @@ glm::mat4 Animation::keyframe_transform(const glm::mat4 &model, const glm::mat4 
 			tmp *= transform_mat4(m_transform[last].rotation, m_transform[last].translation, m_transform[last].scale, m_applied_transform);
 		}
 	}
+
+	glm::quat rot(glm::vec3(45.f, 75.f, 22.f));
 	return tmp;
 }
 
@@ -57,6 +59,13 @@ Animation::Animation(animation_func func, float duration) :
 	m_function(func),
 	m_duration(duration),
 	m_type(AnimationType::FUNCTION)
+{
+}
+
+Animation::Animation(animation_func2 func, float duration) :
+	m_function2(func),
+	m_duration(duration),
+	m_type(AnimationType::FUNCTION2)
 {
 }
 
@@ -129,9 +138,52 @@ glm::mat4 Animation::transform(const glm::mat4 &model, const glm::mat4 &parent)
 			{
 				tmp = keyframe_transform(model, parent, time, m_duration);
 			}
-			else
+			else if(m_type == AnimationType::FUNCTION)
 			{
 				tmp = m_function(model, parent, time, m_duration);
+			}
+		}
+
+		if(m_next)
+		{
+			tmp = m_next->transform(tmp, parent);
+		}
+	}
+
+	return tmp;
+}
+
+Transformation Animation::transform(const Transformation &model, const Transformation &parent)
+{
+	Transformation tmp;
+
+	if(m_status != AnimationStatus::NONE && m_status != AnimationStatus::FINISHED)
+	{
+		if(m_status == AnimationStatus::PREPARE)
+		{
+			m_start = Clock::getDuration();
+			m_status = AnimationStatus::RUNNING;
+		}
+
+		float time = Clock::getDuration() - m_start;
+		if(time > m_duration)
+		{
+			if(m_sequence == AnimationSequence::SINGLE_SHOT)
+			{
+				m_status = AnimationStatus::FINISHED;
+			}
+			else
+			{
+				m_start += m_duration;
+				time -= m_duration;
+			}
+		}
+
+		if(m_status != AnimationStatus::FINISHED)
+		{
+			if(m_type == AnimationType::FUNCTION2)
+			{
+				tmp = m_function2(model, parent, time, m_duration);
 			}
 		}
 

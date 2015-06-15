@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 typedef unsigned GLID;
 typedef int GLSID;
@@ -45,22 +48,33 @@ struct colour
 		}
 };
 
-struct colour_point
+struct colour_vertex
 {
 		vec3 p;
 		colour c;
 };
 
-struct uv_point
+struct uv_vertex
 {
 		vec3 p;
 		vec3 n;
 		vec2 uv;
 };
 
+struct transform
+{
+		glm::quat rot {};
+		glm::vec3 loc {};
+		glm::vec3 scale { 1.f };
+		operator glm::mat4 () const
+		{
+			return glm::scale(glm::translate(glm::mat4_cast(rot), loc), scale);
+		}
+};
+
 struct shape
 {
-		std::vector<uv_point> data;
+		std::vector<uv_vertex> data;
 		std::vector<GLID> indexes;
 };
 

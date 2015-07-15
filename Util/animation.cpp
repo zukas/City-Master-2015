@@ -37,8 +37,6 @@ glm::mat4 Animation::keyframe_transform(const glm::mat4 &model, const glm::mat4 
 			tmp *= transform_mat4(m_transform[last].rotation, m_transform[last].translation, m_transform[last].scale, m_applied_transform);
 		}
 	}
-
-	glm::quat rot(glm::vec3(45.f, 75.f, 22.f));
 	return tmp;
 }
 

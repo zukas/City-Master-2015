@@ -15,7 +15,7 @@
 
 #include <chrono>
 
-constexpr float year { 60 *	 60 * 1000.f };
+constexpr float year { 5 *	 60 * 1000.f };
 constexpr float size_div { 6371.f };
 constexpr float distance_div { 14959.78707f };
 constexpr float rat { distance_div / size_div };
@@ -272,8 +272,8 @@ glProgram::glProgram()
 	m_fire = new ParticleSystem;
 	Texture pt { GL_TEXTURE_2D, "textures/fire2.jpg"};
 	//    pt.setSamplerParameter(GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
-	m_fire->setTexture(pt);
-	m_fire->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	//	m_fire->setTexture(pt);
+	//	m_fire->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 
 	//    m_smoke = new ParticleSystem;
@@ -582,21 +582,21 @@ glProgram::glProgram()
 	sun.setChild(7, &neptune);
 
 
-//	m_models.push_back(sun.generate());
+		m_models.push_back(sun.generate());
 
 
-	m_fire->setProperties(
-				glm::vec3(0.f, 0.f, 0.f), // Where the particles are generated
-				glm::vec3(0.f, -0.2, 0.f), // Minimal velocity
-				glm::vec3(0.f, -0.4, 0.f), // Maximal velocity
-				glm::vec3(0.f, -1.1, 0.f), // Gravity force applied to particles
-				glm::vec3(0.f, 1.f, 0.f), // Color (light blue)
-				2000.f, // Minimum lifetime in seconds
-				5000.0f, // Maximum lifetime in seconds
-				0.5f, // Rendered size
-				jupiter.calc_size / 2,
-				1.f, // Spawn every 0.05 seconds
-				20); // And spawn 30 particles
+	//	m_fire->setProperties(
+	//				glm::vec3(0.f, 0.f, 0.f), // Where the particles are generated
+	//				glm::vec3(0.f, -0.2, 0.f), // Minimal velocity
+	//				glm::vec3(0.f, -0.4, 0.f), // Maximal velocity
+	//				glm::vec3(0.f, -1.1, 0.f), // Gravity force applied to particles
+	//				glm::vec3(0.f, 1.f, 0.f), // Color (light blue)
+	//				2000.f, // Minimum lifetime in seconds
+	//				5000.0f, // Maximum lifetime in seconds
+	//				0.5f, // Rendered size
+	//				jupiter.calc_size / 2,
+	//				1.f, // Spawn every 0.05 seconds
+	//				20); // And spawn 30 particles
 
 
 
@@ -800,6 +800,8 @@ glProgram::glProgram()
 
 	//	m_models.push_back(std::move(sun_model));
 
+	rings.init();
+
 	m_text = { "fonts/FreeSans.ttf", 26 };
 
 	glDebugger::init({ "fonts/FreeSans.ttf", 14 });
@@ -931,7 +933,7 @@ void glProgram::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_camera.calcViewport();
 
-	//		m_axis.render(m_camera);
+	m_axis.render(m_camera);
 
 	//    m_axisProgram.use();
 	//    m_camera.update(m_axisProgram);
@@ -953,14 +955,16 @@ void glProgram::render()
 		m.render(m_objectProgram);
 	}
 
-	m_fire->update();
-	m_fire->render(m_camera);
+	rings.render(m_camera);
+
+	//	m_fire->update();
+	//	m_fire->render(m_camera);
 
 	char buf[128];
 	std::sprintf(buf,"FPS: %.2f", m_frameRate);
 	m_text.render(buf, glm::vec4(0.f, 0.f, 0.f, 1.f), 20, 40);
-	std::sprintf(buf,"PC: %d", m_fire->count());
-	m_text.render(buf, glm::vec4(0.f, 0.f, 0.f, 1.f), 20, 80);
+	//	std::sprintf(buf,"PC: %d", m_fire->count());
+	//	m_text.render(buf, glm::vec4(0.f, 0.f, 0.f, 1.f), 20, 80);
 
 	//	glDebugger::flush();
 

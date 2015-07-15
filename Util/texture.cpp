@@ -64,6 +64,19 @@ Texture::Texture(GLID type, const std::string &file) :
 
 }
 
+Texture::Texture(GLID type, const unsigned char *data, long size)
+{
+	m_data.m_textureType = type;
+	m_data.m_textureID = SOIL_load_OGL_texture_from_memory(data,
+														   size,
+														   SOIL_LOAD_AUTO,
+														   SOIL_CREATE_NEW_ID,
+														   SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
 Texture::Texture(GLID type, const std::vector<unsigned char> &buffer, int width, int height, GLID format)
 {
 	m_data.m_textureType = type;

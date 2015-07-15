@@ -67,7 +67,38 @@ constexpr Shader operator "" _fs (const char * source, std::size_t)
 #define GS(value) GLSL(value, ""_gs)
 #define FS(value) GLSL(value, ""_fs)
 
-class Program
+class Program;
+
+class UniformManager
+{
+	private:
+		Program *m_prog;
+
+	public:
+		UniformManager(Program *prog);
+
+		void setUniform(const char *name, bool value);
+		void setUniform(const char *name, GLID value);
+		void setUniform(const char *name, GLSID value);
+		void setUniform(const char *name, float value);
+		void setUniform(const char *name, const glm::vec2 &vec);
+		void setUniform(const char *name, const glm::vec3 &vec);
+		void setUniform(const char *name, const glm::vec4 &vec);
+		void setUniform(const char *name, const glm::mat4 &mat);
+
+		void setUniform(GLSID id, bool value);
+		void setUniform(GLSID id, GLID value);
+		void setUniform(GLSID id, GLSID value);
+		void setUniform(GLSID id, float value);
+		void setUniform(GLSID id, const glm::vec2 &vec);
+		void setUniform(GLSID id, const glm::vec3 &vec);
+		void setUniform(GLSID id, const glm::vec4 &vec);
+		void setUniform(GLSID id, const glm::mat4 &mat);
+
+		GLSID resolveUniform(const char *name) const;
+};
+
+class Program : public UniformManager
 {
 	private:
 		GLID m_programID;
@@ -125,25 +156,6 @@ class Program
 		void setObjectID(const glm::vec4 &vec);
 		void setSelected(bool value);
 		void setColour(const glm::vec4 &vec);
-
-
-		void setUniform(const std::string &name, bool value);
-		void setUniform(const std::string &name, GLID value);
-		void setUniform(const std::string &name, GLSID value);
-		void setUniform(const std::string &name, float value);
-		void setUniform(const std::string &name, const glm::vec2 &vec);
-		void setUniform(const std::string &name, const glm::vec3 &vec);
-		void setUniform(const std::string &name, const glm::vec4 &vec);
-		void setUniform(const std::string &name, const glm::mat4 &mat);
-
-		void setUniform(GLID id, bool value);
-		void setUniform(GLID id, GLID value);
-		void setUniform(GLID id, GLSID value);
-		void setUniform(GLID id, float value);
-		void setUniform(GLID id, const glm::vec2 &vec);
-		void setUniform(GLID id, const glm::vec3 &vec);
-		void setUniform(GLID id, const glm::vec4 &vec);
-		void setUniform(GLID id, const glm::mat4 &mat);
 
 
 		Program &operator = (Program &&other);

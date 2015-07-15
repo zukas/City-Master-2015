@@ -11,6 +11,7 @@
 #include "keyboard.h"
 #include "skybox.h"
 #include "particlesystem.h"
+#include "saturnrings.h"
 
 class glProgram
 {
@@ -27,6 +28,8 @@ class glProgram
         Program m_textProgram;
         Program m_skyProgram;
         Camera m_camera;
+
+		SaturnRings rings;
         Text m_text;
         Lamp m_lamp;
         SkyBox m_box;

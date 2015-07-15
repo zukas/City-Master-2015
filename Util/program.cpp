@@ -18,11 +18,13 @@ void Program::cleanUp()
 }
 
 Program::Program() :
+	UniformManager(this),
     m_programID(0)
 {
 }
 
 Program::Program(const std::string &vertex, const std::string &fragment, ProgramType type) :
+	UniformManager(this),
     m_programID(0),
     m_type(type)
 {
@@ -34,6 +36,7 @@ Program::Program(const std::string &vertex, const std::string &fragment, Program
 }
 
 Program::Program(Program &&other) :
+	UniformManager(this),
     m_programID(other.m_programID),
     m_type(other.m_type),
     m_ids(other.m_ids)
@@ -42,6 +45,7 @@ Program::Program(Program &&other) :
 }
 
 Program::Program(const Program &other) :
+	UniformManager(this),
     m_programID(other.m_programID),
     m_type(other.m_type),
     m_ids(other.m_ids)
@@ -271,94 +275,6 @@ void Program::setColour(const glm::vec4 &vec)
     glProgramUniform4fv(m_programID, m_ids.glsl_colour, 1, &vec[0]);
 }
 
-void Program::setUniform(const std::string &name, bool value)
-{
-    GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glProgramUniform1i(m_programID, id, value);
-}
-
-void Program::setUniform(const std::string &name, GLID value)
-{
-    GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glProgramUniform1ui(m_programID, id, value);
-}
-
-void Program::setUniform(const std::string &name, GLSID value)
-{
-    GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glProgramUniform1i(m_programID, id, value);
-}
-
-void Program::setUniform(const std::string &name, float value)
-{
-    GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glProgramUniform1f(m_programID, id, value);
-}
-
-void Program::setUniform(const std::string &name, const glm::vec2 &vec)
-{
-    GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glProgramUniform2fv(m_programID, id, 1, &vec[0]);
-}
-
-void Program::setUniform(const std::string &name, const glm::vec3 &vec)
-{
-    GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glProgramUniform3fv(m_programID, id, 1, &vec[0]);
-}
-
-void Program::setUniform(const std::string &name, const glm::vec4 &vec)
-{
-    GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glProgramUniform4fv(m_programID, id, 1, &vec[0]);
-}
-
-void Program::setUniform(const std::string &name, const glm::mat4 &mat)
-{
-    GLSID id = glGetUniformLocation(m_programID, name.c_str());
-    glProgramUniformMatrix4fv(m_programID, id, 1, GL_FALSE, &mat[0][0]);
-}
-
-void Program::setUniform(GLID id, bool value)
-{
-    glProgramUniform1ui(m_programID, id, value);
-}
-
-void Program::setUniform(GLID id, GLID value)
-{
-    glProgramUniform1ui(m_programID, id, value);
-}
-
-void Program::setUniform(GLID id, GLSID value)
-{
-    glProgramUniform1i(m_programID, id, value);
-}
-
-void Program::setUniform(GLID id, float value)
-{
-    glProgramUniform1f(m_programID, id, value);
-}
-
-void Program::setUniform(GLID id, const glm::vec2 &vec)
-{
-    glProgramUniform2fv(m_programID, id, 1, &vec[0]);
-}
-
-void Program::setUniform(GLID id, const glm::vec3 &vec)
-{
-    glProgramUniform3fv(m_programID, id, 1, &vec[0]);
-}
-
-void Program::setUniform(GLID id, const glm::vec4 &vec)
-{
-    glProgramUniform4fv(m_programID, id, 1, &vec[0]);
-}
-
-void Program::setUniform(GLID id, const glm::mat4 &mat)
-{
-    glProgramUniformMatrix4fv(m_programID, id, 1, GL_FALSE, &mat[0][0]);
-}
-
 Viewport Program::getViewport() const
 {
     return m_viewport;
@@ -382,4 +298,103 @@ Program &Program::operator = (const Program &other)
     m_ids = other.m_ids;
     g_counter+m_programID;
     return *this;
+}
+
+
+UniformManager::UniformManager(Program *prog) :
+	m_prog(prog)
+{
+}
+
+void UniformManager::setUniform(const char *name, bool value)
+{
+	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glProgramUniform1i(m_prog->program(), id, value);
+}
+
+void UniformManager::setUniform(const char *name, GLID value)
+{
+	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glProgramUniform1ui(m_prog->program(), id, value);
+}
+
+void UniformManager::setUniform(const char *name, GLSID value)
+{
+	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glProgramUniform1i(m_prog->program(), id, value);
+}
+
+void UniformManager::setUniform(const char *name, float value)
+{
+	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glProgramUniform1f(m_prog->program(), id, value);
+}
+
+void UniformManager::setUniform(const char *name, const glm::vec2 &vec)
+{
+	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glProgramUniform2fv(m_prog->program(), id, 1, &vec[0]);
+}
+
+void UniformManager::setUniform(const char *name, const glm::vec3 &vec)
+{
+	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glProgramUniform3fv(m_prog->program(), id, 1, &vec[0]);
+}
+
+void UniformManager::setUniform(const char *name, const glm::vec4 &vec)
+{
+	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glProgramUniform4fv(m_prog->program(), id, 1, &vec[0]);
+}
+
+void UniformManager::setUniform(const char *name, const glm::mat4 &mat)
+{
+	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glProgramUniformMatrix4fv(m_prog->program(), id, 1, GL_FALSE, &mat[0][0]);
+}
+
+void UniformManager::setUniform(GLSID id, bool value)
+{
+	glProgramUniform1ui(m_prog->program(), id, value);
+}
+
+void UniformManager::setUniform(GLSID id, GLID value)
+{
+	glProgramUniform1ui(m_prog->program(), id, value);
+}
+
+void UniformManager::setUniform(GLSID id, GLSID value)
+{
+	glProgramUniform1i(m_prog->program(), id, value);
+}
+
+void UniformManager::setUniform(GLSID id, float value)
+{
+	glProgramUniform1f(m_prog->program(), id, value);
+}
+
+void UniformManager::setUniform(GLSID id, const glm::vec2 &vec)
+{
+	glProgramUniform2fv(m_prog->program(), id, 1, &vec[0]);
+}
+
+void UniformManager::setUniform(GLSID id, const glm::vec3 &vec)
+{
+	glProgramUniform3fv(m_prog->program(), id, 1, &vec[0]);
+}
+
+void UniformManager::setUniform(GLSID id, const glm::vec4 &vec)
+{
+	glProgramUniform4fv(m_prog->program(), id, 1, &vec[0]);
+}
+
+void UniformManager::setUniform(GLSID id, const glm::mat4 &mat)
+{
+	glProgramUniformMatrix4fv(m_prog->program(), id, 1, GL_FALSE, &mat[0][0]);
+}
+
+GLSID UniformManager::resolveUniform(const char *name) const
+{
+	return glGetUniformLocation(m_prog->program(), name);
 }

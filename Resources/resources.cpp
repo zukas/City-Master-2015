@@ -174,25 +174,29 @@ void load_resource(char *out_filename, const char *file, const char *out_dir)
 		char full_file_path[512] { '\0' };
 
 		snprintf(full_file_path, 512, "%s/%s.cpp", out_dir, name);
-		snprintf(out_filename, 512, "%s/%s.cpp", out_dir, name);
-		printf("out: %s\n", out_filename);
-		size_t original_hash = file_hash(full_file_path);
+        snprintf(out_filename, 512, "%s/%s.cpp", out_dir, name);
+        size_t original_hash = file_hash(full_file_path);
 		size_t generated_hash = crc32_fast(buffer, buffer_offest, 0);
+
+//        printf("out: %s, original hash: %lu, new hash: %lu\n", full_file_path, original_hash, generated_hash);
+
 
 		if(original_hash != generated_hash)
 		{
-
+//            printf("Generating sources for %s\n", file);
 			tmp = fopen64(full_file_path, "wb");
 			if(tmp)
 			{
+                printf("Updating %s\n", full_file_path);
 				fwrite(buffer, 1, buffer_offest, tmp);
 				fclose(tmp);
 			}
 
-			snprintf(full_file_path, 512, "%s/%s.h", out_dir, name);
+//			snprintf(full_file_path, 512, "%s/%s.h", out_dir, name);
 			tmp = fopen64(full_file_path, "wb");
 			if(tmp)
 			{
+                printf("Updating %s\n", full_file_path);
 				char __tmp[256] { '\0' };
 				strcpy(__tmp, name);
 
@@ -234,6 +238,6 @@ void generate_resources(filesname *out_files, const char **files, size_t size, c
 	for(size_t i = 0; i < size; ++i)
 	{
 		load_resource(out_files[i].name, files[i], out_dir);
-		printf("%s - %s\n", files[i], out_files[i].name);
+//		printf("%s - %s\n", files[i], out_files[i].name);
 	}
 }

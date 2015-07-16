@@ -22,6 +22,8 @@ void main()
     vec4 tmpPos = modelMatrix * viewMatrix * vec4(inPosition,1);
     Position_worldspace = tmpPos.xyz;
 
+    vec4 other_pos = vec4(0.1, 0.1, 0.2, 1.0);
+
     vec4 tmpPosCam = modelMatrix * viewMatrix * vec4(inPosition,1);
     vec3 PosCam = tmpPosCam.xyz;
 

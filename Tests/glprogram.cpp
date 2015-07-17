@@ -13,6 +13,11 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+#include "resources/res_object_frag_glsl.h"
+#include "resources/res_object_vert_glsl.h"
+#include "resources/res_object_select_frag_glsl.h"
+#include "resources/res_object_select_vert_glsl.h"
+
 #include <chrono>
 
 constexpr float year { 5 *	 60 * 1000.f };
@@ -262,15 +267,35 @@ glProgram::glProgram()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	m_objectProgram = { "shaders/object.vert", "shaders/object.frag" };
-	m_objectSelectionProgram = {"shaders/object_select.vert", "shaders/object_select.frag", Selection };
-	m_axisProgram = { "shaders/basic.vert", "shaders/basic.frag" };
-	m_textProgram = { "shaders/text.vert", "shaders/text.frag" };
+//	m_objectProgram = { "shaders/object_vert.glsl", "shaders/object_frag.glsl" };
+	{
+		auto vert = get_res_object_vert_glsl();
+		auto frag = get_res_object_frag_glsl();
+		m_objectProgram.createShader({ VERTEX,  vert.buffer });
+		m_objectProgram.createShader({ FRAGMENT,  frag.buffer });
+		m_objectProgram.createProgram();
+		m_objectProgram.linkProgram();
+		m_objectProgram.resolveUniforms();
+	}
+
+	{
+		auto vert = get_res_object_select_vert_glsl();
+		auto frag = get_res_object_select_frag_glsl();
+		m_objectSelectionProgram.createShader({VERTEX, vert.buffer});
+		m_objectSelectionProgram.createShader({FRAGMENT, frag.buffer});
+		m_objectSelectionProgram.createProgram();
+		m_objectSelectionProgram.linkProgram();
+		m_objectSelectionProgram.resolveUniforms();
+	}
+
+//	m_objectSelectionProgram = {"shaders/object_select_vert.glsl", "shaders/object_select_frag.glsl", Selection };
+//	m_axisProgram = { "shaders/basic_vert.glsl", "shaders/basic.frag" };
+//	m_textProgram = { "shaders/text.vert", "shaders/text.frag" };
 	//	m_skyProgram = { "shaders/skybox.vert", "shaders/skybox.frag" };
 
 	m_axis.init();
 	m_fire = new ParticleSystem;
-	Texture pt { GL_TEXTURE_2D, "textures/fire2.jpg"};
+//	Texture pt { GL_TEXTURE_2D, "textures/fire2.jpg"};
 	//    pt.setSamplerParameter(GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
 	//	m_fire->setTexture(pt);
 	//	m_fire->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -291,15 +316,15 @@ glProgram::glProgram()
 	//                6.f, // Spawn every 0.05 seconds
 	//                30); // And spawn 30 particles
 
-	m_box =
-	{
-		"textures/bluecloud_lf.jpg",
-		"textures/bluecloud_rt.jpg",
-		"textures/bluecloud_dn.jpg",
-		"textures/bluecloud_up.jpg",
-		"textures/bluecloud_ft.jpg",
-		"textures/bluecloud_bk.jpg"
-	};
+//	m_box =
+//	{
+//		"textures/bluecloud_lf.jpg",
+//		"textures/bluecloud_rt.jpg",
+//		"textures/bluecloud_dn.jpg",
+//		"textures/bluecloud_up.jpg",
+//		"textures/bluecloud_ft.jpg",
+//		"textures/bluecloud_bk.jpg"
+//	};
 
 
 	//	float system =  143.73 * std::pow(10, 9);
@@ -338,7 +363,7 @@ glProgram::glProgram()
 			  25.6f * day,
 	{ 0.f, 0.f, 7.25f * degree },
 			  SUN,
-			  "textures/sun.jpg");
+			  "textures/sun.dds");
 
 	Planet mercury;
 	mercury.setup("mercury",
@@ -348,7 +373,7 @@ glProgram::glProgram()
 				  day * 58.6f,
 	{0.f, 0.f, 0.1 * degree},
 				  PLANET,
-				  "textures/mercurymap.jpg");
+				  "textures/mercurymap.dds");
 
 	Planet venus;
 	venus.setup("venus",
@@ -358,7 +383,7 @@ glProgram::glProgram()
 				day * 116.75f,
 	{0.f, 0.f, 177.f * degree},
 				PLANET,
-				"textures/venusmap.jpg");
+				"textures/venusmap.dds");
 
 	Planet earth;
 	earth.setup("earth",
@@ -406,7 +431,7 @@ glProgram::glProgram()
 				  9.97f * hour,
 	{0.f, 0.f, 3.f * degree},
 				  PLANET,
-				  "textures/jupiter.jpg");
+				  "textures/jupiter.dds");
 
 
 	Planet europa;

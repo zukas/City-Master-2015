@@ -14,11 +14,11 @@ int main(int argc, const char **argv) {
     filesname *buffer = new filesname[argc - 2];
     generate_resources(buffer, &argv[1], argc - 2, argv[argc - 1]);
 
-    for (int i = 0; i < argc - 2; ++i) {
-      printf("%s\r\n", buffer[i].name);
-    }
-//    printf("%s\r\n", buffer[argc - 3].name);
-    fflush(stdout);
+//    for (int i = 0; i < argc - 2; ++i) {
+//      printf("%s\r\n", buffer[i].name);
+//    }
+////    printf("%s\r\n", buffer[argc - 3].name);
+//    fflush(stdout);
 
     //	char cmd[8192];
     //	size_t size = 8192;

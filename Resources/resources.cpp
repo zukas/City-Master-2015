@@ -41,7 +41,8 @@ ResType read_mime_type(const char *filename)
 		"jpeg",
 		"png",
 		"tga",
-		"dds"
+		"dds",
+		"ttf"
 	};
 
 	for(size_t i = 0; i < sizeof(array) / sizeof(const char*) && t == TEXT; ++i)
@@ -127,6 +128,7 @@ uint32_t file_hash(const char *filename)
 void load_resource(char *out_filename, const char *file, const char *out_dir)
 {
 	ResType  type = read_mime_type(file);
+//	printf("file: %s, mime: %d\n", file, type);
 	char file_name[128] { 'r', 'e', 's', '_' };
 
 
@@ -154,7 +156,7 @@ void load_resource(char *out_filename, const char *file, const char *out_dir)
 		long buffer_offest = 0;
 		char *buffer = (char*)malloc(buffer_size);
 
-		buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "#include \"%s.h\"\nconstexpr %s get_%s() { return %s{{",name, name, name, name);
+		buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "#include \"%s.h\"\n%s get_%s() { return %s{{",name, name, name, name);
 
 		int c = fgetc (tmp);
 		buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "%d", c);
@@ -178,12 +180,12 @@ void load_resource(char *out_filename, const char *file, const char *out_dir)
         size_t original_hash = file_hash(full_file_path);
 		size_t generated_hash = crc32_fast(buffer, buffer_offest, 0);
 
-//        printf("out: %s, original hash: %lu, new hash: %lu\n", full_file_path, original_hash, generated_hash);
+//		printf("out: %s, original hash: %lu, new hash: %lu\n", full_file_path, original_hash, generated_hash);
 
 
 		if(original_hash != generated_hash)
 		{
-//            printf("Generating sources for %s\n", file);
+			printf("Generating sources for %s\n", file);
 			tmp = fopen64(full_file_path, "wb");
 			if(tmp)
 			{
@@ -192,7 +194,7 @@ void load_resource(char *out_filename, const char *file, const char *out_dir)
 				fclose(tmp);
 			}
 
-//			snprintf(full_file_path, 512, "%s/%s.h", out_dir, name);
+			snprintf(full_file_path, 512, "%s/%s.h", out_dir, name);
 			tmp = fopen64(full_file_path, "wb");
 			if(tmp)
 			{
@@ -215,14 +217,14 @@ void load_resource(char *out_filename, const char *file, const char *out_dir)
 
 				if(type == IMAGE)
 				{
-					fprintf(tmp, "struct %s { unsigned char buffer[%ld]; long int size; };\n", name, size);
+					fprintf(tmp, "struct %s { unsigned char buffer[%ld]; long int size; };\n%s get_%s();\n#endif\n", name, size, name, name);
+					fprintf(tmp, "", );
 				}
 				else
 				{
-					fprintf(tmp, "struct %s { char buffer[%ld]; long int size; };\n", name, size);
+					fprintf(tmp, "const char* get_%s();\n#endif\n", name);
 				}
 
-				fprintf(tmp, "constexpr %s get_%s();\n#endif\n", name, name);
 				fclose(tmp);
 			}
 		}

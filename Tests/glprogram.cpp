@@ -1003,7 +1003,7 @@ void glProgram::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_camera.calcViewport();
 
-	m_axis.render(m_camera);
+//	m_axis.render(m_camera);
 
 	//    m_axisProgram.use();
 	//    m_camera.update(m_axisProgram);

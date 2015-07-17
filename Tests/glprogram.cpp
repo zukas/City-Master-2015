@@ -17,6 +17,29 @@
 #include "resources/res_object_vert_glsl.h"
 #include "resources/res_object_select_frag_glsl.h"
 #include "resources/res_object_select_vert_glsl.h"
+#include "resources/res_freesans_ttf.h"
+
+#include "resources/res_callisto_dds.h"
+#include "resources/res_dione_dds.h"
+#include "resources/res_earth_dds.h"
+#include "resources/res_enceladus_dds.h"
+#include "resources/res_europa_dds.h"
+#include "resources/res_ganymede_dds.h"
+#include "resources/res_iapetus_dds.h"
+#include "resources/res_io_dds.h"
+#include "resources/res_jupiter_dds.h"
+#include "resources/res_mars_dds.h"
+#include "resources/res_mercurymap_dds.h"
+#include "resources/res_mimas_dds.h"
+#include "resources/res_moon_dds.h"
+#include "resources/res_neptune_dds.h"
+#include "resources/res_rhea_dds.h"
+#include "resources/res_saturn_dds.h"
+#include "resources/res_sun_dds.h"
+#include "resources/res_tethys_dds.h"
+#include "resources/res_titan_dds.h"
+#include "resources/res_uranus_dds.h"
+#include "resources/res_venusmap_dds.h"
 
 #include <chrono>
 
@@ -105,7 +128,8 @@ class Planet
 		float rotation_period;
 		glm::vec3 axis_tilt;
 		PlanetType type;
-		const char *texture;
+        unsigned char *texture_buffer;
+        long int buffer_size;
 
 		float calc_size;
 		float calc_distance;
@@ -120,14 +144,14 @@ class Planet
 				   float _rotation_period,
 				   glm::vec3 _axis_tilt,
 				   PlanetType _type,
-				   const char *_texture);
+                   unsigned char * _texture_buffer, long int _buffer_size);
 		void setChildrenCount(int size);
 		void setChild(int pos, Planet *chiled);
 		void calc();
 		Model generate(float parent_size = 0.f);
 };
 
-void Planet::setup(const char *_name, float _size, float _distance, float _orbtal_period, float _rotation_period, glm::vec3 _axis_tilt, PlanetType _type, const char *_texture)
+void Planet::setup(const char *_name, float _size, float _distance, float _orbtal_period, float _rotation_period, glm::vec3 _axis_tilt, PlanetType _type, unsigned char *_texture_buffer, long _buffer_size)
 {
 	name = _name;
 	size = _size;
@@ -136,7 +160,8 @@ void Planet::setup(const char *_name, float _size, float _distance, float _orbta
 	rotation_period = _rotation_period;
 	axis_tilt = _axis_tilt;
 	type = _type;
-	texture = _texture;
+    texture_buffer = _texture_buffer;
+    buffer_size = _buffer_size;
 }
 
 void Planet::setChildrenCount(int size)
@@ -194,7 +219,7 @@ Model Planet::generate(float parent_size)
 	}
 
 	Mesh m { sphare::create(calc_size / 2.f, parts, parts) };
-	m.addTexture({GL_TEXTURE_2D, texture});
+    m.addTexture({GL_TEXTURE_2D, texture_buffer, buffer_size});
 
 	Model mod { { std::move(m) } };
 	mod.setLocation({ parent_size + (calc_distance > 0.f ? calc_size + calc_distance : 0.f), 0.f, 0.f });
@@ -269,20 +294,16 @@ glProgram::glProgram()
 
 //	m_objectProgram = { "shaders/object_vert.glsl", "shaders/object_frag.glsl" };
 	{
-		auto vert = get_res_object_vert_glsl();
-		auto frag = get_res_object_frag_glsl();
-		m_objectProgram.createShader({ VERTEX,  vert.buffer });
-		m_objectProgram.createShader({ FRAGMENT,  frag.buffer });
+        m_objectProgram.createShader({ VERTEX,  get_res_object_vert_glsl() });
+        m_objectProgram.createShader({ FRAGMENT,  get_res_object_frag_glsl() });
 		m_objectProgram.createProgram();
 		m_objectProgram.linkProgram();
 		m_objectProgram.resolveUniforms();
 	}
 
 	{
-		auto vert = get_res_object_select_vert_glsl();
-		auto frag = get_res_object_select_frag_glsl();
-		m_objectSelectionProgram.createShader({VERTEX, vert.buffer});
-		m_objectSelectionProgram.createShader({FRAGMENT, frag.buffer});
+        m_objectSelectionProgram.createShader({VERTEX, get_res_object_select_vert_glsl() });
+        m_objectSelectionProgram.createShader({FRAGMENT, get_res_object_select_frag_glsl() });
 		m_objectSelectionProgram.createProgram();
 		m_objectSelectionProgram.linkProgram();
 		m_objectSelectionProgram.resolveUniforms();
@@ -354,6 +375,29 @@ glProgram::glProgram()
 	float ganymede_size = 2634.1f;
 	float saturn_size = 58232.f;
 
+    auto sun_buff = get_res_sun_dds();
+    auto mercury_buff = get_res_mercurymap_dds();
+    auto venus_buff = get_res_venusmap_dds();
+    auto earth_buff = get_res_earth_dds();
+    auto moon_buff = get_res_moon_dds();
+    auto mars_buff = get_res_mars_dds();
+    auto jupiter_buff = get_res_jupiter_dds();
+    auto europa_buff = get_res_europa_dds();
+    auto io_buff = get_res_io_dds();
+    auto ganymede_buff = get_res_ganymede_dds();
+    auto callisto_buff = get_res_callisto_dds();
+    auto saturn_buff = get_res_saturn_dds();
+    auto titan_buff = get_res_titan_dds();
+    auto enceladus_buff = get_res_enceladus_dds();
+    auto rhea_buff = get_res_rhea_dds();
+    auto dione_buff = get_res_dione_dds();
+    auto tethys_buff = get_res_tethys_dds();
+    auto iapetus_buff = get_res_iapetus_dds();
+    auto mimas_buff = get_res_mimas_dds();
+    auto uranus_buff = get_res_uranus_dds();
+    auto neptune_buff = get_res_neptune_dds();
+
+
 
 	Planet sun;
 	sun.setup("sun",
@@ -363,7 +407,7 @@ glProgram::glProgram()
 			  25.6f * day,
 	{ 0.f, 0.f, 7.25f * degree },
 			  SUN,
-			  "textures/sun.dds");
+              sun_buff->buffer, sun_buff->size);
 
 	Planet mercury;
 	mercury.setup("mercury",
@@ -373,7 +417,7 @@ glProgram::glProgram()
 				  day * 58.6f,
 	{0.f, 0.f, 0.1 * degree},
 				  PLANET,
-				  "textures/mercurymap.dds");
+                  mercury_buff->buffer, mercury_buff->size);
 
 	Planet venus;
 	venus.setup("venus",
@@ -383,7 +427,7 @@ glProgram::glProgram()
 				day * 116.75f,
 	{0.f, 0.f, 177.f * degree},
 				PLANET,
-				"textures/venusmap.dds");
+                venus_buff->buffer, venus_buff->size);
 
 	Planet earth;
 	earth.setup("earth",
@@ -393,7 +437,7 @@ glProgram::glProgram()
 				day,
 	{0.f, 0.f, 23.f * degree},
 				PLANET,
-				"textures/earth.dds");
+                earth_buff->buffer, earth_buff->size);
 
 
 
@@ -405,7 +449,7 @@ glProgram::glProgram()
 			   0.f,
 	{0.f, 0.f, 6.687f * degree},
 			   MOON,
-			   "textures/moon.dds");
+               moon_buff->buffer, moon_buff->size);
 
 	earth.setChildrenCount(1);
 	earth.setChild(0, &moon);
@@ -419,7 +463,7 @@ glProgram::glProgram()
 			   1.02876421707f * day,
 	{0.f, 0.f, 25.f * degree},
 			   PLANET,
-			   "textures/mars.dds");
+               mars_buff->buffer, mars_buff->size);
 
 
 
@@ -431,7 +475,7 @@ glProgram::glProgram()
 				  9.97f * hour,
 	{0.f, 0.f, 3.f * degree},
 				  PLANET,
-				  "textures/jupiter.dds");
+                  jupiter_buff->buffer, jupiter_buff->size);
 
 
 	Planet europa;
@@ -442,7 +486,7 @@ glProgram::glProgram()
 				 0.f,
 	{0.f, 0.f, 0.1f * degree},
 				 MOON,
-				 "textures/europa.dds");
+                 europa_buff->buffer, europa_buff->size);
 
 
 	Planet io;
@@ -453,7 +497,7 @@ glProgram::glProgram()
 			 0.f,
 	{0.f, 0.f, 0.05f * degree},
 			 MOON,
-			 "textures/io.png");
+             io_buff->buffer, io_buff->size);
 
 
 	Planet ganymede;
@@ -464,7 +508,7 @@ glProgram::glProgram()
 				   0.f,
 	{0.f, 0.f, 2.214f * degree},
 				   MOON,
-				   "textures/ganymede.dds");
+                   ganymede_buff->buffer, ganymede_buff->size);
 
 
 
@@ -476,7 +520,7 @@ glProgram::glProgram()
 				   0.f,
 	{0.f, 0.f, 2.017f * degree},
 				   MOON,
-				   "textures/callisto.dds");
+                   callisto_buff->buffer, callisto_buff->size);
 
 	jupiter.setChildrenCount(4);
 	jupiter.setChild(0, &europa);
@@ -493,7 +537,7 @@ glProgram::glProgram()
 				 10.65f * hour,
 	{0.f, 0.f, 26.7f * degree},
 				 PLANET,
-				 "textures/saturn.png");
+                 saturn_buff->buffer, saturn_buff->size);
 
 	Planet titan;
 	titan.setup("titan",
@@ -503,7 +547,7 @@ glProgram::glProgram()
 				0.f,
 	{0.f, 0.f, 0.f * degree},
 				MOON,
-				"textures/titan.png");
+                titan_buff->buffer, titan_buff->size);
 
 	Planet enceladus;
 	enceladus.setup("enceladus",
@@ -513,7 +557,7 @@ glProgram::glProgram()
 					0.f,
 	{0.f, 0.f, 0.017f * degree},
 					MOON,
-					"textures/enceladus.png");
+                    enceladus_buff->buffer, enceladus_buff->size);
 
 	Planet rhea;
 	rhea.setup("rhea",
@@ -523,7 +567,7 @@ glProgram::glProgram()
 			   0.f,
 	{0.f, 0.f, 0.f * degree},
 			   MOON,
-			   "textures/rhea.jpg");
+               rhea_buff->buffer, rhea_buff->size);
 
 	Planet dione;
 	dione.setup("dione",
@@ -533,7 +577,7 @@ glProgram::glProgram()
 				0.f,
 	{0.f, 0.f, 0.f * degree},
 				MOON,
-				"textures/dione.jpg");
+                dione_buff->buffer, dione_buff->size);
 
 	Planet tethys;
 	tethys.setup("tethys",
@@ -543,7 +587,7 @@ glProgram::glProgram()
 				 0.f,
 	{0.f, 0.f, 0.f * degree},
 				 MOON,
-				 "textures/tethys.jpg");
+                 tethys_buff->buffer, tethys_buff->size);
 
 	Planet iapetus;
 	iapetus.setup("iapetus",
@@ -553,7 +597,7 @@ glProgram::glProgram()
 				  0.f,
 	{0.f, 0.f, 0.f * degree},
 				  MOON,
-				  "textures/iapetus.jpg");
+                  iapetus_buff->buffer, iapetus_buff->size);
 
 	Planet mimas;
 	mimas.setup("mimas",
@@ -563,7 +607,7 @@ glProgram::glProgram()
 				0.f,
 	{0.f, 0.f, 0.f * degree},
 				MOON,
-				"textures/mimas.jpg");
+                mimas_buff->buffer, mimas_buff->size);
 
 	saturn.setChildrenCount(7);
 	saturn.setChild(0, &titan);
@@ -583,7 +627,7 @@ glProgram::glProgram()
 				 17.233333333f * hour,
 	{0.f, 0.f, 97.77f * degree},
 				 PLANET,
-				 "textures/uranus.jpg");
+                 uranus_buff->buffer, uranus_buff->size);
 
 	Planet neptune;
 	neptune.setup("neptune",
@@ -593,7 +637,7 @@ glProgram::glProgram()
 				  16.266666667f * hour,
 	{0.f, 0.f, 28.32f * degree},
 				  PLANET,
-				  "textures/neptune.dds");
+                  neptune_buff->buffer, neptune_buff->size);
 
 
 	sun.setChildrenCount(8);
@@ -827,9 +871,10 @@ glProgram::glProgram()
 
 	rings.init();
 
-	m_text = { "fonts/FreeSans.ttf", 26 };
-
-	glDebugger::init({ "fonts/FreeSans.ttf", 14 });
+    auto font_data = get_res_freesans_ttf();
+    m_text = { font_data->buffer, font_data->size, 26 };
+    glDebugger::init({ font_data->buffer, font_data->size, 14 });
+    delete font_data;
 
 	m_mouse = { m_window };
 	m_keyboard = { m_window };

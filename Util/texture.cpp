@@ -75,6 +75,7 @@ Texture::Texture(GLID type, const unsigned char *data, long size)
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glGenSamplers(1, &m_data.m_samplerID);
 }
 
 Texture::Texture(GLID type, const std::vector<unsigned char> &buffer, int width, int height, GLID format)

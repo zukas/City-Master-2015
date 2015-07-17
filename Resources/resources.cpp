@@ -155,21 +155,42 @@ void load_resource(char *out_filename, const char *file, const char *out_dir)
 		long buffer_size = (size << 2) * sizeof(int);
 		long buffer_offest = 0;
 		char *buffer = (char*)malloc(buffer_size);
+        if(type == IMAGE)
+        {
+            buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "#include \"%s.h\"\n%s* get_%s() { return new %s{{",name, name, name, name);
 
-		buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "#include \"%s.h\"\n%s get_%s() { return %s{{",name, name, name, name);
+            int c = fgetc (tmp);
+            buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "%d", c);
+            while(tmp && !feof(tmp))
+            {
+                c = fgetc (tmp);
+                if(c != EOF)
+                {
+                    buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, ",%d", c);
+                }
+            }
 
-		int c = fgetc (tmp);
-		buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "%d", c);
-		while(tmp && !feof(tmp))
-		{
-			c = fgetc (tmp);
-			if(c != EOF)
-			{
-				buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, ",%d", c);
-			}
-		}
+            buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "},%ld}; }\n", size);
+        }
+        else
+        {
+            int c;
+            buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "#include \"%s.h\"\nconst char* get_%s() { return \"",name, name);
+            while(tmp && !feof(tmp))
+            {
+                c = fgetc (tmp);
+                if(c == '\n')
+                {
+                    buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "\\n");
+                }
+                if(isprint(c) && c != EOF)
+                {
+                    buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "%c", c);
+                }
+            }
 
-		buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "},%ld}; }\n", size);
+            buffer_offest += snprintf(&buffer[buffer_offest], buffer_size - buffer_offest, "\"; }\n", size);
+        }
 
 		fclose(tmp);
 
@@ -217,8 +238,7 @@ void load_resource(char *out_filename, const char *file, const char *out_dir)
 
 				if(type == IMAGE)
 				{
-					fprintf(tmp, "struct %s { unsigned char buffer[%ld]; long int size; };\n%s get_%s();\n#endif\n", name, size, name, name);
-					fprintf(tmp, "", );
+                    fprintf(tmp, "struct %s { unsigned char buffer[%ld]; long int size; };\n%s* get_%s();\n#endif\n", name, size, name, name);
 				}
 				else
 				{

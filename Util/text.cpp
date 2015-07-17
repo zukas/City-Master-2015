@@ -167,7 +167,73 @@ Text::Text(const char *font, int size) :
 	m_program.createShader(fs);
 	m_program.createProgram();
 	m_program.linkProgram();
-	m_program.resolveUniforms();
+    m_program.resolveUniforms();
+}
+
+Text::Text(unsigned char *font_buffer, long font_bufer_size, int size) :
+    m_fontSize(size)
+{
+    FT_Library lib { nullptr };
+    FT_Face face { nullptr };
+    FT_Init_FreeType(&lib);
+    FT_New_Memory_Face(lib, font_buffer, font_bufer_size, 0, &face);
+    FT_Set_Pixel_Sizes(face, size, size);
+
+    glGenVertexArrays(1, &m_vertexArray);
+    glBindVertexArray(m_vertexArray);
+
+    glm::vec2 position [ char_data_set * 4 ];
+    glm::vec2 coordiante [ char_data_set * 4 ];
+
+    for(int i = 0; i < char_data_set; ++i)
+    {
+        m_data[i].pos = &position[i * 4];
+        m_data[i].coord = &coordiante[i * 4];
+        load_char(m_data[i], face, i);
+        m_newLine = std::max(m_newLine, m_data[i].cH);
+        m_data[i].pos = nullptr;
+        m_data[i].coord = nullptr;
+    }
+
+    FT_Done_Face(face);
+    FT_Done_FreeType(lib);
+
+    GLuint buffers[2];
+    glGenBuffers(2, buffers);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+    glBufferData(GL_ARRAY_BUFFER, char_data_set * 4 * sizeof(glm::vec2), position, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(
+                0,                  // attribute
+                2,                  // size
+                GL_FLOAT,           // type
+                GL_FALSE,           // normalized?
+                0,                  // stride
+                nullptr           // array buffer offset
+                );
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
+    glBufferData(GL_ARRAY_BUFFER, char_data_set * 4 * sizeof(glm::vec2), coordiante, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(
+                1,                  // attribute
+                2,                  // size
+                GL_FLOAT,           // type
+                GL_FALSE,           // normalized?
+                0,                  // stride
+                nullptr         // array buffer offset
+                );
+
+    g_counter + m_vertexArray;
+
+    glBindVertexArray(0);
+
+    m_program.createShader(vs);
+    m_program.createShader(fs);
+    m_program.createProgram();
+    m_program.linkProgram();
+    m_program.resolveUniforms();
 }
 
 Text::Text(Text &&other) :

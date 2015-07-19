@@ -70,8 +70,8 @@ glm::mat4 __postproc_motion(const glm::mat4 &t, model_data data) {
 	return res;
 }
 
-constexpr float system_size = 143.73 * pow(10, 9);
-constexpr float system_scale = system_size / 50000000.f;
+float system_size { 143.73f * pow(10, 9) };
+float system_scale { system_size / 50000000.f };
 
 float size_scaling(float amp, float x) {
 	return std::sqrt((x / (amp * 2)) + std::sqrt(amp / 25));
@@ -294,146 +294,146 @@ glProgram::glProgram() {
 	BitsMemory::init(1024 * 1024 * 20);
 	set_malloc_function(BitsMemory::malloc_aligend_64);
 
-	Planet sun;
-	sun.setup("sun", sun_size, 0.f, 0.f, 25.6f * day,
-			  {0.f, 0.f, 0.f /*7.25f * degree*/}, SUN,
-			  buffer_resource_t::RES_SUN_DDS);
+//	Planet sun;
+//	sun.setup("sun", sun_size, 0.f, 0.f, 25.6f * day,
+//			  {0.f, 0.f, 0.f /*7.25f * degree*/}, SUN,
+//			  buffer_resource_t::RES_SUN_DDS);
 
-	Planet mercury;
-	mercury.setup("mercury", mercury_size, mercury_distance, day * 88.f,
-				  day * 58.6f, {0.f, 0.f, 0.1 * degree}, PLANET,
-				  buffer_resource_t::RES_MERCURY_DDS);
+//	Planet mercury;
+//	mercury.setup("mercury", mercury_size, mercury_distance, day * 88.f,
+//				  day * 58.6f, {0.f, 0.f, 0.1 * degree}, PLANET,
+//				  buffer_resource_t::RES_MERCURY_DDS);
 
-	Planet venus;
-	venus.setup("venus", venus_size, venus_distance, day * 224.701f,
-				day * 116.75f, {0.f, 0.f, 177.f * degree}, PLANET,
-				buffer_resource_t::RES_VENUSMAP_DDS);
+//	Planet venus;
+//	venus.setup("venus", venus_size, venus_distance, day * 224.701f,
+//				day * 116.75f, {0.f, 0.f, 177.f * degree}, PLANET,
+//				buffer_resource_t::RES_VENUSMAP_DDS);
 
-	Planet earth;
-	earth.setup("earth", earth_size, earth_distance, year, day,
-				{0.f, 0.f, 23.f * degree}, PLANET,
-				buffer_resource_t::RES_EARTH_DDS);
+//	Planet earth;
+//	earth.setup("earth", earth_size, earth_distance, year, day,
+//				{0.f, 0.f, 23.f * degree}, PLANET,
+//				buffer_resource_t::RES_EARTH_DDS);
 
-	Planet moon;
-	moon.setup("moon", moon_size, moon_distance, day * 29.530589f, 0.f,
-			   {0.f, 0.f, 6.687f * degree}, MOON,
-			   buffer_resource_t::RES_MOON_DDS);
+//	Planet moon;
+//	moon.setup("moon", moon_size, moon_distance, day * 29.530589f, 0.f,
+//			   {0.f, 0.f, 6.687f * degree}, MOON,
+//			   buffer_resource_t::RES_MOON_DDS);
 
-	earth.setChildrenCount(1);
-	earth.setChild(0, &moon);
+//	earth.setChildrenCount(1);
+//	earth.setChild(0, &moon);
 
-	Planet mars;
-	mars.setup("mars", mars_size, mars_distance, 686.971f * day,
-			   1.02876421707f * day, {0.f, 0.f, 25.f * degree}, PLANET,
-			   buffer_resource_t::RES_MARS_DDS);
+//	Planet mars;
+//	mars.setup("mars", mars_size, mars_distance, 686.971f * day,
+//			   1.02876421707f * day, {0.f, 0.f, 25.f * degree}, PLANET,
+//			   buffer_resource_t::RES_MARS_DDS);
 
-	Planet jupiter;
-	jupiter.setup("jupiter", jupiter_size, jupiter_distance, 11.86f * year,
-				  9.97f * hour, {0.f, 0.f, 3.f * degree}, PLANET,
-				  buffer_resource_t::RES_JUPITER_DDS);
+//	Planet jupiter;
+//	jupiter.setup("jupiter", jupiter_size, jupiter_distance, 11.86f * year,
+//				  9.97f * hour, {0.f, 0.f, 3.f * degree}, PLANET,
+//				  buffer_resource_t::RES_JUPITER_DDS);
 
-	Planet europa;
-	europa.setup("europa", europa_size, europa_distance, 3.551181f * day, 0.f,
-				 {0.f, 0.f, 0.1f * degree}, MOON,
-				 buffer_resource_t::RES_EUROPA_DDS);
+//	Planet europa;
+//	europa.setup("europa", europa_size, europa_distance, 3.551181f * day, 0.f,
+//				 {0.f, 0.f, 0.1f * degree}, MOON,
+//				 buffer_resource_t::RES_EUROPA_DDS);
 
-	Planet io;
-	io.setup("io", io_size, io_distance, 1.769137786f * day, 0.f,
-			 {0.f, 0.f, 0.05f * degree}, MOON, buffer_resource_t::RES_IO_DDS);
+//	Planet io;
+//	io.setup("io", io_size, io_distance, 1.769137786f * day, 0.f,
+//			 {0.f, 0.f, 0.05f * degree}, MOON, buffer_resource_t::RES_IO_DDS);
 
-	Planet ganymede;
-	ganymede.setup("ganymede", ganymede_size, ganymede_distance,
-				   7.15455296f * day, 0.f, {0.f, 0.f, 2.214f * degree}, MOON,
-				   buffer_resource_t::RES_GANYMEDE_DDS);
+//	Planet ganymede;
+//	ganymede.setup("ganymede", ganymede_size, ganymede_distance,
+//				   7.15455296f * day, 0.f, {0.f, 0.f, 2.214f * degree}, MOON,
+//				   buffer_resource_t::RES_GANYMEDE_DDS);
 
-	Planet callisto;
-	callisto.setup("callisto", callisto_size, callisto_distance,
-				   16.6890184f * day, 0.f, {0.f, 0.f, 2.017f * degree}, MOON,
-				   buffer_resource_t::RES_CALLISTO_DDS);
+//	Planet callisto;
+//	callisto.setup("callisto", callisto_size, callisto_distance,
+//				   16.6890184f * day, 0.f, {0.f, 0.f, 2.017f * degree}, MOON,
+//				   buffer_resource_t::RES_CALLISTO_DDS);
 
-	jupiter.setChildrenCount(4);
-	jupiter.setChild(0, &europa);
-	jupiter.setChild(1, &io);
-	jupiter.setChild(2, &ganymede);
-	jupiter.setChild(3, &callisto);
+//	jupiter.setChildrenCount(4);
+//	jupiter.setChild(0, &europa);
+//	jupiter.setChild(1, &io);
+//	jupiter.setChild(2, &ganymede);
+//	jupiter.setChild(3, &callisto);
 
-	Planet saturn;
-	saturn.setup("saturn", saturn_size, saturn_distance, 29.f * year,
-				 10.65f * hour, {0.f, 0.f, 26.7f * degree}, PLANET,
-				 buffer_resource_t::RES_SATURN_DDS);
+//	Planet saturn;
+//	saturn.setup("saturn", saturn_size, saturn_distance, 29.f * year,
+//				 10.65f * hour, {0.f, 0.f, 26.7f * degree}, PLANET,
+//				 buffer_resource_t::RES_SATURN_DDS);
 
-	Planet titan;
-	titan.setup("titan", 2576.f, 1221870.f, 15.945f * day, 0.f,
-				{0.f, 0.f, 0.f * degree}, MOON,
-				buffer_resource_t::RES_TITAN_DDS);
+//	Planet titan;
+//	titan.setup("titan", 2576.f, 1221870.f, 15.945f * day, 0.f,
+//				{0.f, 0.f, 0.f * degree}, MOON,
+//				buffer_resource_t::RES_TITAN_DDS);
 
-	Planet enceladus;
-	enceladus.setup("enceladus", 252.f, 238020.f, 1.370218f * day, 0.f,
-					{0.f, 0.f, 0.017f * degree}, MOON,
-					buffer_resource_t::RES_ENCELADUS_DDS);
+//	Planet enceladus;
+//	enceladus.setup("enceladus", 252.f, 238020.f, 1.370218f * day, 0.f,
+//					{0.f, 0.f, 0.017f * degree}, MOON,
+//					buffer_resource_t::RES_ENCELADUS_DDS);
 
-	Planet rhea;
-	rhea.setup("rhea", 763.8f, 527108.f, 4.518212f * day, 0.f,
-			   {0.f, 0.f, 0.f * degree}, MOON, buffer_resource_t::RES_RHEA_DDS);
+//	Planet rhea;
+//	rhea.setup("rhea", 763.8f, 527108.f, 4.518212f * day, 0.f,
+//			   {0.f, 0.f, 0.f * degree}, MOON, buffer_resource_t::RES_RHEA_DDS);
 
-	Planet dione;
-	dione.setup("dione", 561.4f, 377400.f, 2.736915f * day, 0.f,
-				{0.f, 0.f, 0.f * degree}, MOON,
-				buffer_resource_t::RES_DIONE_DDS);
+//	Planet dione;
+//	dione.setup("dione", 561.4f, 377400.f, 2.736915f * day, 0.f,
+//				{0.f, 0.f, 0.f * degree}, MOON,
+//				buffer_resource_t::RES_DIONE_DDS);
 
-	Planet tethys;
-	tethys.setup("tethys", 531.1f, 294619.f, 1.887802f * day, 0.f,
-				 {0.f, 0.f, 0.f * degree}, MOON,
-				 buffer_resource_t::RES_TETHYS_DDS);
+//	Planet tethys;
+//	tethys.setup("tethys", 531.1f, 294619.f, 1.887802f * day, 0.f,
+//				 {0.f, 0.f, 0.f * degree}, MOON,
+//				 buffer_resource_t::RES_TETHYS_DDS);
 
-	Planet iapetus;
-	iapetus.setup("iapetus", 734.5f, 3560820.f, 79.3215f * day, 0.f,
-				  {0.f, 0.f, 0.f * degree}, MOON,
-				  buffer_resource_t::RES_IAPETUS_DDS);
+//	Planet iapetus;
+//	iapetus.setup("iapetus", 734.5f, 3560820.f, 79.3215f * day, 0.f,
+//				  {0.f, 0.f, 0.f * degree}, MOON,
+//				  buffer_resource_t::RES_IAPETUS_DDS);
 
-	Planet mimas;
-	mimas.setup("mimas", 198.2f, 185539.f, 0.942f * day, 0.f,
-				{0.f, 0.f, 0.f * degree}, MOON,
-				buffer_resource_t::RES_MIMAS_DDS);
+//	Planet mimas;
+//	mimas.setup("mimas", 198.2f, 185539.f, 0.942f * day, 0.f,
+//				{0.f, 0.f, 0.f * degree}, MOON,
+//				buffer_resource_t::RES_MIMAS_DDS);
 
-	saturn.setChildrenCount(7);
-	saturn.setChild(0, &titan);
-	saturn.setChild(1, &enceladus);
-	saturn.setChild(2, &rhea);
-	saturn.setChild(3, &dione);
-	saturn.setChild(4, &tethys);
-	saturn.setChild(5, &iapetus);
-	saturn.setChild(6, &mimas);
+//	saturn.setChildrenCount(7);
+//	saturn.setChild(0, &titan);
+//	saturn.setChild(1, &enceladus);
+//	saturn.setChild(2, &rhea);
+//	saturn.setChild(3, &dione);
+//	saturn.setChild(4, &tethys);
+//	saturn.setChild(5, &iapetus);
+//	saturn.setChild(6, &mimas);
 
-	Planet uranus;
-	uranus.setup("uranus", 25362.f, 2870671400.f, 84.016846f * year,
-				 17.233333333f * hour, {0.f, 0.f, 97.77f * degree}, PLANET,
-				 buffer_resource_t::RES_URANUS_DDS);
+//	Planet uranus;
+//	uranus.setup("uranus", 25362.f, 2870671400.f, 84.016846f * year,
+//				 17.233333333f * hour, {0.f, 0.f, 97.77f * degree}, PLANET,
+//				 buffer_resource_t::RES_URANUS_DDS);
 
-	Planet neptune;
-	neptune.setup("neptune", 24622.f, 4503000000.f, 165 * year,
-				  16.266666667f * hour, {0.f, 0.f, 28.32f * degree}, PLANET,
-				  buffer_resource_t::RES_NEPTUNE_DDS);
+//	Planet neptune;
+//	neptune.setup("neptune", 24622.f, 4503000000.f, 165 * year,
+//				  16.266666667f * hour, {0.f, 0.f, 28.32f * degree}, PLANET,
+//				  buffer_resource_t::RES_NEPTUNE_DDS);
 
-	sun.setChildrenCount(8);
-	sun.setChild(0, &mercury);
-	sun.setChild(1, &venus);
-	sun.setChild(2, &earth);
-	sun.setChild(3, &mars);
-	sun.setChild(4, &jupiter);
-	sun.setChild(5, &saturn);
-	sun.setChild(6, &uranus);
-	sun.setChild(7, &neptune);
+//	sun.setChildrenCount(8);
+//	sun.setChild(0, &mercury);
+//	sun.setChild(1, &venus);
+//	sun.setChild(2, &earth);
+//	sun.setChild(3, &mars);
+//	sun.setChild(4, &jupiter);
+//	sun.setChild(5, &saturn);
+//	sun.setChild(6, &uranus);
+//	sun.setChild(7, &neptune);
 
-	m_models.push_back(sun.generate());
+//	m_models.push_back(sun.generate());
 
 	BitsMemory::clear();
 
 	rings.init();
-	auto freesans_buffer =
-		load_buffer_resource(buffer_resource_t::RES_FREESANS_TTF);
-	m_text = {freesans_buffer.buffer, freesans_buffer.size, 26};
-	glDebugger::init({freesans_buffer.buffer, freesans_buffer.size, 14});
+//	auto freesans_buffer =
+//		load_buffer_resource(buffer_resource_t::RES_FREESANS_TTF);
+//	m_text = {freesans_buffer.buffer, freesans_buffer.size, 26};
+//	glDebugger::init({freesans_buffer.buffer, freesans_buffer.size, 14});
 
 	BitsMemory::deinit();
 

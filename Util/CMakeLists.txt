@@ -3,7 +3,7 @@ project(${UTIL} CXX)
 pkg_check_modules(FREETYPE2 ${FreeType})
 include_directories(${FREETYPE2_INCLUDE_DIRS})
 
-add_subdirectory(SOIL)
+#add_subdirectory(SOIL)
 
 list(APPEND HEADERS
     types.h
@@ -26,6 +26,12 @@ list(APPEND HEADERS
     gldebugger.h
     utils.h
     shapes.h
+    SOIL/SOIL.h
+    SOIL/image_DXT.h
+    SOIL/image_helper.h
+    SOIL/stbi_DDS_aug.h
+    SOIL/stbi_DDS_aug_c.h
+    SOIL/stb_image_aug.h
     )
 
 list(APPEND SOURCES
@@ -48,7 +54,11 @@ list(APPEND SOURCES
     gldebugger.cpp
     utils.cpp
     shapes.cpp
+    SOIL/SOIL.cpp
+    SOIL/image_DXT.cpp
+    SOIL/image_helper.cpp
+    SOIL/stb_image_aug.cpp
     )
 
 add_library(${PROJECT_NAME} SHARED ${HEADERS} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} ${OpenGL} gl-soil ${FREETYPE2_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${OpenGL} ${FREETYPE2_LIBRARIES})

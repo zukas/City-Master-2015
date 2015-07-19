@@ -4,10 +4,10 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 file(GLOB RES_FILES
     "shaders/*.glsl"
-    "fonts/*.ttf"
-    "textures/*.dds"
-    "textures/*.jpg"
-    "textures/*.png"
+#    "fonts/*.ttf"
+#    "textures/*.dds"
+#    "textures/*.jpg"
+#    "textures/*.png"
     )
 
 execute_process(

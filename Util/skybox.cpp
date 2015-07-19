@@ -19,8 +19,8 @@ constexpr float vertexs[108]
 };
 
 
-constexpr float t = (1 + sqrt(5.0))/2.0;
-constexpr float s = sqrt(1 + t*t);
+float t = (1 + sqrt(5.0))/2.0;
+float s = sqrt(1 + t*t);
 
 //constexpr float coords
 //{

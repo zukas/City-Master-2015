@@ -1,5 +1,6 @@
 #ifndef RES_NEPTUNE_DDS_H
 #define RES_NEPTUNE_DDS_H
-struct res_neptune_dds { unsigned char buffer[699216]; long int size; };
-res_neptune_dds* get_res_neptune_dds();
+#include <cstddef>
+constexpr size_t res_neptune_dds_size { 699216 };
+unsigned char *get_res_neptune_dds(void*);
 #endif

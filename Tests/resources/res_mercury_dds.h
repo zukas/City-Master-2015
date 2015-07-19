@@ -1,5 +1,6 @@
 #ifndef RES_MERCURY_DDS_H
 #define RES_MERCURY_DDS_H
-struct res_mercury_dds { unsigned char buffer[699216]; long int size; };
-res_mercury_dds* get_res_mercury_dds();
+#include <cstddef>
+constexpr size_t res_mercury_dds_size { 699216 };
+unsigned char *get_res_mercury_dds(void*);
 #endif

@@ -1,5 +1,6 @@
 #ifndef RES_VENUSMAP_DDS_H
 #define RES_VENUSMAP_DDS_H
-struct res_venusmap_dds { unsigned char buffer[699216]; long int size; };
-res_venusmap_dds* get_res_venusmap_dds();
+#include <cstddef>
+constexpr size_t res_venusmap_dds_size { 699216 };
+unsigned char *get_res_venusmap_dds(void*);
 #endif

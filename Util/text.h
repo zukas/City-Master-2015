@@ -36,7 +36,7 @@ class Text
     public:
         Text();
 		Text(const char *font, int size);
-        Text(unsigned char *font_buffer, long int font_bufer_size, int size);
+		Text(unsigned char *font_buffer, size_t font_bufer_size, int size);
         Text(Text &&other);
         ~Text();
 

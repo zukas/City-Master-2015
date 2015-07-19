@@ -64,7 +64,7 @@ Texture::Texture(GLID type, const std::string &file) :
 
 }
 
-Texture::Texture(GLID type, const unsigned char *data, long size)
+Texture::Texture(GLID type, const unsigned char *data, size_t size)
 {
 #warning Loading only DDS
 	m_data.m_textureType = type;

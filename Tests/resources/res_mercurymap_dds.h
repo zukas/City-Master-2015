@@ -1,5 +1,6 @@
 #ifndef RES_MERCURYMAP_DDS_H
 #define RES_MERCURYMAP_DDS_H
-struct res_mercurymap_dds { unsigned char buffer[699216]; long int size; };
-res_mercurymap_dds* get_res_mercurymap_dds();
+#include <cstddef>
+constexpr size_t res_mercurymap_dds_size { 699216 };
+unsigned char *get_res_mercurymap_dds(void*);
 #endif

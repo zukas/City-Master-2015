@@ -1,5 +1,6 @@
 #ifndef RES_RHEA_DDS_H
 #define RES_RHEA_DDS_H
-struct res_rhea_dds { unsigned char buffer[699216]; long int size; };
-res_rhea_dds* get_res_rhea_dds();
+#include <cstddef>
+constexpr size_t res_rhea_dds_size { 699216 };
+unsigned char *get_res_rhea_dds(void*);
 #endif

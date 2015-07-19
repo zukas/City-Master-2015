@@ -170,7 +170,7 @@ Text::Text(const char *font, int size) :
     m_program.resolveUniforms();
 }
 
-Text::Text(unsigned char *font_buffer, long font_bufer_size, int size) :
+Text::Text(unsigned char *font_buffer, size_t font_bufer_size, int size) :
     m_fontSize(size)
 {
     FT_Library lib { nullptr };

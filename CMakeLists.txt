@@ -36,12 +36,14 @@ set(FreeType
     )
 
 set(RESOURCES gl-res)
+set(MEMORY gl-memory)
 set(UTIL gl-util)
 set(IMPORT gl-import)
 set(UI gl-ui)
 set(TESTS gl-test)
 
 add_subdirectory(Resources)
+add_subdirectory(Memory)
 add_subdirectory(Util)
 add_subdirectory(Import)
 add_subdirectory(UI)

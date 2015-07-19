@@ -3,13 +3,12 @@
 
 #include <cstddef>
 
-struct filesname
-{
-		char name[256];
-};
+void init();
 
-void load_resource(char *out_filename, const char *file, const char * out_dir);
+void deinit();
 
-void generate_resources(filesname *out_files, const char **files, size_t size, const char *out_dir);
+void load_resource(char *out_header, const char *file, const char * out_dir);
+
+void generate_resources(const char **files, size_t size, const char *out_dir);
 
 #endif // RESOURCES_H

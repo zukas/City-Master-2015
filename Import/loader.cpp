@@ -6,8 +6,8 @@
 #include "assimp/DefaultLogger.hpp"
 #include "assimp/Logger.hpp"
 
-#include "mesh.h"
-#include "utils.h"
+#include "Util/mesh.h"
+#include "Util/utils.h"
 
 #include <GL/gl.h>
 #include <glm/gtc/matrix_transform.hpp>

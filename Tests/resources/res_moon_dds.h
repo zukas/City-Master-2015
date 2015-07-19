@@ -1,5 +1,6 @@
 #ifndef RES_MOON_DDS_H
 #define RES_MOON_DDS_H
-struct res_moon_dds { unsigned char buffer[699216]; long int size; };
-res_moon_dds* get_res_moon_dds();
+#include <cstddef>
+constexpr size_t res_moon_dds_size { 699216 };
+unsigned char *get_res_moon_dds(void*);
 #endif

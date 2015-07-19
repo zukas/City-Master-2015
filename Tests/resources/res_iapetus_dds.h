@@ -1,5 +1,6 @@
 #ifndef RES_IAPETUS_DDS_H
 #define RES_IAPETUS_DDS_H
-struct res_iapetus_dds { unsigned char buffer[699216]; long int size; };
-res_iapetus_dds* get_res_iapetus_dds();
+#include <cstddef>
+constexpr size_t res_iapetus_dds_size { 699216 };
+unsigned char *get_res_iapetus_dds(void*);
 #endif

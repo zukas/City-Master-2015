@@ -2,7 +2,7 @@ project(${IMPORT} CXX)
 add_subdirectory(Assimp)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Assimp/include)
-include_directories(${CMAKE_SOURCE_DIR}/Util)
+include_directories(${CMAKE_SOURCE_DIR})
 
 list(APPEND HEADERS
     loader.h

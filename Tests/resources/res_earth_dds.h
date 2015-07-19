@@ -1,5 +1,6 @@
 #ifndef RES_EARTH_DDS_H
 #define RES_EARTH_DDS_H
-struct res_earth_dds { unsigned char buffer[699216]; long int size; };
-res_earth_dds* get_res_earth_dds();
+#include <cstddef>
+constexpr size_t res_earth_dds_size { 699216 };
+unsigned char *get_res_earth_dds(void*);
 #endif

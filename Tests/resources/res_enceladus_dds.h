@@ -1,5 +1,6 @@
 #ifndef RES_ENCELADUS_DDS_H
 #define RES_ENCELADUS_DDS_H
-struct res_enceladus_dds { unsigned char buffer[699216]; long int size; };
-res_enceladus_dds* get_res_enceladus_dds();
+#include <cstddef>
+constexpr size_t res_enceladus_dds_size { 699216 };
+unsigned char *get_res_enceladus_dds(void*);
 #endif

@@ -1,19 +1,5 @@
 project(${RESOURCES} CXX)
 
-#list(APPEND HEADERS
-#    resources.h
-#    hash.h
-#    )
-
-#list(APPEND SOURCES
-#    main.cpp
-#    resources.cpp
-#    )
-
-#list(APPEND OTHER
-#    sample.res
-#    )
-
 file(GLOB SOURCES
     "*.h"
     "*.cpp"

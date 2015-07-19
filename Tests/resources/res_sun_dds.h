@@ -1,5 +1,6 @@
 #ifndef RES_SUN_DDS_H
 #define RES_SUN_DDS_H
-struct res_sun_dds { unsigned char buffer[699216]; long int size; };
-res_sun_dds* get_res_sun_dds();
+#include <cstddef>
+constexpr size_t res_sun_dds_size { 699216 };
+unsigned char *get_res_sun_dds(void*);
 #endif

@@ -1,16 +1,16 @@
 #ifndef GLPROGRAM_H
 #define GLPROGRAM_H
 
-#include "program.h"
-#include "camera.h"
-#include "lamp.h"
-#include "model.h"
-#include "axis.h"
-#include "text.h"
-#include "mouse.h"
-#include "keyboard.h"
-#include "skybox.h"
-#include "particlesystem.h"
+#include "Util/program.h"
+#include "Util/camera.h"
+#include "Util/lamp.h"
+#include "Util/model.h"
+#include "Util/axis.h"
+#include "Util/text.h"
+#include "Util/mouse.h"
+#include "Util/keyboard.h"
+#include "Util/skybox.h"
+#include "Util/particlesystem.h"
 #include "saturnrings.h"
 
 class glProgram
@@ -24,9 +24,6 @@ class glProgram
     private:
         Program m_objectProgram;
         Program m_objectSelectionProgram;
-        Program m_axisProgram;
-        Program m_textProgram;
-        Program m_skyProgram;
         Camera m_camera;
 
 		SaturnRings rings;
@@ -36,8 +33,6 @@ class glProgram
         Mouse m_mouse;
         Keyboard m_keyboard;
         Axis m_axis;
-        ParticleSystem * m_fire { nullptr };
-        ParticleSystem * m_smoke { nullptr };
         std::vector<Model > m_models;
         class GLFWwindow *m_window { nullptr };
         float m_frameRate { 0 };

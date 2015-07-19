@@ -1,5 +1,6 @@
 #ifndef RES_IO_DDS_H
 #define RES_IO_DDS_H
-struct res_io_dds { unsigned char buffer[699216]; long int size; };
-res_io_dds* get_res_io_dds();
+#include <cstddef>
+constexpr size_t res_io_dds_size { 699216 };
+unsigned char *get_res_io_dds(void*);
 #endif

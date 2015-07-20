@@ -8,7 +8,7 @@
 char *buffer{nullptr};
 size_t buffer_size{1024 * 1024 * 25};
 
-enum ResType { IMAGE, TEXT };
+enum ResType { BINERY, TEXT };
 
 ResType read_mime_type(const char *filename) {
 	ResType t = TEXT;
@@ -33,7 +33,7 @@ ResType read_mime_type(const char *filename) {
 	for (size_t i = 0; i < sizeof(array) / sizeof(const char *) && t == TEXT;
 		 ++i) {
 		if (strcmp(array[i], file_name) == 0) {
-			t = IMAGE;
+			t = BINERY;
 		}
 	}
 	return t;
@@ -148,7 +148,7 @@ void load_resource(char *out_header, const char *file, const char *out_dir) {
 			printf("File is bigger then the allocated buffer\n");
 		}
 		long buffer_offest = 0;
-		if (type == IMAGE) {
+		if (type == BINERY) {
 			buffer_offest +=
 				snprintf(&buffer[buffer_offest], buffer_size - buffer_offest,
 						 "#include \"%s.h\"\n"
@@ -228,7 +228,7 @@ void load_resource(char *out_header, const char *file, const char *out_dir) {
 
 				fprintf(tmp, "#ifndef %s\n#define %s\n", __tmp, __tmp);
 
-				if (type == IMAGE) {
+				if (type == BINERY) {
 					fprintf(tmp, "#include <cstddef>\nconstexpr size_t %s_size "
 								 "{ %lu };\n",
 							name, size);
@@ -295,7 +295,7 @@ void generate_resources(const char **files, size_t size, const char *out_dir) {
 		fwrite(template_cpp_1, strlen(template_cpp_1), 1, man_cpp);
 		size_t buff_res_cout{0};
 		for (size_t i = 0; i < size; ++i) {
-			if (read_mime_type(files[i]) == IMAGE) {
+			if (read_mime_type(files[i]) == BINERY) {
 				++buff_res_cout;
 			}
 			char out_buffer[256]{'\0'};
@@ -304,7 +304,7 @@ void generate_resources(const char **files, size_t size, const char *out_dir) {
 		}
 		fwrite(template_cpp_2, strlen(template_cpp_2), 1, man_cpp);
 		for (size_t i = 0, curr = 0, last = buff_res_cout - 1; i < size; ++i) {
-			if (IMAGE == read_mime_type(files[i])) {
+			if (BINERY == read_mime_type(files[i])) {
 				char up_res[256]{'\0'};
 				char lo_res[256]{'\0'};
 				get_resource_name_upper(up_res, 256, files[i]);

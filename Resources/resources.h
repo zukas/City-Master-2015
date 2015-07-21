@@ -11,4 +11,7 @@ void load_resource(char *out_header, const char *file, const char * out_dir);
 
 void generate_resources(const char **files, size_t size, const char *out_dir);
 
+
+void generate_resource_manager(const char **files, size_t size, const char *binery_resource_file, const char *out_dir);
+
 #endif // RESOURCES_H

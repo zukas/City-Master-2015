@@ -4,15 +4,15 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 file(GLOB RES_FILES
     "shaders/*.glsl"
-#    "fonts/*.ttf"
-#    "textures/*.dds"
-#    "textures/*.jpg"
-#    "textures/*.png"
+    "fonts/*.ttf"
+    "textures/*.dds"
+    "textures/*.jpg"
+    "textures/*.png"
     )
 
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E make_directory resources
-    COMMAND ${CMAKE_SOURCE_DIR}/gl-res ${RES_FILES} resources
+    COMMAND ${CMAKE_SOURCE_DIR}/gl-res ${RES_FILES} rc_pack.crp resources
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     RESULT_VARIABLE __OUT_RES
     )
@@ -28,7 +28,7 @@ file(GLOB SRC_FILES
 
 add_custom_target(resources ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory resources
-    COMMAND ${CMAKE_SOURCE_DIR}/gl-res ${RES_FILES} resources
+    COMMAND ${CMAKE_SOURCE_DIR}/gl-res ${RES_FILES} rc_pack.crp resources
     DEPENDS ${RESOURCES} ${RES_FILES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )

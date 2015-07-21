@@ -1,2 +1,0 @@
-#include "res_skybox_vert_glsl.h"
-const char* get_res_skybox_vert_glsl() { return "#version 330\n\nlayout(location = 0) in vec3 inPosition;\n\nuniform mat4 viewMatrix;\nuniform mat4 projectionMatrix;\n\nsmooth out vec4 UV;\n\nvoid main()\n{\n    UV = inPosition;\n    vec4 VPp =  projectionMatrix * viewMatrix * vec4(inPosition, 1);\n    vec4 nVPp = normalize(VPp);\n    VPp.xyw\n    gl_Position = vec4(VPp.xy, nVPp.z, VPp.w);\n}\n"; }

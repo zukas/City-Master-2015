@@ -11,7 +11,7 @@ int main(int argc, const char **argv) {
 
 	if (argc > 2) {
 		init();
-		generate_resources(&argv[1], argc - 2, argv[argc - 1]);
+        generate_resource_manager(&argv[1], argc - 3, argv[argc - 2], argv[argc - 1]);
 		deinit();
 	}
 

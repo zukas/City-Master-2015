@@ -7,9 +7,16 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#ifdef DEBUG_BUILD
+#define ASSERT(exp) assert(exp)
+#else
+#define ASSERT(exp)
+#endif
+
 
 typedef unsigned GLID;
 typedef int GLSID;
+typedef unsigned char byte;
 
 constexpr float PI { 3.1415926535897932384626433832795f };
 constexpr float PI2 { PI * 2.0 };
@@ -60,6 +67,9 @@ struct uv_vertex
 		vec3 n;
 		vec2 uv;
 };
+
+typedef std::vector<uv_vertex> uv_vertex_array;
+typedef std::vector<class Texture> texture_array;
 
 struct transform
 {

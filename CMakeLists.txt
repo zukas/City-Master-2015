@@ -15,11 +15,15 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -fPIC")
 set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
 if (NOT "${BUILD_TYPE}" STREQUAL "")
 string(TOUPPER ${BUILD_TYPE} BUILD_TYPE)
+endif (NOT "${BUILD_TYPE}" STREQUAL "")
+
 if ("${BUILD_TYPE}" STREQUAL "RELEASE")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -fomit-frame-pointer")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -fomit-frame-pointer")
+add_definitions(-DRELEASE_BUILD)
+else ("${BUILD_TYPE}" STREQUAL "RELEASE")
+add_definitions(-DDEBUG_BUILD)
 endif ("${BUILD_TYPE}" STREQUAL "RELEASE")
-endif (NOT "${BUILD_TYPE}" STREQUAL "")
 
 add_definitions(-DGLM_FORCE_RADIANS)
 

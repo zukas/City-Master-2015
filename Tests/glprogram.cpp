@@ -13,6 +13,8 @@
 #include "Util/shapes.h"
 #include "Util/utils.h"
 #include "Util/gldebugger.h"
+#include "Util/texturecollection2d.h"
+
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
@@ -290,6 +292,7 @@ glProgram::glProgram() {
     BitsMemory::init(1024 * 1024 * 20);
     set_malloc_function(BitsMemory::malloc_aligend_64);
 
+
     Planet sun;
     sun.setup("sun", sun_size, 0.f, 0.f, 25.6f * day,
               {0.f, 0.f, 0.f /*7.25f * degree*/}, SUN,
@@ -424,6 +427,8 @@ glProgram::glProgram() {
     m_models.push_back(sun.generate());
 
 	BitsMemory::clear();
+
+
 
 	rings.init();
     auto freesans_buffer = get_res_freesans_ttf();

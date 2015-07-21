@@ -128,14 +128,24 @@ uint32_t file_hash(const char *filename) {
     uint32_t res{0};
     FILE *file = fopen64(filename, "rb");
     if (file) {
-        fseeko64(file, 0, SEEK_END);
-        long size = ftello64(file);
+		size_t file_size = 0;
+		size_t read_size = 0;
+		size_t tmp_size = 0;
+		char read_buffer[2048];
+		fseek(file, 0, SEEK_END);
+		file_size = ftell(file);
         rewind(file);
-        char *tmp = (char *)malloc(size * sizeof(char));
-        fread(tmp, 1, size, file);
+
+		while (!feof(file)) {
+			tmp_size = fread(read_buffer, 1, sizeof(read_buffer), file);
+			read_size += tmp_size;
+			res = crc32_fast(read_buffer, tmp_size, res);
+		}
+		if (file_size != read_size) {
+			res = 0;
+		}
+
         fclose(file);
-        res = crc32_fast(tmp, size, 0);
-        free(tmp);
     }
 
     return res;
@@ -428,7 +438,7 @@ resource_info write(FILE *out, FILE *in) {
     char buffer[2048];
     size_t wb = 0;
 
-    printf("start: %lu, size: %lu\n", info.offset, info.size);
+//    printf("start: %lu, size: %lu\n", info.offset, info.size);
     while (wb < info.size) {
         size_t rs = fread(buffer, 1, sizeof(buffer), in);
         wb += fwrite(buffer, 1, rs, out);
@@ -510,16 +520,22 @@ void generate_resource_manager(const char **files, size_t size,
         fclose(_out);
     }
     size_t wb;
-    sprintf(tmp_buffer, "%s/resourcemanager.h", out_dir);
-    _out = fopen(tmp_buffer, "wb");
-    wb = sprintf(out_buffer, manager_header, bin->header_f, lit->header_f);
-    fwrite(out_buffer, wb, 1, _out);
-    fclose(_out);
+
+	wb = sprintf(out_buffer, manager_header, bin->header_f, lit->header_f);
+	sprintf(tmp_buffer, "%s/resourcemanager.h", out_dir);
+	if (crc32_fast(out_buffer, wb) != file_hash(tmp_buffer)) {
+		_out = fopen(tmp_buffer, "wb");
+		fwrite(out_buffer, 1, wb, _out);
+		fclose(_out);
+	}
 
     sprintf(tmp_buffer, "%s/resourcemanager.cpp", out_dir);
-    _out = fopen(tmp_buffer, "wb");
     wb = sprintf(out_buffer, manager_source, binery_resource_file,
                  bin->source_f, lit->source_f);
-    fwrite(out_buffer, wb, 1, _out);
-    fclose(_out);
+
+	if (crc32_fast(out_buffer, wb) != file_hash(tmp_buffer)) {
+		_out = fopen(tmp_buffer, "wb");
+		fwrite(out_buffer, 1, wb, _out);
+		fclose(_out);
+	}
 }

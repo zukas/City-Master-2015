@@ -124,13 +124,6 @@ void Camera::zoom(float delta)
 
 	auto tmp = glm::normalize(diff * dir) * delta * m_speed;
 	auto plane = m_eye + tmp;
-	auto zero = glm::vec3(0.f,0.f,0.f);
-	if(m_eye.y + tmp.y < min_height ||
-	   glm::distance(zero, glm::vec3(plane.x, 0.f, plane.z)) >= max_distance ||
-	   glm::distance(zero, glm::vec3(0.f, plane.y, 0.f)) >= max_distance)
-	{
-		return;
-	}
 
 	m_update = 1;
 	m_view += tmp;

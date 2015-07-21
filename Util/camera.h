@@ -9,8 +9,7 @@
 
 class Camera
 {
-		static constexpr float max_distance { 500000.f };
-		static constexpr float min_height { 5.f };
+		static constexpr float max_distance { 5000.f };
 
     private:
         GLFWwindow *m_window;

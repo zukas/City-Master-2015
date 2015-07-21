@@ -29,3 +29,7 @@
 
 #User files
 *.user
+
+#Project files
+
+*.crp

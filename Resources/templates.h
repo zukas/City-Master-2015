@@ -16,7 +16,8 @@ constexpr const char *manager_header{
 
 constexpr const char *manager_header_binery_function{"resource get_%s ();" NL};
 
-constexpr const char *manager_header_literal_function{"const char *get_%s ();" NL};
+constexpr const char *manager_header_literal_function{
+	"const char *get_%s ();" NL};
 
 constexpr const char *manager_source{
     "#include \"resourcemanager.h\"" NL "#include <cstdlib>" NL
@@ -29,9 +30,9 @@ constexpr const char *manager_source{
     "fclose(__g_resource_handle); __g_resource_handle = nullptr; }" NL
     "resource load_binery_resource(size_t start, size_t size) {" NL
     "resource res;" NL "if(__g_resource_handle) {" NL
-    "res.buffer = (unsigned char *)__g__malloc(size);" NL "res.size = size;" NL
-    "fseek(__g_resource_handle, start, SEEK_SET);" NL
-    "fread(res.buffer, size, 1, __g_resource_handle);" NL "}" NL
+	"fseek(__g_resource_handle, start, SEEK_SET);" NL
+	"res.buffer = (unsigned char *)__g__malloc(size);" NL
+	"res.size = fread(res.buffer, 1, size, __g_resource_handle);" NL "}" NL
     "return res;" NL "}" NL
     // GENERATED BINERY RESOURCE GETTERS
     "%s" NL
@@ -40,6 +41,5 @@ constexpr const char *manager_source{
 
 constexpr const char *manager_source_binery_function{
     "resource get_%s () { return load_binery_resource(%lu, %lu); }" NL};
-
 
 #endif // TEMPLATES_H

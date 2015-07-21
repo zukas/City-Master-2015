@@ -20,7 +20,7 @@
 
 #include <chrono>
 
-constexpr float year{5 * 60 * 1000.f};
+constexpr float year{30 * 60 * 1000.f};
 constexpr float size_div{6371.f};
 constexpr float distance_div{14959.78707f};
 constexpr float rat{distance_div / size_div};
@@ -141,12 +141,12 @@ void Planet::calc() {
 		break;
 	case PLANET:
 		calc_size = size_scaling(40.f, size);
-		calc_distance = distance_scaling(1500.f, distance);
+		calc_distance = distance_scaling(1000.f, distance);
 		break;
 	case MOON:
 	case SHALLOW_MOON:
-		calc_size = size_scaling(155.f, size);
-		calc_distance = distance_scaling(8000.f, distance);
+		calc_size = size_scaling(255.f, size);
+		calc_distance = distance_scaling(2000.f, distance);
 		break;
 	default:
 		break;
@@ -243,6 +243,8 @@ glProgram::glProgram() {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+	init_resources();
 
 	m_objectProgram.createShader({VERTEX, get_res_object_vert_glsl()});
 	m_objectProgram.createShader({FRAGMENT, get_res_object_frag_glsl()});
@@ -429,6 +431,8 @@ glProgram::glProgram() {
     glDebugger::init({freesans_buffer.buffer, freesans_buffer.size, 14});
 
 	BitsMemory::deinit();
+
+	deinit_resources();
 
 	m_mouse = {m_window};
 	m_keyboard = {m_window};

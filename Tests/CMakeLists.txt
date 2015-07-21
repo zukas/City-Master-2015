@@ -13,6 +13,9 @@ file(GLOB RES_FILES
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E make_directory resources
     COMMAND ${CMAKE_SOURCE_DIR}/gl-res ${RES_FILES} rc_pack.crp resources
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/rc_pack.crp
+        ${CMAKE_CURRENT_BINARY_DIR}/rc_pack.crp
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     RESULT_VARIABLE __OUT_RES
     )
@@ -29,6 +32,9 @@ file(GLOB SRC_FILES
 add_custom_target(resources ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory resources
     COMMAND ${CMAKE_SOURCE_DIR}/gl-res ${RES_FILES} rc_pack.crp resources
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/rc_pack.crp
+        ${CMAKE_CURRENT_BINARY_DIR}/rc_pack.crp
     DEPENDS ${RESOURCES} ${RES_FILES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )

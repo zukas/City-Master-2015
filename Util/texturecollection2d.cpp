@@ -6,7 +6,7 @@
 
 texture2d TextureCollection2D::g_textures[50];
 
-GLID TextureCollection2D::create_dds_from_memory(byte *buffer, size_t size) {
+GLID TextureCollection2D::create_dds_from_memory(byte *buffer, uint32_t size) {
 
 	GLID texture_id = SOIL_load_OGL_texture_from_memory(
 		buffer, size, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,

@@ -15,7 +15,7 @@ class TextureCollection2D
 		static texture2d g_textures[50];
 
 	public:
-		static GLID create_dds_from_memory(byte * buffer, size_t size);
+        static GLID create_dds_from_memory(byte * buffer, uint32_t size);
 
 
 		static void destroy(GLID texture_id);

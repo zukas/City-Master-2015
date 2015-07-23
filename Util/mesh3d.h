@@ -3,25 +3,25 @@
 
 #include "types.h"
 
-constexpr size_t max_texture_count{3};
+constexpr uint32_t max_texture_count{3};
 
 class alignas(32) Mesh3D {
 
-    typedef void (*render_func)(size_t);
+    typedef void (*render_func)(uint32_t);
 
   private:
     GLID m_vertex_array{0};
-    size_t m_size;
+    uint32_t m_count{0};
     GLID m_textures[max_texture_count]{0};
-    size_t m_count{0};
+    uint32_t m_size;
     render_func m_render_func;
 
   public:
     Mesh3D();
     Mesh3D(const Mesh3D &) = delete;
     Mesh3D(Mesh3D &&other);
-    Mesh3D(const uv_vertex *vertexes, size_t size);
-    Mesh3D(const uv_vertex *vertexes, const GLID *indexes, size_t size);
+    Mesh3D(const uv_vertex *vertexes, uint32_t size);
+    Mesh3D(const uv_vertex *vertexes, const GLID *indexes, uint32_t size);
     ~Mesh3D();
     void add_texture(GLID texture_id);
     void render() const;

@@ -10,6 +10,7 @@ class alignas(32) Mesh3D {
     typedef void (*render_func)(size_t);
 
   private:
+	//Object size 32 bytes on 64 bit machine
     GLID m_vertex_array{0};
     size_t m_size;
     GLID m_textures[max_texture_count]{0};

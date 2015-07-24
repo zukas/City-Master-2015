@@ -16,6 +16,8 @@
 
 typedef unsigned GLID;
 typedef int GLSID;
+typedef unsigned uint32;
+typedef int int32;
 typedef unsigned char byte;
 
 constexpr float PI { 3.1415926535897932384626433832795f };

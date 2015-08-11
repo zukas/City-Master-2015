@@ -1,26 +1,17 @@
 #include "glprogram.h"
-#include "../Memory/utils.h"
-
-void check_alignment()
-{
-	for(int i = 0; i < 512; ++i)
-	{
-		printf("Value: %d, aligned 16: %lu, aligned 32: %lu, aligned 64: %lu\n", i, align_block_16(i),align_block_32(i),align_block_64(i));
-	}
-}
-
-void check_alloc()
-{
-
-}
-
+#include "Util/mesh3d.h"
+#include "Util/mesh.h"
+#include "Util/model.h"
+#include "Util/profiler.h"
 
 int main()
 {
-//	check_alignment();
+    printf("Model: %lu\nMesh: %lu\nMesh3D: %lu\n", sizeof(Model), sizeof(Mesh), sizeof(Mesh3D));
+
+
 	glProgram p;
 	p.exec();
 
-
+    print_profiler_results();
     return 0;
 }

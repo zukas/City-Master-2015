@@ -14,6 +14,7 @@
 #include "Util/utils.h"
 #include "Util/gldebugger.h"
 #include "Util/texturecollection2d.h"
+#include "Util/profiler.h"
 
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
@@ -478,30 +479,13 @@ glProgram::glProgram() {
 	m_keyboard.rotateVertical(
 		[=](float diff) { m_camera.rotateVertical(diff); });
 
-	glfwSwapInterval(1);
+    glfwSwapInterval(0);
 }
 
 void glProgram::exec() {
 	int frameCount = 0;
 	auto startTime = std::chrono::high_resolution_clock::now();
 	do {
-
-		if (glfwGetKey(m_window, GLFW_KEY_1) == GLFW_PRESS) {
-			for (auto &m : m_models) {
-				m.setAnimation(0);
-			}
-		} else if (glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS) {
-			for (auto &m : m_models) {
-				m.setAnimation(1);
-			}
-		}
-
-		if (glfwGetKey(m_window, GLFW_KEY_0) == GLFW_PRESS) {
-			for (auto &m : m_models) {
-				m.setAnimation(-1);
-			}
-		}
-
 		m_mouse.update();
 		m_keyboard.update();
 		render();
@@ -521,25 +505,29 @@ void glProgram::exec() {
 }
 
 void glProgram::render() {
-	Clock::update();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	m_camera.calcViewport();
+    {
+        PROF;
+        Clock::update();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        m_camera.calcViewport();
 
-	//	m_axis.render(m_camera);
+        //	m_axis.render(m_camera);
 
-	m_objectProgram.use();
-	m_lamp.update(m_objectProgram);
-	m_camera.update(m_objectProgram);
+        m_objectProgram.use();
+        m_lamp.update(m_objectProgram);
+        m_camera.update(m_objectProgram);
 
-	for (auto &m : m_models) {
-		m.render(m_objectProgram);
-	}
+        for (auto &m : m_models) {
+            m.render(m_objectProgram);
+        }
 
-	rings.render(m_camera);
+        rings.render(m_camera);
 
-	char buf[128];
-	std::sprintf(buf, "FPS: %.2f", m_frameRate);
-	m_text.render(buf, glm::vec4(0.f, 0.f, 0.f, 1.f), 20, 40);
+        char buf[128];
+        std::sprintf(buf, "FPS: %.2f", m_frameRate);
+        m_text.render(buf, glm::vec4(0.f, 0.f, 0.f, 1.f), 20, 40);
+
+    }
 
 	glDebugger::flush();
 

@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include "gldebugger.h"
+#include "profiler.h"
 
 
 glm::mat4 __basic_model_matrix_func(const transform &t, model_data)
@@ -22,7 +23,6 @@ Model::Model(Model &&other) :
 	m_data(other.m_data),
 	m_children(std::move(other.m_children)),
 	m_meshes(std::move(other.m_meshes)),
-	m_animations(std::move(other.m_animations)),
 	m_id(other.m_id),
 	m_selectable(other.m_selectable),
 	m_selected(other.m_selected)
@@ -41,7 +41,6 @@ Model::Model(const Model &other) :
 	m_data(other.m_data),
 	m_children(other.m_children),
 	m_meshes(other.m_meshes),
-	m_animations(other.m_animations),
 	m_id(ColourID::aquireID()),
 	m_selectable(other.m_selectable),
 	m_selected(false)
@@ -114,36 +113,10 @@ Mesh *Model::mesh(int index)
 	return index >= 0 && index < meshCount() ? &m_meshes[index] : nullptr;
 }
 
-void Model::addAnimation(Animation animation)
-{
-	m_animations.push_back(std::move(animation));
-}
-
-void Model::setAnimation(int id)
-{
-	m_animIndex = id >= 0 && id < (int)m_animations.size() ? id : -1;
-	if(m_animIndex != -1)
-	{
-		m_animations[m_animIndex].prepare();
-	}
-	for(auto &m : m_children)
-	{
-		m.setAnimation(id);
-	}
-}
-
-int Model::animationCount() const
-{
-	return m_animations.size();
-}
-
-Animation *Model::animation(int index)
-{
-	return index >= 0 && index < animationCount() ? &m_animations[index] : nullptr;
-}
 
 void Model::render(Program &program, const glm::mat4 &parent_transform)
 {
+    PROF;
 	if(program.type() == Selection)
 	{
 		if(!m_selectable) return;
@@ -246,7 +219,6 @@ Model &Model::operator = (Model &&other)
 	m_data = other.m_data;
 	m_children = std::move(other.m_children);
 	m_meshes = std::move(other.m_meshes);
-	m_animations = std::move(other.m_animations);
 	m_id = other.m_id;
 	m_selectable = other.m_selectable;
 	m_selected = other.m_selected;
@@ -269,7 +241,6 @@ Model &Model::operator = (const Model &other)
 	m_data = other.m_data;
 	m_children = other.m_children;
 	m_meshes = other.m_meshes;
-	m_animations = other.m_animations;
 	m_id = ColourID::aquireID();
 	m_selectable = other.m_selectable;
 	m_selected = false;

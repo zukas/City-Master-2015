@@ -4,7 +4,7 @@
 #include "types.h"
 #include "texture.h"
 #include "program.h"
-#include "animation.h"
+
 #include <glm/glm.hpp>
 #include <memory>
 

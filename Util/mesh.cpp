@@ -1,7 +1,7 @@
 #include "mesh.h"
 #include "clock.h"
 #include "gldebugger.h"
-
+#include "profiler.h"
 #include <GL/glew.h>
 
 
@@ -113,6 +113,7 @@ int Mesh::textureCount() const
 
 void Mesh::render(Program &program)
 {
+    PROF;
 	glBindVertexArray(m_vertexArray);
 
 	if(program.type() != Selection)

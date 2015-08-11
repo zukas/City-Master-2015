@@ -170,7 +170,7 @@ void Texture::unbind(GLID unit) const
 	glBindSampler(unit, m_data.m_samplerID);
 }
 
-bool Texture::bind(GLenum unit) const
+bool Texture::bind(GLID unit) const
 {
 	if(m_data.m_textureID == 0) return false;
 	glActiveTexture(GL_TEXTURE0+unit);

@@ -23,9 +23,6 @@ class Model
 		std::vector<Model> m_children;
 		std::vector<Mesh> m_meshes;
 
-		std::vector<Animation > m_animations;
-		int m_animIndex { -1 };
-
 		ColourID m_id { 0 };
 		bool m_selectable { true };
 		bool m_selected { false };
@@ -49,11 +46,6 @@ class Model
 		bool selected() const;
 		int meshCount() const;
 		Mesh *mesh(int index);
-		void addAnimation(Animation animation);
-		void setAnimation(int id);
-		int animationCount() const;
-		Animation *animation(int index);
-
 
 		void render(Program &program, const glm::mat4 &parent_transform = glm::mat4(1.f));
 //		void render(Program &program, const Transformation &parent_transform, const glm::mat4 &parent_matrix = glm::mat4(1.f));

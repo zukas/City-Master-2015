@@ -18,7 +18,6 @@
 
 Model processNode(const aiScene *scene, aiNode *node, glm::mat4 parentTransform);
 Mesh processMesh(const aiScene *scene, aiMesh *mesh);
-void attachAnimation(const aiScene *scene, aiNode *node, Model &model, glm::mat4 parentTransform);
 
 glm::mat4 convertMatrix(const aiMatrix4x4 &m);
 glm::mat4 convertMatrix(const glm::mat4 &m);
@@ -118,51 +117,6 @@ Mesh processMesh(const aiScene *scene, aiMesh *mesh)
     return res;
 }
 
-
-void attachAnimation(const aiScene *scene, aiNode *node, Model &model, glm::mat4 parentTransform)
-{
-    aiAnimation *tmp { nullptr };
-    aiNodeAnim *anim { nullptr };
-    for(unsigned i = 0; i < scene->mNumAnimations && anim == nullptr; ++i)
-    {
-        tmp = scene->mAnimations[i];
-        for(unsigned j = 0; j <tmp->mNumChannels && anim == nullptr; ++j)
-        {
-            if(tmp->mChannels[j]->mNodeName == node->mName)
-            {
-                anim = tmp->mChannels[j];
-            }
-        }
-    }
-
-    if(anim)
-    {
-
-        std::vector<AnimationKey > _trans(anim->mNumPositionKeys);
-
-        glm::mat4 rootTransform = convertMatrix(scene->mRootNode->mTransformation);
-        rootTransform = glm::inverse(std::move(rootTransform));
-		glm::mat4 base_transform = parentTransform * rootTransform;
-
-
-		for(unsigned i = 0; i < anim->mNumScalingKeys; ++i)
-		{
-			aiQuatKey rot = anim->mRotationKeys[i];
-			aiVectorKey trans = anim->mPositionKeys[i];
-			aiVectorKey scale = anim->mScalingKeys[i];
-
-			_trans[i] = {
-				{ rot.mValue.w, rot.mValue.x, rot.mValue.y, rot.mValue.z },
-				{ trans.mValue.x, trans.mValue.y, trans.mValue.z },
-				{ scale.mValue.x, scale.mValue.y, scale.mValue.z},
-				rot.mTime * 1000.f
-			};
-		}
-
-		model.addAnimation( { std::move(_trans), base_transform, float(tmp->mDuration) * 1000.f } );
-
-    }
-}
 
 glm::mat4 convertMatrix(const aiMatrix4x4 &m)
 {

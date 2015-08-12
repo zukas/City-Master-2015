@@ -38,10 +38,10 @@ void bind_vertex_data(const uv_vertex *vertexes, uint32_t size) {
 }
 
 
-Mesh3D::Mesh3D() : m_size(0) {}
+Mesh3D::Mesh3D() : m_elem_size(0) {}
 
 Mesh3D::Mesh3D(Mesh3D &&other)
-    : m_vertex_array(other.m_vertex_array), m_size(other.m_size) {
+    : m_vertex_array(other.m_vertex_array), m_elem_size(other.m_elem_size) {
     for (uint32_t i = 0; i < MESH3D_TEXTURE_COUNT; ++i) {
         m_textures[i] = other.m_textures[i];
         other.m_textures[i] = 0;
@@ -49,17 +49,17 @@ Mesh3D::Mesh3D(Mesh3D &&other)
     other.m_vertex_array = 0;
 }
 
-Mesh3D::Mesh3D(const uv_vertex *vertexes, const GLID *indexes, uint32_t size)
-    : m_size(size) {
+Mesh3D::Mesh3D(const uv_vertex *vertexes, uint32_t vertexe_size, const GLID *indexes, uint32_t index_size)
+    : m_elem_size(index_size) {
     glGenVertexArrays(1, &m_vertex_array);
     glBindVertexArray(m_vertex_array);
 
     GLID buffer[2];
     glGenBuffers(2, buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    bind_vertex_data(vertexes, size);
-
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(GLID), indexes,
+    bind_vertex_data(vertexes, vertexe_size);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_size * sizeof(GLID), indexes,
                  GL_STATIC_DRAW);
     glBindVertexArray(0);
 }
@@ -80,7 +80,7 @@ void Mesh3D::render() const {
     const GLID vertex_aray_ = m_vertex_array;
     const uint32_t count_ = m_count;
     const GLID *textures_ = m_textures;
-    const uint32_t size_ = m_size;
+    const uint32_t size_ = m_elem_size;
 
     glBindVertexArray(vertex_aray_);
 
@@ -98,7 +98,7 @@ void Mesh3D::render() const {
 void Mesh3D::render_geometry() const {
 
     const GLID vertex_aray_ = m_vertex_array;
-    const uint32_t size_ = m_size;
+    const uint32_t size_ = m_elem_size;
 
     glBindVertexArray(vertex_aray_);
     glDrawElements(GL_TRIANGLES, size_, GL_UNSIGNED_INT, nullptr);
@@ -107,7 +107,7 @@ void Mesh3D::render_geometry() const {
 
 Mesh3D &Mesh3D::operator=(Mesh3D &&other) {
     m_vertex_array = other.m_vertex_array;
-    m_size = other.m_size;
+    m_elem_size = other.m_elem_size;
     for (uint32_t i = 0; i < MESH3D_TEXTURE_COUNT; ++i) {
         m_textures[i] = other.m_textures[i];
         other.m_textures[i] = 0;

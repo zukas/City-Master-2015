@@ -12,13 +12,13 @@ class Mesh3D {
     GLID m_vertex_array{0};
     uint32_t m_count{0};
     GLID m_textures[MESH3D_TEXTURE_COUNT]{0};
-    uint32_t m_size;
+    uint32_t m_elem_size;
 
   public:
     Mesh3D();
     Mesh3D(const Mesh3D &) = delete;
     Mesh3D(Mesh3D &&other);
-    Mesh3D(const uv_vertex *vertexes, const GLID *indexes, uint32_t size);
+    Mesh3D(const uv_vertex *vertexes, uint32_t vertexe_size, const GLID *indexes, uint32_t index_size);
     ~Mesh3D();
     void add_texture(GLID texture_id);
     void render() const;

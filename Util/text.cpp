@@ -86,7 +86,7 @@ void load_char(char_data &data, FT_Face face, int index) {
 	data.coord[3] = glm::vec2(1.0f, 0.0f);
 }
 
-RefCount Text::g_counter{};
+// RefCount Text::g_counter{};
 
 Text::Text() {}
 
@@ -142,7 +142,7 @@ Text::Text(const char *font, int size) : m_fontSize(size) {
 						  nullptr   // array buffer offset
 						  );
 
-	g_counter + m_vertexArray;
+	//	g_counter + m_vertexArray;
 
 	glBindVertexArray(0);
 
@@ -153,7 +153,7 @@ Text::Text(const char *font, int size) : m_fontSize(size) {
     m_program.resolveUniforms();
 }
 
-Text::Text(unsigned char *font_buffer, size_t font_bufer_size, int size)
+Text::Text(byte *font_buffer, size_t font_bufer_size, int size)
 	: m_fontSize(size) {
 	FT_Library lib{nullptr};
 	FT_Face face{nullptr};
@@ -206,7 +206,7 @@ Text::Text(unsigned char *font_buffer, size_t font_bufer_size, int size)
 						  nullptr   // array buffer offset
 						  );
 
-    g_counter + m_vertexArray;
+	//    g_counter + m_vertexArray;
 
     glBindVertexArray(0);
 
@@ -218,19 +218,16 @@ Text::Text(unsigned char *font_buffer, size_t font_bufer_size, int size)
 }
 
 Text::Text(Text &&other)
-	: m_vertexArray(other.m_vertexArray), m_data(std::move(other.m_data)),
-	  m_newLine(other.m_newLine), m_fontSize(other.m_fontSize) {
+	: m_vertexArray(other.m_vertexArray.move()),
+	  m_data(std::move(other.m_data)), m_newLine(other.m_newLine),
+	  m_fontSize(other.m_fontSize) {
 	other.m_vertexArray = 0;
 }
 
-Text::~Text() {
-	if (m_vertexArray != 0 && (g_counter - m_vertexArray) == 0) {
-		glDeleteVertexArrays(1, &m_vertexArray);
-	}
-}
+Text::~Text() { glDeleteVertexArrays(1, &m_vertexArray); }
 
 Text &Text::operator=(Text &&other) {
-	m_vertexArray = other.m_vertexArray;
+	m_vertexArray = other.m_vertexArray.move();
 	m_program = std::move(other.m_program);
 	m_data = std::move(other.m_data);
 	m_newLine = other.m_newLine;

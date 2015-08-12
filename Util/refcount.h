@@ -7,12 +7,12 @@
 class RefCount
 {
     private:
-         std::map<GLID, int > m_counter;
+		 std::map<uint32_t, int > m_counter;
          std::mutex m_lock;
 
     public:
-        void operator + (GLID val);
-        int operator - (GLID val);
+		void operator + (uint32_t val);
+		int operator - (uint32_t val);
 };
 
 #endif // REFCOUNT_H

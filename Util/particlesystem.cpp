@@ -286,10 +286,10 @@ void ParticleSystem::init_programs(size_t field_count, const char **field_names)
 
 void ParticleSystem::init_buffers(size_t particle_size, size_t field_count, field_prop *field_deatils, size_t total_particle_count, size_t init_particle_count, void *init_buffer)
 {
-	glGenBuffers(2, m_buffers);
+	glGenBuffers(2, (GLuint*)m_buffers);
 	glGenTransformFeedbacks(1, &m_transformBuffer);
 	glGenQueries(1, &m_query);
-	glGenVertexArrays(2, m_vertexArrayID);
+	glGenVertexArrays(2, (GLuint*)m_vertexArrayID);
 	for(int i = 0; i < 2; ++i)
 	{
 		glBindVertexArray(m_vertexArrayID[i]);
@@ -339,8 +339,8 @@ void ParticleSystem::setBlendFunc(int key, int func)
 
 void ParticleSystem::update(set_uniforms_func func)
 {
-		static GLSID frame_time_uniform = m_programs[0].resolveUniform("frame_time");
-		static GLSID current_time_uniform = m_programs[0].resolveUniform("current_time");
+		static glint frame_time_uniform = m_programs[0].resolveUniform("frame_time");
+		static glint current_time_uniform = m_programs[0].resolveUniform("current_time");
 
 		m_programs[0].use();
 

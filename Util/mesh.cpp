@@ -11,7 +11,7 @@ void Mesh::bindData()
 	glBindVertexArray(m_vertexArray);
 
 	GLID buffer[2];
-	glGenBuffers(m_indexes.empty() ? 1 : 2, buffer);
+	glGenBuffers(m_indexes.empty() ? 1 : 2, (GLuint*)buffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
 	glBufferData(GL_ARRAY_BUFFER, m_data.size() * sizeof(uv_vertex), &m_data[0], GL_STATIC_DRAW);

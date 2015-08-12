@@ -7,49 +7,49 @@
 #include <array>
 #include <glm/glm.hpp>
 
-struct char_data
-{
-        Texture c {};
-        int aX { 0 };
-        int aY { 0 };
-        int bX { 0 };
-        int bY { 0 };
-        int cW { 0 };
-        int cH { 0 };
-        glm::vec2 *pos { nullptr };
-        glm::vec2 *coord { nullptr };
+struct char_data {
+	Texture c{};
+	int aX{0};
+	int aY{0};
+	int bX{0};
+	int bY{0};
+	int cW{0};
+	int cH{0};
+	glm::vec2 *pos{nullptr};
+	glm::vec2 *coord{nullptr};
 };
 
-class Text
-{
-	private:
-		static  constexpr int char_data_set { 128 };
-    private:
-        GLID m_vertexArray { 0 };
-		Program m_program {};
-		std::array<char_data, char_data_set > m_data;
-        int m_newLine { 0 };
-		int m_fontSize { 0 };
-		glm::vec2 m_last {};
-        static RefCount g_counter;
+class Text {
+  private:
+	static constexpr int char_data_set{128};
 
-    public:
-        Text();
-		Text(const char *font, int size);
-		Text(unsigned char *font_buffer, size_t font_bufer_size, int size);
-        Text(Text &&other);
-        ~Text();
+  private:
+	GLID m_vertexArray{0};
+	Program m_program{};
+	std::array<char_data, char_data_set> m_data;
+	int m_newLine{0};
+	int m_fontSize{0};
+	glm::vec2 m_last{};
+//	static RefCount g_counter;
 
-        Text &operator = (Text &&other);
+  public:
+	Text();
+	Text(const char *font, int size);
+	Text(byte *font_buffer, size_t font_bufer_size, int size);
+	Text(Text &&other);
+	~Text();
 
-		void render(const char *text, const glm::vec4 &colour, int x, int y, int size = -1);
+	Text &operator=(Text &&other);
 
-		glm::vec2 lastDimentions() const;
-		int lineHeight() const;
-		Program &program();
+	void render(const char *text, const glm::vec4 &colour, int x, int y,
+				int size = -1);
 
-        Text(const Text&) = delete;
-        Text &operator = (const Text&) = delete;
+	glm::vec2 lastDimentions() const;
+	int lineHeight() const;
+	Program &program();
+
+	Text(const Text &) = delete;
+	Text &operator=(const Text &) = delete;
 };
 
 #endif // TEXT_H

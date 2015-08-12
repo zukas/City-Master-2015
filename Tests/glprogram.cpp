@@ -13,14 +13,13 @@
 #include "Util/shapes.h"
 #include "Util/utils.h"
 #include "Util/gldebugger.h"
-#include "Util/texturecollection2d.h"
 #include "Util/profiler.h"
+#include "Util/texture2d.h"
 
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
 #include "resources/resourcemanager.h"
-#include "Util/texturecollection2d.h"
 
 #include <chrono>
 
@@ -181,8 +180,9 @@ Model Planet::generate(float parent_size) {
     auto d = sphare::create(calc_size / 2.f, parts, parts);
 
     Mesh3D m{d.data.data(), d.data.size(), d.indexes.data(), d.indexes.size()};
-
-    m.add_texture(TextureCollection2D::create_dds_from_memory(res.buffer, res.size));
+	Texture2D tex;
+	tex.init_dds_from_memory(res.buffer, res.size);
+	m.texture(0) = tex.move();
 
     Model mod{new Mesh3D[1] { std::move(m) }, 1 };
 	mod.setLocation(
@@ -434,7 +434,15 @@ glProgram::glProgram() {
 
 	BitsMemory::clear();
 
+	auto dd = get_res_neptune_dds();
+	Texture2D tt;
+	tt.init_dds_from_memory(dd.buffer,dd.size);
 
+	Texture2D tt2;
+
+	tt2 = std::move(tt);
+
+	BitsMemory::clear();
 
 	rings.init();
     auto freesans_buffer = get_res_freesans_ttf();

@@ -35,7 +35,7 @@ Texture::Texture(int size)
 	g_counter + m_data.m_textureID;
 }
 
-Texture::Texture(GLID type, const std::string &file) :
+Texture::Texture(unsigned type, const std::string &file) :
 	m_id(std::hash<std::string>()(file))
 {
 	auto it = g_data.find(m_id);
@@ -64,7 +64,7 @@ Texture::Texture(GLID type, const std::string &file) :
 
 }
 
-Texture::Texture(GLID type, const unsigned char *data, size_t size)
+Texture::Texture(unsigned type, const unsigned char *data, size_t size)
 {
 #warning Loading only DDS
 	m_data.m_textureType = type;
@@ -81,7 +81,7 @@ Texture::Texture(GLID type, const unsigned char *data, size_t size)
     g_counter + m_data.m_textureID;
 }
 
-Texture::Texture(GLID type, const std::vector<unsigned char> &buffer, int width, int height, GLID format)
+Texture::Texture(unsigned type, const std::vector<unsigned char> &buffer, int width, int height, unsigned format)
 {
 	m_data.m_textureType = type;
 	glGenTextures(1, &m_data.m_textureID);
@@ -163,14 +163,14 @@ Texture::~Texture()
 	}
 }
 
-void Texture::unbind(GLID unit) const
+void Texture::unbind(unsigned unit) const
 {
 	glActiveTexture(GL_TEXTURE0+unit);
 	glBindTexture(m_data.m_textureType, 0);
 	glBindSampler(unit, m_data.m_samplerID);
 }
 
-bool Texture::bind(GLID unit) const
+bool Texture::bind(unsigned unit) const
 {
 	if(m_data.m_textureID == 0) return false;
 	glActiveTexture(GL_TEXTURE0+unit);

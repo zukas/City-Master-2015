@@ -11,11 +11,11 @@
 class Mesh
 {
     private:
-        GLID m_vertexArray { 0 };
+		uint32_t m_vertexArray { 0 };
 
     private:
 		std::vector<uv_vertex> m_data;
-		std::vector<GLID> m_indexes;
+		std::vector<uint32_t> m_indexes;
 		std::vector<Texture > m_textures;
     private:
         void bindData();

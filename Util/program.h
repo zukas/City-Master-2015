@@ -79,46 +79,46 @@ class UniformManager
 
 		void setUniform(const char *name, bool value);
 		void setUniform(const char *name, GLID value);
-		void setUniform(const char *name, GLSID value);
+		void setUniform(const char *name, glint value);
 		void setUniform(const char *name, float value);
 		void setUniform(const char *name, const glm::vec2 &vec);
 		void setUniform(const char *name, const glm::vec3 &vec);
 		void setUniform(const char *name, const glm::vec4 &vec);
 		void setUniform(const char *name, const glm::mat4 &mat);
 
-		void setUniform(GLSID id, bool value);
-		void setUniform(GLSID id, GLID value);
-		void setUniform(GLSID id, GLSID value);
-		void setUniform(GLSID id, float value);
-		void setUniform(GLSID id, const glm::vec2 &vec);
-		void setUniform(GLSID id, const glm::vec3 &vec);
-		void setUniform(GLSID id, const glm::vec4 &vec);
-		void setUniform(GLSID id, const glm::mat4 &mat);
+		void setUniform(glint id, bool value);
+		void setUniform(glint id, GLID value);
+		void setUniform(glint id, glint value);
+		void setUniform(glint id, float value);
+		void setUniform(glint id, const glm::vec2 &vec);
+		void setUniform(glint id, const glm::vec3 &vec);
+		void setUniform(glint id, const glm::vec4 &vec);
+		void setUniform(glint id, const glm::mat4 &mat);
 
-		GLSID resolveUniform(const char *name) const;
+		glint resolveUniform(const char *name) const;
 };
 
 class Program : public UniformManager
 {
 	private:
-		GLID m_programID;
-		std::vector<GLID > m_shaders;
+		uint32_t m_programID;
+		std::vector<uint32_t > m_shaders;
 		ProgramType m_type { Normal };
 		Viewport m_viewport;
 		struct
 		{
-				GLSID glsl_model_matrix { 0 };
-				GLSID glsl_view_matrix { 0 };
-				GLSID glsl_projection_matrix { 0 };
-				GLSID glsl_camera_position { 0 };
-				GLSID glsl_quad[2] { 0 };
-				GLSID glsl_light_position { 0 };
-				GLSID glsl_light_strength { 0 };
-				GLSID glsl_sampler[5] { 0 };
-				GLSID glsl_texture_count { 0 };
-				GLSID glsl_object_id { 0 };
-				GLSID glsl_object_selected { 0 };
-				GLSID glsl_colour { 0 };
+				glint glsl_model_matrix { 0 };
+				glint glsl_view_matrix { 0 };
+				glint glsl_projection_matrix { 0 };
+				glint glsl_camera_position { 0 };
+				glint glsl_quad[2] { 0 };
+				glint glsl_light_position { 0 };
+				glint glsl_light_strength { 0 };
+				glint glsl_sampler[5] { 0 };
+				glint glsl_texture_count { 0 };
+				glint glsl_object_id { 0 };
+				glint glsl_object_selected { 0 };
+				glint glsl_colour { 0 };
 		} m_ids;
 
 		static RefCount g_counter;
@@ -152,7 +152,7 @@ class Program : public UniformManager
 		void setQuads(const glm::vec3 *quads);
 		void setLigthPosition(const glm::vec3 &vec);
 		void setLightStrength(float value);
-		void setSampers(GLSID value);
+		void setSampers(glint value);
 		void setObjectID(const glm::vec4 &vec);
 		void setSelected(bool value);
 		void setColour(const glm::vec4 &vec);

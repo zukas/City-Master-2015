@@ -250,7 +250,7 @@ void Program::setLightStrength(float value)
     glProgramUniform1f(m_programID, m_ids.glsl_light_strength, value);
 }
 
-void Program::setSampers(GLSID value)
+void Program::setSampers(glint value)
 {
     for(int i = 0; i < value; ++i)
     {
@@ -308,93 +308,93 @@ UniformManager::UniformManager(Program *prog) :
 
 void UniformManager::setUniform(const char *name, bool value)
 {
-	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glint id = glGetUniformLocation(m_prog->program(), name);
 	glProgramUniform1i(m_prog->program(), id, value);
 }
 
 void UniformManager::setUniform(const char *name, GLID value)
 {
-	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glint id = glGetUniformLocation(m_prog->program(), name);
 	glProgramUniform1ui(m_prog->program(), id, value);
 }
 
-void UniformManager::setUniform(const char *name, GLSID value)
+void UniformManager::setUniform(const char *name, glint value)
 {
-	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glint id = glGetUniformLocation(m_prog->program(), name);
 	glProgramUniform1i(m_prog->program(), id, value);
 }
 
 void UniformManager::setUniform(const char *name, float value)
 {
-	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glint id = glGetUniformLocation(m_prog->program(), name);
 	glProgramUniform1f(m_prog->program(), id, value);
 }
 
 void UniformManager::setUniform(const char *name, const glm::vec2 &vec)
 {
-	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glint id = glGetUniformLocation(m_prog->program(), name);
 	glProgramUniform2fv(m_prog->program(), id, 1, &vec[0]);
 }
 
 void UniformManager::setUniform(const char *name, const glm::vec3 &vec)
 {
-	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glint id = glGetUniformLocation(m_prog->program(), name);
 	glProgramUniform3fv(m_prog->program(), id, 1, &vec[0]);
 }
 
 void UniformManager::setUniform(const char *name, const glm::vec4 &vec)
 {
-	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glint id = glGetUniformLocation(m_prog->program(), name);
 	glProgramUniform4fv(m_prog->program(), id, 1, &vec[0]);
 }
 
 void UniformManager::setUniform(const char *name, const glm::mat4 &mat)
 {
-	GLSID id = glGetUniformLocation(m_prog->program(), name);
+	glint id = glGetUniformLocation(m_prog->program(), name);
 	glProgramUniformMatrix4fv(m_prog->program(), id, 1, GL_FALSE, &mat[0][0]);
 }
 
-void UniformManager::setUniform(GLSID id, bool value)
+void UniformManager::setUniform(glint id, bool value)
 {
 	glProgramUniform1ui(m_prog->program(), id, value);
 }
 
-void UniformManager::setUniform(GLSID id, GLID value)
+void UniformManager::setUniform(glint id, GLID value)
 {
 	glProgramUniform1ui(m_prog->program(), id, value);
 }
 
-void UniformManager::setUniform(GLSID id, GLSID value)
+void UniformManager::setUniform(glint id, glint value)
 {
 	glProgramUniform1i(m_prog->program(), id, value);
 }
 
-void UniformManager::setUniform(GLSID id, float value)
+void UniformManager::setUniform(glint id, float value)
 {
 	glProgramUniform1f(m_prog->program(), id, value);
 }
 
-void UniformManager::setUniform(GLSID id, const glm::vec2 &vec)
+void UniformManager::setUniform(glint id, const glm::vec2 &vec)
 {
 	glProgramUniform2fv(m_prog->program(), id, 1, &vec[0]);
 }
 
-void UniformManager::setUniform(GLSID id, const glm::vec3 &vec)
+void UniformManager::setUniform(glint id, const glm::vec3 &vec)
 {
 	glProgramUniform3fv(m_prog->program(), id, 1, &vec[0]);
 }
 
-void UniformManager::setUniform(GLSID id, const glm::vec4 &vec)
+void UniformManager::setUniform(glint id, const glm::vec4 &vec)
 {
 	glProgramUniform4fv(m_prog->program(), id, 1, &vec[0]);
 }
 
-void UniformManager::setUniform(GLSID id, const glm::mat4 &mat)
+void UniformManager::setUniform(glint id, const glm::mat4 &mat)
 {
 	glProgramUniformMatrix4fv(m_prog->program(), id, 1, GL_FALSE, &mat[0][0]);
 }
 
-GLSID UniformManager::resolveUniform(const char *name) const
+glint UniformManager::resolveUniform(const char *name) const
 {
 	return glGetUniformLocation(m_prog->program(), name);
 }

@@ -1,5 +1,4 @@
 #include "mesh3d.h"
-#include "texturecollection2d.h"
 #include "uniforms.h"
 #include "profiler.h"
 #include <GL/glew.h>
@@ -37,25 +36,13 @@ void bind_vertex_data(const uv_vertex *vertexes, uint32_t size) {
         );
 }
 
-
-Mesh3D::Mesh3D() : m_elem_size(0) {}
-
-Mesh3D::Mesh3D(Mesh3D &&other)
-    : m_vertex_array(other.m_vertex_array), m_count(other.m_count), m_elem_size(other.m_elem_size) {
-    for (uint32_t i = 0; i < MESH3D_TEXTURE_COUNT; ++i) {
-        m_textures[i] = other.m_textures[i];
-        other.m_textures[i] = 0;
-    }
-    other.m_vertex_array = 0;
-}
-
-Mesh3D::Mesh3D(const uv_vertex *vertexes, uint32_t vertexe_size, const GLID *indexes, uint32_t index_size)
+Mesh3D::Mesh3D(const uv_vertex *vertexes, uint32_t vertexe_size, const uint32_t *indexes, uint32_t index_size)
     : m_elem_size(index_size) {
     glGenVertexArrays(1, &m_vertex_array);
     glBindVertexArray(m_vertex_array);
 
     GLID buffer[2];
-    glGenBuffers(2, buffer);
+	glGenBuffers(2, (GLuint*)buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
     bind_vertex_data(vertexes, vertexe_size);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer[1]);
@@ -66,29 +53,26 @@ Mesh3D::Mesh3D(const uv_vertex *vertexes, uint32_t vertexe_size, const GLID *ind
 
 Mesh3D::~Mesh3D() {
     glDeleteVertexArrays(1, &m_vertex_array);
-    m_vertex_array = 0;
+	m_vertex_array = 0;
 }
 
-void Mesh3D::add_texture(GLID texture_id) {
-    ASSERT(texture_id != 0);
-    ASSERT(m_count < MESH3D_TEXTURE_COUNT);
-    m_textures[m_count++] = texture_id;
+Texture2D &Mesh3D::texture(uint32_t index)
+{
+	return m_textures[index];
 }
 
 void Mesh3D::render() const {
     PROF;
-    const GLID vertex_aray_ = m_vertex_array;
-    const uint32_t count_ = m_count;
-    const GLID *textures_ = m_textures;
+	const GLuint vertex_aray_ = m_vertex_array;
     const uint32_t size_ = m_elem_size;
 
     glBindVertexArray(vertex_aray_);
 
-    for (size_t i = 0; i < count_; ++i) {
-        TextureCollection2D::bind(textures_[i], i);
+	for (uint8_t i = 0; i < m_textures.size(); ++i) {
+		m_textures[i].bind(i);
         glUniform1i(glsl_sampler_int[i], i);
     }
-    glUniform1i(glsl_texture_count_int, count_);
+	glUniform1i(glsl_texture_count_int,  m_textures.size());
 
     glDrawElements(GL_TRIANGLES, size_, GL_UNSIGNED_INT, nullptr);
 
@@ -97,22 +81,15 @@ void Mesh3D::render() const {
 
 void Mesh3D::render_geometry() const {
 
-    const GLID vertex_aray_ = m_vertex_array;
+	const GLuint vertex_aray_ = m_vertex_array;
     const uint32_t size_ = m_elem_size;
 
     glBindVertexArray(vertex_aray_);
     glDrawElements(GL_TRIANGLES, size_, GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
+	glBindVertexArray(0);
 }
 
-Mesh3D &Mesh3D::operator=(Mesh3D &&other) {
-    m_vertex_array = other.m_vertex_array;
-    m_count = other.m_count;
-    m_elem_size = other.m_elem_size;
-    for (uint32_t i = 0; i < MESH3D_TEXTURE_COUNT; ++i) {
-        m_textures[i] = other.m_textures[i];
-        other.m_textures[i] = 0;
-    }
-    m_vertex_array = 0;
-    return *this;
+Mesh3D &&Mesh3D::move()
+{
+	return ::move(*this);
 }

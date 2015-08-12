@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "mesh.h"
+#include "mesh3d.h"
 #include "colourid.h"
 
 
@@ -21,7 +22,8 @@ class Model
 		model_data m_data { nullptr };
 
 		std::vector<Model> m_children;
-		std::vector<Mesh> m_meshes;
+        Mesh3D *m_meshes;
+        uint32_t m_mesh_size;
 
 		ColourID m_id { 0 };
 		bool m_selectable { true };
@@ -32,7 +34,8 @@ class Model
 		~Model();
 		Model(Model &&other);
 		Model(const Model &other);
-		Model(std::vector<Mesh > meshes);
+//		Model(std::vector<Mesh > meshes);
+        Model(Mesh3D *meshes, uint32_t size);
 
 		void addChild(Model &&child);
 		void setLocation(const glm::vec3 &loc);
@@ -45,7 +48,7 @@ class Model
 		void select(bool selected = true);
 		bool selected() const;
 		int meshCount() const;
-		Mesh *mesh(int index);
+        Mesh3D *mesh(int index);
 
 		void render(Program &program, const glm::mat4 &parent_transform = glm::mat4(1.f));
 //		void render(Program &program, const Transformation &parent_transform, const glm::mat4 &parent_matrix = glm::mat4(1.f));

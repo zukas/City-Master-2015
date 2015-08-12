@@ -1,6 +1,6 @@
 #version 330
 
-uniform sampler2D tsampler[5];
+uniform sampler2D tsampler[2];
 uniform int tcount;
 uniform vec3 lightPosition;
 uniform float lightStrength;
@@ -17,34 +17,34 @@ out vec3 colour;
 void main()
 {
 
-    vec4 tmpc = vec4(0.0, 0.0, 0.0, 0.0);
-    for(int i = 0; i < tcount; i++)
-    {
-        if(i == 0)
-        {
-            tmpc+=texture2D(tsampler[0], UV);
-        }
-        else if(i == 1)
-        {
-            tmpc+=texture2D(tsampler[1], UV);
-        }
-        else if(i == 2)
-        {
-            tmpc+=texture2D(tsampler[2], UV);
-        }
-        else if(i == 3)
-        {
-            tmpc+=texture2D(tsampler[3], UV);
-        }
-        else if(i == 4)
-        {
-            tmpc+=texture2D(tsampler[4], UV);
-        }
-    }
-    if(tcount == 0)
-    {
-        tmpc = vec4(UV.x, UV.y, 0.35, 1.0);
-    }
+    vec4 tmpc = texture2D(tsampler[0], UV);
+//    for(int i = 0; i < tcount; i++)
+//    {
+//        if(i == 0)
+//        {
+//            tmpc+=texture2D(tsampler[0], UV);
+//        }
+//        else if(i == 1)
+//        {
+//            tmpc+=texture2D(tsampler[1], UV);
+//        }
+//        else if(i == 2)
+//        {
+//            tmpc+=texture2D(tsampler[2], UV);
+//        }
+//        else if(i == 3)
+//        {
+//            tmpc+=texture2D(tsampler[3], UV);
+//        }
+//        else if(i == 4)
+//        {
+//            tmpc+=texture2D(tsampler[4], UV);
+//        }
+//    }
+//    if(tcount == 0)
+//    {
+//        tmpc = vec4(UV.x, UV.y, 0.35, 1.0);
+//    }
 
     vec3 LightColor = vec3(1,0.92,0.90);
     if(objectSelected == 1)

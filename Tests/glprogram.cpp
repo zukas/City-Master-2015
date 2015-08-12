@@ -20,6 +20,7 @@
 #include <glm/gtx/euler_angles.hpp>
 
 #include "resources/resourcemanager.h"
+#include "Util/texturecollection2d.h"
 
 #include <chrono>
 
@@ -176,10 +177,14 @@ Model Planet::generate(float parent_size) {
 		parts = 4;
 		break;
 	}
-	Mesh m{sphare::create(calc_size / 2.f, parts, parts)};
-    m.addTexture({GL_TEXTURE_2D, res.buffer, res.size});
 
-	Model mod{{std::move(m)}};
+    auto d = sphare::create(calc_size / 2.f, parts, parts);
+
+    Mesh3D m{d.data.data(), d.data.size(), d.indexes.data(), d.indexes.size()};
+
+    m.add_texture(TextureCollection2D::create_dds_from_memory(res.buffer, res.size));
+
+    Model mod{new Mesh3D[1] { std::move(m) }, 1 };
 	mod.setLocation(
 		{parent_size + (calc_distance > 0.f ? calc_size + calc_distance : 0.f),
 		 0.f, 0.f});

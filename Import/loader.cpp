@@ -53,7 +53,7 @@ Model processNode(const aiScene *scene, aiNode *node, glm::mat4 parentTransform)
         Mesh mesh = processMesh(scene, scene->mMeshes[node->mMeshes[i]]);
 		meshes[i] = std::move(mesh);
     }
-	Model m { std::move(meshes) };
+    Model m;// { std::move(meshes) };
 
 //	mesh = attachAnimation(scene, node, std::move(mesh), std::move(parentTransform));
     for(unsigned i = 0; i <node->mNumChildren; ++i)

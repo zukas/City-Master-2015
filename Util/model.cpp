@@ -22,7 +22,8 @@ Model::Model(Model &&other) :
 	m_postprocFunc(other.m_postprocFunc),
 	m_data(other.m_data),
 	m_children(std::move(other.m_children)),
-	m_meshes(std::move(other.m_meshes)),
+    m_meshes(other.m_meshes),
+    m_mesh_size(other.m_mesh_size),
 	m_id(other.m_id),
 	m_selectable(other.m_selectable),
 	m_selected(other.m_selected)
@@ -40,18 +41,27 @@ Model::Model(const Model &other) :
 	m_postprocFunc(other.m_postprocFunc),
 	m_data(other.m_data),
 	m_children(other.m_children),
-	m_meshes(other.m_meshes),
+    m_meshes(other.m_meshes),
+    m_mesh_size(other.m_mesh_size),
 	m_id(ColourID::aquireID()),
 	m_selectable(other.m_selectable),
 	m_selected(false)
 {
 }
 
-Model::Model(std::vector<Mesh> meshes) :
-	m_meshes(std::move(meshes)),
-	m_id(ColourID::aquireID())
+Model::Model(Mesh3D *meshes, uint32_t size) :
+    m_meshes(meshes),
+    m_mesh_size(size),
+    m_id(ColourID::aquireID())
 {
+
 }
+
+//Model::Model(std::vector<Mesh> meshes) :
+//	m_meshes(std::move(meshes)),
+//	m_id(ColourID::aquireID())
+//{
+//}
 
 void Model::addChild(Model &&child)
 {
@@ -105,12 +115,12 @@ bool Model::selected() const
 
 int Model::meshCount() const
 {
-	return m_meshes.size();
+    return m_mesh_size;
 }
 
-Mesh *Model::mesh(int index)
+Mesh3D *Model::mesh(int index)
 {
-	return index >= 0 && index < meshCount() ? &m_meshes[index] : nullptr;
+    return index >= 0 && index < m_mesh_size ? &m_meshes[index] : nullptr;
 }
 
 
@@ -155,10 +165,16 @@ void Model::render(Program &program, const glm::mat4 &parent_transform)
 
 	program.setModelMatrix(tmp);
 
-	for(auto &m : m_meshes)
-	{
-		m.render(program);
-	}
+
+    for(uint32_t i = 0; i < m_mesh_size; ++i)
+    {
+        m_meshes[i].render();
+    }
+
+//	for(auto &m : m_meshes)
+//	{
+//		m.render(program);
+//	}
 
 }
 
@@ -218,7 +234,8 @@ Model &Model::operator = (Model &&other)
 	m_postprocFunc = other.m_postprocFunc;
 	m_data = other.m_data;
 	m_children = std::move(other.m_children);
-	m_meshes = std::move(other.m_meshes);
+    m_meshes = other.m_meshes;
+    m_mesh_size = other.m_mesh_size;
 	m_id = other.m_id;
 	m_selectable = other.m_selectable;
 	m_selected = other.m_selected;
@@ -240,7 +257,8 @@ Model &Model::operator = (const Model &other)
 	m_postprocFunc = other.m_postprocFunc;
 	m_data = other.m_data;
 	m_children = other.m_children;
-	m_meshes = other.m_meshes;
+    m_meshes = other.m_meshes;
+    m_mesh_size = other.m_mesh_size;
 	m_id = ColourID::aquireID();
 	m_selectable = other.m_selectable;
 	m_selected = false;

@@ -41,7 +41,7 @@ void bind_vertex_data(const uv_vertex *vertexes, uint32_t size) {
 Mesh3D::Mesh3D() : m_elem_size(0) {}
 
 Mesh3D::Mesh3D(Mesh3D &&other)
-    : m_vertex_array(other.m_vertex_array), m_elem_size(other.m_elem_size) {
+    : m_vertex_array(other.m_vertex_array), m_count(other.m_count), m_elem_size(other.m_elem_size) {
     for (uint32_t i = 0; i < MESH3D_TEXTURE_COUNT; ++i) {
         m_textures[i] = other.m_textures[i];
         other.m_textures[i] = 0;
@@ -107,6 +107,7 @@ void Mesh3D::render_geometry() const {
 
 Mesh3D &Mesh3D::operator=(Mesh3D &&other) {
     m_vertex_array = other.m_vertex_array;
+    m_count = other.m_count;
     m_elem_size = other.m_elem_size;
     for (uint32_t i = 0; i < MESH3D_TEXTURE_COUNT; ++i) {
         m_textures[i] = other.m_textures[i];

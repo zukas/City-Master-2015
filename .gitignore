@@ -34,3 +34,7 @@
 
 *.crp
 gl-res
+
+#Generated files
+resources/resourcemanager.cpp
+resources/resourcemanager.h

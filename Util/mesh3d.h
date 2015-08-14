@@ -6,6 +6,13 @@
 
 #define MESH3D_TEXTURE_COUNT 2
 
+struct mesh_3d
+{
+    uint32_t mesh_index;
+    uint32_t texture_size;
+    uint32_t texture_index[4];
+};
+
 class Mesh3D {
 
   private:

@@ -9,8 +9,8 @@ message("Required packages:\nlibghc-glut-dev libglfw3-dev libglm-dev libgl1-mesa
 
 include(FindPkgConfig)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -fPIC")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -fno-exceptions -fPIC")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -fno-exceptions -fPIC")
 
 set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
 if (NOT "${BUILD_TYPE}" STREQUAL "")
@@ -49,7 +49,7 @@ set(TESTS gl-test)
 add_subdirectory(Resources)
 add_subdirectory(Memory)
 add_subdirectory(Util)
-add_subdirectory(Import)
+#add_subdirectory(Import)
 add_subdirectory(UI)
 add_subdirectory(Tests)
 

@@ -9,7 +9,7 @@ uint32_t Texture2DCollection::_sampler_size{0};
 
 void Texture2DCollection::init(uint32_t texture_size, uint32_t sampler_size) {
     ASSERT(texture_size > 0);
-    ASSERT(texture_size < MAX_TEXTURE_2D_COUNT);
+	ASSERT(texture_size < MAX_TEXTURE_2D_SIZE);
     _texture_size = texture_size;
 
     ASSERT(sampler_size > 0);

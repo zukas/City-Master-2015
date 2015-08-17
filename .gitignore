@@ -36,5 +36,6 @@
 gl-res
 
 #Generated files
-resources/resourcemanager.cpp
-resources/resourcemanager.h
+Tests/resources/resourcemanager.cpp
+Tests/resources/resourcemanager.h
+

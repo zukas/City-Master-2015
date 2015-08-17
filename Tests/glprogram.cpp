@@ -8,14 +8,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_interpolation.hpp>
 #include <glm/gtx/transform.hpp>
-#include "Import/loader.h"
+//#include "Import/loader.h"
 #include "Util/clock.h"
 #include "Util/shapes.h"
 #include "Util/utils.h"
 #include "Util/gldebugger.h"
 #include "Util/profiler.h"
 #include "Util/texture2d.h"
-
+#include "Util/utils.h"
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
@@ -259,6 +259,18 @@ glProgram::glProgram() {
     m_objectProgram.createProgram();
     m_objectProgram.linkProgram();
     m_objectProgram.resolveUniforms();
+
+	Shader ss[2] {
+		{VERTEX, get_res_object_vert_glsl()},
+		{FRAGMENT, get_res_object_frag_glsl()}
+	};
+
+	uint32_t pid = ProgramCompiler::compileProgram(ss, 2);
+
+	uint32_t uni[6];
+	ProgramCompiler::resolveUniforms(pid, uni, 6);
+
+	uint32_t uni2 = crypto::sid("modelMatrix");
 
     m_objectSelectionProgram.createShader(
         {VERTEX, get_res_object_select_vert_glsl()});

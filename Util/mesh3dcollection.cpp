@@ -10,7 +10,7 @@ uint32_t Mesh3DCollection::_size{0};
 void Mesh3DCollection::init(uint32_t size) {
     ASSERT(_elem_count == nullptr);
     ASSERT(size > 0);
-    ASSERT(size < MAX_MESH_3D_COUNT);
+	ASSERT(size < MAX_MESH_3D_SIZE);
     _size = size;
     memset(_elem_count, 0, sizeof(_elem_count));
 

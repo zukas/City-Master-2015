@@ -492,7 +492,7 @@ glProgram::glProgram() {
 	m_keyboard.rotateVertical(
 		[=](float diff) { m_camera.rotateVertical(diff); });
 
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);
 }
 
 void glProgram::exec() {
@@ -518,6 +518,7 @@ void glProgram::exec() {
 }
 
 void glProgram::render() {
+    PROF;
     {
         PROF;
         Clock::update();
@@ -534,7 +535,7 @@ void glProgram::render() {
             m.render(m_objectProgram);
         }
 
-        rings.render(m_camera);
+//        rings.render(m_camera);
 
         char buf[128];
         std::sprintf(buf, "FPS: %.2f", m_frameRate);

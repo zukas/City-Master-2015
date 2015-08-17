@@ -78,6 +78,6 @@ void print_profiler_results()
     for(uint16_t i = 0; i < size; ++i)
     {
         const prof_info &info = __profiler_data[i];
-        printf("%s::%s: call count: %u, total duration: %lu(ms), avg duration: %.4f(ms)\n", __file_names[i], __function_names[i], info.counter, info.duration / 1000000, (double)(info.duration / 1000000) / info.counter);
+        printf("%s::%s(%u): call count: %u, total duration: %lu(ms), avg duration: %.4f(ms)\n", __file_names[i], __function_names[i], __profiler_ids[i].line, info.counter, info.duration / 1000000, (double)(info.duration / 1000000) / info.counter);
     }
 }

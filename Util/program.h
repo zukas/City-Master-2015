@@ -2,6 +2,8 @@
 #define PROGRAM_H
 
 #include "types.h"
+#include "utils.h"
+
 #include "refcount.h"
 #include <glm/glm.hpp>
 
@@ -56,35 +58,35 @@ constexpr Shader operator"" _fs(const char *source, std::size_t) {
 
 class Program;
 
-class UniformManager {
-  private:
-	Program *m_prog;
+//class UniformManager {
+//  private:
+//	Program *m_prog;
 
-  public:
-	UniformManager(Program *prog);
+//  public:
+//	UniformManager(Program *prog);
 
-	void setUniform(const char *name, bool value);
-	void setUniform(const char *name, GLID value);
-	void setUniform(const char *name, glint value);
-	void setUniform(const char *name, float value);
-	void setUniform(const char *name, const glm::vec2 &vec);
-	void setUniform(const char *name, const glm::vec3 &vec);
-	void setUniform(const char *name, const glm::vec4 &vec);
-	void setUniform(const char *name, const glm::mat4 &mat);
+//	void setUniform(const char *name, bool value);
+//	void setUniform(const char *name, GLID value);
+//	void setUniform(const char *name, glint value);
+//	void setUniform(const char *name, float value);
+//	void setUniform(const char *name, const glm::vec2 &vec);
+//	void setUniform(const char *name, const glm::vec3 &vec);
+//	void setUniform(const char *name, const glm::vec4 &vec);
+//	void setUniform(const char *name, const glm::mat4 &mat);
 
-	void setUniform(glint id, bool value);
-	void setUniform(glint id, GLID value);
-	void setUniform(glint id, glint value);
-	void setUniform(glint id, float value);
-	void setUniform(glint id, const glm::vec2 &vec);
-	void setUniform(glint id, const glm::vec3 &vec);
-	void setUniform(glint id, const glm::vec4 &vec);
-	void setUniform(glint id, const glm::mat4 &mat);
+//	void setUniform(glint id, bool value);
+//	void setUniform(glint id, GLID value);
+//	void setUniform(glint id, glint value);
+//	void setUniform(glint id, float value);
+//	void setUniform(glint id, const glm::vec2 &vec);
+//	void setUniform(glint id, const glm::vec3 &vec);
+//	void setUniform(glint id, const glm::vec4 &vec);
+//	void setUniform(glint id, const glm::mat4 &mat);
 
-	glint resolveUniform(const char *name) const;
-};
+//	glint resolveUniform(const char *name) const;
+//};
 
-class Program : public UniformManager {
+class Program  {
   private:
 	uint32_t m_programID;
 	std::vector<uint32_t> m_shaders;
@@ -145,9 +147,22 @@ class Program : public UniformManager {
 	Program &operator=(const Program &other);
 };
 
+
+
+
 namespace ProgramCompiler {
 uint32_t compileProgram(const Shader *shaders, uint32_t size);
 void resolveUniforms(uint32_t programId, uint32_t *uniforms, uint32_t size);
+}
+
+namespace UniformManager {
+    void setUniform(uint32_t programId, uint32_t uniformId, int32_t value);
+    void setUniform(uint32_t programId, uint32_t uniformId, uint32_t value);
+    void setUniform(uint32_t programId, uint32_t uniformId, float_t value);
+    void setUniform(uint32_t programId, uint32_t uniformId, const glm::vec2 &vec);
+    void setUniform(uint32_t programId, uint32_t uniformId, const glm::vec3 &vec);
+    void setUniform(uint32_t programId, uint32_t uniformId, const glm::vec4 &vec);
+    void setUniform(uint32_t programId, uint32_t uniformId, const glm::mat4 &mat);
 }
 
 #endif // PROGRAM_H

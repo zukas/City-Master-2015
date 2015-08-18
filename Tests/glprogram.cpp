@@ -532,9 +532,9 @@ void glProgram::exec() {
 void glProgram::render() {
     PROF;
     {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         PROF;
         Clock::update();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_camera.calcViewport();
 
         //	m_axis.render(m_camera);
@@ -543,8 +543,12 @@ void glProgram::render() {
         m_lamp.update(m_objectProgram);
         m_camera.update(m_objectProgram);
 
-        for (auto &m : m_models) {
-            m.render(m_objectProgram);
+        {
+            PROF;
+            for (auto &m : m_models) {
+                m.render(m_objectProgram);
+            }
+
         }
 
 //        rings.render(m_camera);
@@ -555,7 +559,7 @@ void glProgram::render() {
 
     }
 
-	glDebugger::flush();
+    //glDebugger::flush();
 
 	glfwSwapBuffers(m_window);
 }

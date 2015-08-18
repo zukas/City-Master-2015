@@ -149,17 +149,17 @@ PARTICLE_FIELD(radius, float);
 using particle = Particle<position_field_t, radius_field_t>::particle_t;
 typedef std::vector<particle> particles;
 
-void update_uniforms(UniformManager &)
-{
+//void update_uniforms(UniformManager &)
+//{
 
-}
+//}
 
-void render_uniforms(UniformManager &m)
-{
-	m.setUniform("modelMatrix", glm::translate(glm::mat4(1.f), { 10.f, 0.f, 0.f}));
-	m.setUniform("colour", { 0.95f, 0.85f, 0.85f });
-	m.setUniform("size", 2.f);
-}
+//void render_uniforms(UniformManager &m)
+//{
+//	m.setUniform("modelMatrix", glm::translate(glm::mat4(1.f), { 10.f, 0.f, 0.f}));
+//	m.setUniform("colour", { 0.95f, 0.85f, 0.85f });
+//	m.setUniform("size", 2.f);
+//}
 
 SaturnRings::SaturnRings()
 {
@@ -175,9 +175,9 @@ void SaturnRings::init()
 
 }
 
-void SaturnRings::render(Camera &c)
-{
-	m_system.update(update_uniforms);
-	m_system.render(c, render_uniforms);
-}
+//void SaturnRings::render(Camera &c)
+//{
+//	m_system.update(update_uniforms);
+//	m_system.render(c, render_uniforms);
+//}
 

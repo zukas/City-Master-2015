@@ -141,7 +141,7 @@ struct field_detail_t<T[N] >
 	static constexpr bool is_floating_point() { return field_detail::is_floating_point; };	\
 	}
 
-typedef void (*set_uniforms_func)(UniformManager&);
+//typedef void (*set_uniforms_func)(UniformManager&);
 
 class ParticleSystem
 {
@@ -194,8 +194,8 @@ class ParticleSystem
 					);
 		}
 
-		void update(set_uniforms_func func = nullptr);
-		void render(Camera &c, set_uniforms_func func = nullptr);
+//		void update(set_uniforms_func func = nullptr);
+//		void render(Camera &c, set_uniforms_func func = nullptr);
 
 };
 

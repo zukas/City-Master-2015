@@ -337,81 +337,81 @@ void ParticleSystem::setBlendFunc(int key, int func)
 	m_blendFunc = func;
 }
 
-void ParticleSystem::update(set_uniforms_func func)
-{
-		static glint frame_time_uniform = m_programs[0].resolveUniform("frame_time");
-		static glint current_time_uniform = m_programs[0].resolveUniform("current_time");
+//void ParticleSystem::update(set_uniforms_func func)
+//{
+//		static glint frame_time_uniform = m_programs[0].resolveUniform("frame_time");
+//		static glint current_time_uniform = m_programs[0].resolveUniform("current_time");
 
-		m_programs[0].use();
+//		m_programs[0].use();
 
-		if(frame_time_uniform >= 0 || current_time_uniform >= 0)
-		{
-			static float start_time = Clock::getDuration();
-			float frame_duration = Clock::getDuration() - start_time;
-			start_time = Clock::getDuration();
-			if(frame_time_uniform >= 0)
-			{
-				m_programs[0].setUniform(frame_time_uniform, frame_duration);
-			}
-			if(current_time_uniform >= 0)
-			{
-				m_programs[0].setUniform(current_time_uniform, start_time);
-			}
-		}
-		if(func)
-		{
-			func(m_programs[0]);
-		}
+//		if(frame_time_uniform >= 0 || current_time_uniform >= 0)
+//		{
+//			static float start_time = Clock::getDuration();
+//			float frame_duration = Clock::getDuration() - start_time;
+//			start_time = Clock::getDuration();
+//			if(frame_time_uniform >= 0)
+//			{
+//				m_programs[0].setUniform(frame_time_uniform, frame_duration);
+//			}
+//			if(current_time_uniform >= 0)
+//			{
+//				m_programs[0].setUniform(current_time_uniform, start_time);
+//			}
+//		}
+//		if(func)
+//		{
+//			func(m_programs[0]);
+//		}
 
-		glEnable(GL_RASTERIZER_DISCARD);
+//		glEnable(GL_RASTERIZER_DISCARD);
 
-		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, m_transformBuffer);
+//		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, m_transformBuffer);
 
-		glBindVertexArray(m_vertexArrayID[m_bufferCursor]);
+//		glBindVertexArray(m_vertexArrayID[m_bufferCursor]);
 
-		glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_buffers[1-m_bufferCursor]);
+//		glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_buffers[1-m_bufferCursor]);
 
-		glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, m_query);
+//		glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, m_query);
 
-		glBeginTransformFeedback(GL_POINTS);
+//		glBeginTransformFeedback(GL_POINTS);
 
-		glDrawArrays(GL_POINTS, 0, m_particleCount);
-		glEndTransformFeedback();
+//		glDrawArrays(GL_POINTS, 0, m_particleCount);
+//		glEndTransformFeedback();
 
-		glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
+//		glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
 
-		glGetQueryObjectiv(m_query, GL_QUERY_RESULT, &m_particleCount);
+//		glGetQueryObjectiv(m_query, GL_QUERY_RESULT, &m_particleCount);
 
-		m_bufferCursor = 1-m_bufferCursor;
+//		m_bufferCursor = 1-m_bufferCursor;
 
-		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
-}
+//		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
+//}
 
-void ParticleSystem::render(Camera &c, set_uniforms_func func)
-{
+//void ParticleSystem::render(Camera &c, set_uniforms_func func)
+//{
 
-		glDisable(GL_CULL_FACE);
-		glEnable(GL_BLEND);
-		glBlendFunc(m_blendKey, m_blendFunc);
-		glDepthMask(0);
-		glDisable(GL_RASTERIZER_DISCARD);
+//		glDisable(GL_CULL_FACE);
+//		glEnable(GL_BLEND);
+//		glBlendFunc(m_blendKey, m_blendFunc);
+//		glDepthMask(0);
+//		glDisable(GL_RASTERIZER_DISCARD);
 
-		m_programs[1].use();
-		glBindVertexArray(m_vertexArrayID[m_bufferCursor]);
-		c.update(m_programs[1]);
-		if(func)
-		{
-			func(m_programs[1]);
-		}
-		m_programs[1].setSampers(m_textures.size());
-		for(size_t i = 0; i < m_textures.size(); ++i)
-		{
-			m_textures[i].bind(i);
-		}
+//		m_programs[1].use();
+//		glBindVertexArray(m_vertexArrayID[m_bufferCursor]);
+//		c.update(m_programs[1]);
+//		if(func)
+//		{
+//			func(m_programs[1]);
+//		}
+//		m_programs[1].setSampers(m_textures.size());
+//		for(size_t i = 0; i < m_textures.size(); ++i)
+//		{
+//			m_textures[i].bind(i);
+//		}
 
-		glDrawArrays(GL_POINTS, 0, m_particleCount);
+//		glDrawArrays(GL_POINTS, 0, m_particleCount);
 
-		glDepthMask(1);
-		glDisable(GL_BLEND);
-		glEnable(GL_CULL_FACE);
-}
+//		glDepthMask(1);
+//		glDisable(GL_BLEND);
+//		glEnable(GL_CULL_FACE);
+//}

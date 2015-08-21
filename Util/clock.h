@@ -1,6 +1,7 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
+#include <stdint.h>
 
 class Clock
 {
@@ -10,6 +11,7 @@ class Clock
     public:
         Clock() = delete;
 
+        static uint64_t now();
         static void update();
 		static float getDuration();
 };

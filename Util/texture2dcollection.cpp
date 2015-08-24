@@ -74,6 +74,7 @@ uint32_t Texture2DCollection::create_ttf_from_memory(byte *buffer,
 
 void Texture2DCollection::bind(uint32_t texture_id, uint32_t unit) {
 	glActiveTexture(GL_TEXTURE0 + unit);
+	glUniform1i(texture_id, unit);
 	glBindTexture(GL_TEXTURE_2D, texture_id);
 	glBindSampler(unit, texture_id);
 }
@@ -87,6 +88,7 @@ void Texture2DCollection::bind(const uint32_t *texture_ids, uint32_t size,
 	for (uint32_t i = start_unit; i < size_; ++i) {
         glActiveTexture(GL_TEXTURE0 + i);
 		const uint32_t id = texture_ids[i];
+		glUniform1i(id, i);
 		glBindTexture(GL_TEXTURE_2D, id);
 		glBindSampler(i, id);
     }

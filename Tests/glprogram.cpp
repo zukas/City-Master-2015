@@ -16,6 +16,7 @@
 #include "Util/profiler.h"
 #include "Util/texture2d.h"
 #include "Util/utils.h"
+#include "Util/texture2dcollection.h"
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
@@ -446,17 +447,8 @@ glProgram::glProgram() {
 
 	BitsMemory::clear();
 
-	auto dd = get_res_neptune_dds();
-	Texture2D tt;
-	tt.init_dds_from_memory(dd.buffer,dd.size);
-
-	Texture2D tt2;
-
-	tt2 = std::move(tt);
-
-	BitsMemory::clear();
-
-	rings.init();
+//	rings.init();
+	Texture2DCollection::init(256);
     auto freesans_buffer = get_res_freesans_ttf();
     m_text = {freesans_buffer.buffer, freesans_buffer.size, 26};
     glDebugger::init({freesans_buffer.buffer, freesans_buffer.size, 14});

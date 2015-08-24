@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <cstring>
+#include "texture2dcollection.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -44,22 +45,21 @@ void load_char(char_data &data, FT_Face face, int index) {
 	FT_Load_Glyph(face, FT_Get_Char_Index(face, index), FT_LOAD_DEFAULT);
 	FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
 
-	data.aX = face->glyph->advance.x >> 6;
-	data.bX = face->glyph->metrics.horiBearingX >> 6;
-	data.cW = face->glyph->metrics.width >> 6;
-
-	data.aY =
-		(face->glyph->metrics.height - face->glyph->metrics.horiBearingY) >> 6;
-	data.bY = face->glyph->metrics.horiBearingY >> 6;
-	data.cH = face->glyph->metrics.height >> 6;
+	const long aX = face->glyph->advance.x >> 6;
+	const long bX = face->glyph->metrics.horiBearingX >> 6;
+	const long aY = (face->glyph->metrics.height - face->glyph->metrics.horiBearingY) >> 6;
+	const long cH = face->glyph->metrics.height >> 6;
+	int next_width = next_size(aX);
+	int next_heigth = next_size(cH);
 
 	FT_Bitmap *bitmap = &face->glyph->bitmap;
 	int width = bitmap->width;
 	int height = bitmap->rows;
-	int next_width = next_size(data.aX);
-	int next_heigth = next_size(data.cH);
 
-	std::vector<unsigned char> buffer(next_width * next_heigth);
+//	std::vector<unsigned char> buffer(next_width * next_heigth);
+
+	byte buffer[32768];
+
 	for (int i = 0; i < next_heigth; ++i) {
 		for (int j = 0; j < next_width; ++j) {
 			buffer[i * next_width + j] =
@@ -69,16 +69,17 @@ void load_char(char_data &data, FT_Face face, int index) {
 		}
 	}
 
-	data.c = Texture{GL_TEXTURE_2D, buffer, next_width, next_heigth,
-					 GL_DEPTH_COMPONENT};
-	data.c.setSamplerParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	data.c.setSamplerParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	data.c.setSamplerParameter(GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
+	data.c = Texture2DCollection::create_ttf_from_memory(
+		buffer, next_width, next_heigth);
 
-	data.pos[0] = glm::vec2(0.0f, float(-data.aY + next_heigth));
-	data.pos[1] = glm::vec2(0.0f, float(-data.aY));
-	data.pos[2] = glm::vec2(float(next_width), float(-data.aY + next_heigth));
-	data.pos[3] = glm::vec2(float(next_width), float(-data.aY));
+	data.aX = aX;
+	data.bX = bX;
+	data.cH = cH;
+
+	data.pos[0] = glm::vec2(0.0f, float(-aY + next_heigth));
+	data.pos[1] = glm::vec2(0.0f, float(-aY));
+	data.pos[2] = glm::vec2(float(next_width), float(-aY + next_heigth));
+	data.pos[3] = glm::vec2(float(next_width), float(-aY));
 
 	data.coord[0] = glm::vec2(0.0f, 1.0f);
 	data.coord[1] = glm::vec2(0.0f, 0.0f);
@@ -236,8 +237,7 @@ Text &Text::operator=(Text &&other) {
 	return *this;
 }
 
-void Text::render(const char *text, const glm::vec4 &colour, int x, int y,
-				  int size) {
+void Text::render(const char *text, const glm::vec4 &colour, int x, int y) {
 
 	glDisable(GL_DEPTH_TEST);
 	glDepthFunc(GL_ALWAYS);
@@ -247,7 +247,7 @@ void Text::render(const char *text, const glm::vec4 &colour, int x, int y,
 
 	glBindVertexArray(m_vertexArray);
 	m_program.use();
-	m_program.setSampers(1);
+//	m_program.setSampers(1);
 
 	auto viewport = m_program.getViewport();
 
@@ -256,12 +256,7 @@ void Text::render(const char *text, const glm::vec4 &colour, int x, int y,
 
 	int cursorX = x;
 	int cursorY = viewport.h - y;
-
-	if (size == -1) {
-		size = m_fontSize;
-	}
-	float scale = float(size) / float(m_fontSize);
-	float incY = m_newLine * scale;
+	float incY = m_newLine;
 	m_last = glm::vec2{0.f, incY};
 
 	auto length = std::strlen(text);
@@ -273,21 +268,20 @@ void Text::render(const char *text, const glm::vec4 &colour, int x, int y,
 			continue;
 		}
 		int index = int(text[i]);
-		cursorX += m_data[index].bX * scale;
+		cursorX += m_data[index].bX;
 		if (text[i] != ' ') {
-			m_data[index].c.bind(0);
+			Texture2DCollection::bind(m_data[index].c);
 
-			glm::mat4 model = glm::scale(
+			glm::mat4 model =
 				glm::translate(glm::mat4(1.0f),
-							   glm::vec3(float(cursorX), float(cursorY), 0.0f)),
-				glm::vec3(scale));
+							   glm::vec3(float(cursorX), float(cursorY), 0.0f));
 
 			m_program.setModelMatrix(model);
 			m_program.setColour(colour);
 			glDrawArrays(GL_TRIANGLE_STRIP, index * 4, 4);
 		}
 
-		cursorX += (m_data[index].aX - m_data[index].bX) * scale;
+		cursorX += (m_data[index].aX - m_data[index].bX);
 		m_last.x = std::max(m_last.x, float(cursorX));
 	}
 	glDisable(GL_BLEND);

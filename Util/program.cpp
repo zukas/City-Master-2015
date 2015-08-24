@@ -217,10 +217,10 @@ void Program::setLightStrength(float value) {
 
 void Program::setSampers(glint value) {
 	for (int i = 0; i < value; ++i) {
-        glProgramUniform1i(m_programID, m_ids.glsl_sampler[i], i);
-    }
+		glProgramUniform1i(m_programID, m_ids.glsl_sampler[i], i);
+	}
 
-    glProgramUniform1i(m_programID, m_ids.glsl_texture_count, value);
+	glProgramUniform1i(m_programID, m_ids.glsl_texture_count, value);
 }
 
 void Program::setObjectID(const glm::vec4 &vec) {

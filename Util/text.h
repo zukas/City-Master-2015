@@ -8,12 +8,9 @@
 #include <glm/glm.hpp>
 
 struct char_data {
-	Texture c{};
+	uint32_t c{};
 	int aX{0};
-	int aY{0};
 	int bX{0};
-	int bY{0};
-	int cW{0};
 	int cH{0};
 	glm::vec2 *pos{nullptr};
 	glm::vec2 *coord{nullptr};
@@ -41,8 +38,7 @@ class Text {
 
 	Text &operator=(Text &&other);
 
-	void render(const char *text, const glm::vec4 &colour, int x, int y,
-				int size = -1);
+	void render(const char *text, const glm::vec4 &colour, int x, int y);
 
 	glm::vec2 lastDimentions() const;
 	int lineHeight() const;

@@ -16,10 +16,12 @@
 #include "Util/profiler.h"
 #include "Util/texture2d.h"
 #include "Util/utils.h"
+#include "Util/viewport.h"
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
 #include "resources/resourcemanager.h"
+#include "Util/texture2dcollection.h"
 
 #include <chrono>
 
@@ -69,8 +71,8 @@ glm::mat4 __postproc_motion(const glm::mat4 &t, model_data data) {
 	return res;
 }
 
-float system_size { 143.73f * pow(10, 9) };
-float system_scale { system_size / 50000000.f };
+float system_size{143.73f * pow(10, 9)};
+float system_scale{system_size / 50000000.f};
 
 float size_scaling(float amp, float x) {
 	return std::sqrt((x / (amp * 2)) + std::sqrt(amp / 25));
@@ -106,8 +108,7 @@ class Planet {
   public:
 	void setup(const char *_name, float _size, float _distance,
 			   float _orbtal_period, float _rotation_period,
-			   glm::vec3 _axis_tilt, PlanetType _type,
-               resource _res);
+			   glm::vec3 _axis_tilt, PlanetType _type, resource _res);
 	void setChildrenCount(int size);
 	void setChild(int pos, Planet *chiled);
 	void calc();
@@ -116,8 +117,7 @@ class Planet {
 
 void Planet::setup(const char *_name, float _size, float _distance,
                    float _orbtal_period, float _rotation_period,
-                   glm::vec3 _axis_tilt, PlanetType _type,
-                   resource _res) {
+				   glm::vec3 _axis_tilt, PlanetType _type, resource _res) {
 	name = _name;
 	size = _size;
 	distance = _distance;
@@ -184,7 +184,7 @@ Model Planet::generate(float parent_size) {
 	tex.init_dds_from_memory(res.buffer, res.size);
 	m.texture(0) = tex.move();
 
-    Model mod{new Mesh3D[1] { std::move(m) }, 1 };
+	Model mod{new Mesh3D[1]{std::move(m)}, 1};
 	mod.setLocation(
 		{parent_size + (calc_distance > 0.f ? calc_size + calc_distance : 0.f),
 		 0.f, 0.f});
@@ -234,6 +234,8 @@ glProgram::glProgram() {
 	m_camera = {m_window};
 	m_lamp = {glm::vec3(0.f, 0.f, 5.f), 500.f};
 
+	Viewport::update({0, 0, windowWidth, windowHeight});
+
 	glClearColor(0.05f, 0.075f, 0.1f, 1.0f);
 
 	glClearDepth(1.0f);
@@ -260,17 +262,15 @@ glProgram::glProgram() {
     m_objectProgram.linkProgram();
     m_objectProgram.resolveUniforms();
 
-	Shader ss[2] {
-		{VERTEX, get_res_object_vert_glsl()},
-		{FRAGMENT, get_res_object_frag_glsl()}
-	};
+//	Shader ss[2]{{VERTEX, get_res_object_vert_glsl()},
+//				 {FRAGMENT, get_res_object_frag_glsl()}};
 
-	uint32_t pid = ProgramCompiler::compileProgram(ss, 2);
+//	uint32_t pid = ProgramCompiler::compileProgram(ss, 2);
 
-	uint32_t uni[6];
-	ProgramCompiler::resolveUniforms(pid, uni, 6);
+//	uint32_t uni[6];
+//	ProgramCompiler::resolveUniforms(pid, uni, 6);
 
-	uint32_t uni2 = crypto::sid("modelMatrix");
+//	uint32_t uni2 = crypto::sid("modelMatrix");
 
     m_objectSelectionProgram.createShader(
         {VERTEX, get_res_object_select_vert_glsl()});
@@ -310,11 +310,9 @@ glProgram::glProgram() {
     BitsMemory::init(1024 * 1024 * 20);
     set_malloc_function(BitsMemory::malloc_aligend_64);
 
-
     Planet sun;
     sun.setup("sun", sun_size, 0.f, 0.f, 25.6f * day,
-              {0.f, 0.f, 0.f /*7.25f * degree*/}, SUN,
-              get_res_sun_dds());
+			  {0.f, 0.f, 0.f /*7.25f * degree*/}, SUN, get_res_sun_dds());
 
     Planet mercury;
     mercury.setup("mercury", mercury_size, mercury_distance, day * 88.f,
@@ -328,13 +326,11 @@ glProgram::glProgram() {
 
     Planet earth;
     earth.setup("earth", earth_size, earth_distance, year, day,
-                {0.f, 0.f, 23.f * degree}, PLANET,
-                get_res_earth_dds());
+				{0.f, 0.f, 23.f * degree}, PLANET, get_res_earth_dds());
 
     Planet moon;
     moon.setup("moon", moon_size, moon_distance, day * 29.530589f, 0.f,
-               {0.f, 0.f, 6.687f * degree}, MOON,
-               get_res_moon_dds());
+			   {0.f, 0.f, 6.687f * degree}, MOON, get_res_moon_dds());
 
     earth.setChildrenCount(1);
     earth.setChild(0, &moon);
@@ -351,8 +347,7 @@ glProgram::glProgram() {
 
     Planet europa;
     europa.setup("europa", europa_size, europa_distance, 3.551181f * day, 0.f,
-                 {0.f, 0.f, 0.1f * degree}, MOON,
-                 get_res_europa_dds());
+				 {0.f, 0.f, 0.1f * degree}, MOON, get_res_europa_dds());
 
     Planet io;
     io.setup("io", io_size, io_distance, 1.769137786f * day, 0.f,
@@ -381,13 +376,11 @@ glProgram::glProgram() {
 
     Planet titan;
     titan.setup("titan", 2576.f, 1221870.f, 15.945f * day, 0.f,
-                {0.f, 0.f, 0.f * degree}, MOON,
-                get_res_titan_dds());
+				{0.f, 0.f, 0.f * degree}, MOON, get_res_titan_dds());
 
     Planet enceladus;
     enceladus.setup("enceladus", 252.f, 238020.f, 1.370218f * day, 0.f,
-                    {0.f, 0.f, 0.017f * degree}, MOON,
-                    get_res_enceladus_dds());
+					{0.f, 0.f, 0.017f * degree}, MOON, get_res_enceladus_dds());
 
     Planet rhea;
     rhea.setup("rhea", 763.8f, 527108.f, 4.518212f * day, 0.f,
@@ -395,23 +388,19 @@ glProgram::glProgram() {
 
     Planet dione;
     dione.setup("dione", 561.4f, 377400.f, 2.736915f * day, 0.f,
-                {0.f, 0.f, 0.f * degree}, MOON,
-                get_res_dione_dds());
+				{0.f, 0.f, 0.f * degree}, MOON, get_res_dione_dds());
 
     Planet tethys;
     tethys.setup("tethys", 531.1f, 294619.f, 1.887802f * day, 0.f,
-                 {0.f, 0.f, 0.f * degree}, MOON,
-                 get_res_tethys_dds());
+				 {0.f, 0.f, 0.f * degree}, MOON, get_res_tethys_dds());
 
     Planet iapetus;
     iapetus.setup("iapetus", 734.5f, 3560820.f, 79.3215f * day, 0.f,
-                  {0.f, 0.f, 0.f * degree}, MOON,
-                  get_res_iapetus_dds());
+				  {0.f, 0.f, 0.f * degree}, MOON, get_res_iapetus_dds());
 
     Planet mimas;
     mimas.setup("mimas", 198.2f, 185539.f, 0.942f * day, 0.f,
-                {0.f, 0.f, 0.f * degree}, MOON,
-                get_res_mimas_dds());
+				{0.f, 0.f, 0.f * degree}, MOON, get_res_mimas_dds());
 
     saturn.setChildrenCount(7);
     saturn.setChild(0, &titan);
@@ -448,17 +437,23 @@ glProgram::glProgram() {
 
 	auto dd = get_res_neptune_dds();
 	Texture2D tt;
-	tt.init_dds_from_memory(dd.buffer,dd.size);
-
-	Texture2D tt2;
-
-	tt2 = std::move(tt);
+	tt.init_dds_from_memory(dd.buffer, dd.size);
 
 	BitsMemory::clear();
 
-	rings.init();
+	{
+		Shader text_[2]{{VERTEX, get_res_text_vert_glsl()},
+						{FRAGMENT, get_res_text_frag_glsl()}};
+
+		Text::init(text_, 2, "projectionMatrix"_h, "modelMatrix"_h, "colour"_h,
+				   "texture"_h);
+	}
+
+	Texture2DCollection::init(256);
+
     auto freesans_buffer = get_res_freesans_ttf();
     m_text = {freesans_buffer.buffer, freesans_buffer.size, 26};
+	m_text.setColour(colour(150, 160, 170, 255));
     glDebugger::init({freesans_buffer.buffer, freesans_buffer.size, 14});
 
 	BitsMemory::deinit();
@@ -535,9 +530,7 @@ void glProgram::render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         PROF;
         Clock::update();
-        m_camera.calcViewport();
-
-        //	m_axis.render(m_camera);
+		m_camera.calcViewport();
 
         m_objectProgram.use();
         m_lamp.update(m_objectProgram);
@@ -548,18 +541,15 @@ void glProgram::render() {
             for (auto &m : m_models) {
                 m.render(m_objectProgram);
             }
-
         }
 
-//        rings.render(m_camera);
-
+		Text::beginRender();
         char buf[128];
         std::sprintf(buf, "FPS: %.2f", m_frameRate);
-        m_text.render(buf, glm::vec4(0.f, 0.f, 0.f, 1.f), 20, 40);
-
+		m_text.render(buf, 20, 40);
+		glDebugger::flush();
+		Text::endRender();
     }
-
-    //glDebugger::flush();
 
 	glfwSwapBuffers(m_window);
 }

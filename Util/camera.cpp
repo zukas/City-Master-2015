@@ -21,8 +21,6 @@ void Camera::calcQuads()
 Camera::Camera(GLFWwindow *window) :
 	m_window(window)
 {
-
-
 	m_viewMat = glm::lookAt(
 					m_eye,
 					m_view,

@@ -11,13 +11,6 @@ enum ProgramType { Normal, Selection };
 
 enum ShaderType { VERTEX, GEOMETRY, FRAGMENT };
 
-struct Viewport {
-	int x{0};
-	int y{0};
-	int w{0};
-	int h{0};
-};
-
 constexpr const char *glsl_model_matrix{"modelMatrix"};
 constexpr const char *glsl_view_matrix{"viewMatrix"};
 constexpr const char *glsl_projection_matrix{"projectionMatrix"};
@@ -58,7 +51,7 @@ constexpr Shader operator"" _fs(const char *source, std::size_t) {
 
 class Program;
 
-//class UniformManager {
+// class UniformManager {
 //  private:
 //	Program *m_prog;
 
@@ -86,12 +79,12 @@ class Program;
 //	glint resolveUniform(const char *name) const;
 //};
 
-class Program  {
+class Program {
   private:
 	uint32_t m_programID;
 	std::vector<uint32_t> m_shaders;
 	ProgramType m_type{Normal};
-	Viewport m_viewport;
+//	ViewportManager m_viewport;
 	struct {
 		glint glsl_model_matrix{0};
 		glint glsl_view_matrix{0};
@@ -129,7 +122,7 @@ class Program  {
 	void linkProgram();
 	void resolveUniforms();
 	GLID program();
-	Viewport getViewport() const;
+	rect getViewport() const;
 
 	void setModelMatrix(const glm::mat4 &mat);
 	void setViewMatrix(const glm::mat4 &mat);
@@ -147,22 +140,22 @@ class Program  {
 	Program &operator=(const Program &other);
 };
 
-
-
-
 namespace ProgramCompiler {
 uint32_t compileProgram(const Shader *shaders, uint32_t size);
 void resolveUniforms(uint32_t programId, uint32_t *uniforms, uint32_t size);
 }
 
-namespace UniformManager {
-    void setUniform(uint32_t programId, uint32_t uniformId, int32_t value);
-    void setUniform(uint32_t programId, uint32_t uniformId, uint32_t value);
-    void setUniform(uint32_t programId, uint32_t uniformId, float_t value);
-    void setUniform(uint32_t programId, uint32_t uniformId, const glm::vec2 &vec);
-    void setUniform(uint32_t programId, uint32_t uniformId, const glm::vec3 &vec);
-    void setUniform(uint32_t programId, uint32_t uniformId, const glm::vec4 &vec);
-    void setUniform(uint32_t programId, uint32_t uniformId, const glm::mat4 &mat);
+namespace Uniforms {
+uint32_t getUniformId(const uint32_t *uniforms, uint32_t size,
+					  uint32_t uniformHash);
+void setUniform(uint32_t uniformId, int32_t value);
+void setUniform(uint32_t uniformId, uint32_t value);
+void setUniform(uint32_t uniformId, float_t value);
+void setUniform(uint32_t uniformId, const glm::vec2 &value);
+void setUniform(uint32_t uniformId, const glm::vec3 &value);
+void setUniform(uint32_t uniformId, const glm::vec4 &value);
+void setUniform(uint32_t uniformId, const glm::mat3 &value);
+void setUniform(uint32_t uniformId, const glm::mat4 &value);
 }
 
 #endif // PROGRAM_H

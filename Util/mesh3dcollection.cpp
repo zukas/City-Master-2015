@@ -34,7 +34,6 @@ void Mesh3DCollection::create(uint32_t index, const uv_vertex *vertexes,
                               uint32_t vertexe_size, const uint32_t *indexes,
                               uint32_t index_size) {
 
-    ASSERT(index >= 0);
     ASSERT(index < _size);
     ASSERT(_elem_count[index] == 0);
 
@@ -87,7 +86,6 @@ void Mesh3DCollection::create(uint32_t index, const uv_vertex *vertexes,
 
 void Mesh3DCollection::render_geometry(uint32_t index) {
     PROF;
-    ASSERT(index >= 0);
     ASSERT(index < _size);
 
     const uint32_t elem_count_ = _elem_count[index];

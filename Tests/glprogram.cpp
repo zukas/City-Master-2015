@@ -449,8 +449,6 @@ glProgram::glProgram() {
 				   "texture"_h);
 	}
 
-	Texture2DCollection::init(256);
-
     auto freesans_buffer = get_res_freesans_ttf();
 	m_text = {freesans_buffer.buffer, freesans_buffer.size, 32};
 	m_text.setColour(colour(150, 160, 170, 255));
@@ -543,12 +541,14 @@ void glProgram::render() {
             }
         }
 
-		Text::beginRender();
-        char buf[128];
-        std::sprintf(buf, "FPS: %.2f", m_frameRate);
-		m_text.render(buf, 20, 40);
-//		glDebugger::flush();
-		Text::endRender();
+		char buf[128];
+		std::sprintf(buf, "FPS: %.2f", m_frameRate);
+		{
+			PROF;
+			Text::beginRender();
+			m_text.render(buf, 20, 40);
+			Text::endRender();
+		}
     }
 
 	glfwSwapBuffers(m_window);

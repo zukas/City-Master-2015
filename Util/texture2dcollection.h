@@ -4,7 +4,7 @@
 #include "types.h"
 
 #ifndef MAX_TEXTURE_2D_SIZE
-#define MAX_TEXTURE_2D_SIZE 256
+#define MAX_TEXTURE_2D_SIZE 512
 #endif
 
 class Texture2DCollection {
@@ -14,8 +14,8 @@ class Texture2DCollection {
   public:
     Texture2DCollection() = delete;
 
-	static void init(uint32_t texture_size);
-    static void destroy();
+	static void clear();
+
     static uint32_t texture_size();
 
 	static uint32_t create_dss_from_memory(byte *buffer, uint32_t size);

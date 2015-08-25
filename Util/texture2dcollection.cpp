@@ -6,38 +6,28 @@
 
 uint32_t Texture2DCollection::_texture_size{0};
 
-void Texture2DCollection::init(uint32_t texture_size) {
-//    ASSERT(texture_size > 0);
-//	ASSERT(texture_size <= MAX_TEXTURE_2D_SIZE);
-//    _texture_size = texture_size;
 
-//    uint32_t textures_[MAX_TEXTURE_2D_SIZE];
-//    glGenTextures(texture_size, textures_);
-//	glGenSamplers(texture_size, textures_);
-//	int a = 0;
-//	a = (1 +(a++))- 1;
-}
+void Texture2DCollection::clear() {
+	ASSERT(_texture_size > 0);
 
-void Texture2DCollection::destroy() {
-//    ASSERT(_texture_size > 0);
+	const uint32_t size_ = _texture_size;
 
-//	const uint32_t size_ = _texture_size;
+	uint32_t textures_[MAX_TEXTURE_2D_SIZE];
 
-//    uint32_t textures_[MAX_TEXTURE_2D_SIZE];
+	for (uint32_t i = 0; i < size_; ++i) {
+		textures_[i] = i + 1;
+	}
 
-//	for (uint32_t i = 0; i < size_; ++i) {
-//        textures_[i] = i + 1;
-//    }
-
-//	glDeleteTextures(size_, textures_);
-//	glDeleteSamplers(size_, textures_);
-//    _texture_size = 0;
+	glDeleteTextures(size_, textures_);
+	glDeleteSamplers(size_, textures_);
+	_texture_size = 0;
 }
 
 uint32_t Texture2DCollection::texture_size() { return _texture_size; }
 
 uint32_t Texture2DCollection::create_dss_from_memory(byte *buffer,
 													 uint32_t size) {
+	uint32_t sampler_id_;
 	uint32_t texture_id_ = SOIL_load_OGL_texture_from_memory(
 		buffer, size, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_DDS_LOAD_DIRECT);
@@ -45,7 +35,12 @@ uint32_t Texture2DCollection::create_dss_from_memory(byte *buffer,
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     GL_LINEAR_MIPMAP_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glGenSamplers(1, &sampler_id_);
+
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	ASSERT(texture_id_ == sampler_id_);
 
 	return texture_id_;
 }

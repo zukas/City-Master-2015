@@ -452,9 +452,9 @@ glProgram::glProgram() {
 	Texture2DCollection::init(256);
 
     auto freesans_buffer = get_res_freesans_ttf();
-    m_text = {freesans_buffer.buffer, freesans_buffer.size, 26};
+	m_text = {freesans_buffer.buffer, freesans_buffer.size, 32};
 	m_text.setColour(colour(150, 160, 170, 255));
-    glDebugger::init({freesans_buffer.buffer, freesans_buffer.size, 14});
+//    glDebugger::init({freesans_buffer.buffer, freesans_buffer.size, 14});
 
 	BitsMemory::deinit();
 
@@ -547,7 +547,7 @@ void glProgram::render() {
         char buf[128];
         std::sprintf(buf, "FPS: %.2f", m_frameRate);
 		m_text.render(buf, 20, 40);
-		glDebugger::flush();
+//		glDebugger::flush();
 		Text::endRender();
     }
 

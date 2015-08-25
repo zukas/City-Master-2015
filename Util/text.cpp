@@ -11,8 +11,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-inline long next_size(long size) {
-	long res = 1;
+inline uint32_t next_size(uint32_t size) {
+	uint32_t res = 1;
 	while (res < size)
 		res <<= 1;
 	return res;
@@ -32,26 +32,26 @@ char_detail_t load_char(float *buffer_data, FT_Face face, uint32_t index) {
 	FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
 	const FT_Bitmap *bitmap = &face->glyph->bitmap;
 
-	const long ax = face->glyph->advance.x >> 6;
-	const long bx = face->glyph->metrics.horiBearingX >> 6;
-	const long nw = next_size(ax);
+	const uint32_t ax = face->glyph->advance.x >> 6;
+	const uint32_t bx = face->glyph->metrics.horiBearingX >> 6;
+	const uint32_t nw = next_size(ax);
 
-	const long ay =
+	const uint32_t ay =
 		(face->glyph->metrics.height - face->glyph->metrics.horiBearingY) >> 6;
-	const long ch = face->glyph->metrics.height >> 6;
-	const long nh = next_size(ch);
+	const uint32_t ch = face->glyph->metrics.height >> 6;
+	const uint32_t nh = next_size(ch);
 
 	const uint32_t width = bitmap->width;
 	const uint32_t height = bitmap->rows;
 
 	{
-		byte buffer[32768];
+		byte buffer[32768]{0};
 		ASSERT(nw * nh < 32768);
 
 		const byte *bitmap_buffer = bitmap->buffer;
 
-		for (long i = 0; i < nw; ++i) {
-			for (long j = 0; j < nh; ++j) {
+		for (uint32_t i = 0; i < nh; ++i) {
+			for (uint32_t j = 0; j < nw; ++j) {
 				buffer[i * nw + j] =
 					(i >= height || j >= width)
 						? 0
@@ -66,9 +66,9 @@ char_detail_t load_char(float *buffer_data, FT_Face face, uint32_t index) {
 		res.height = ch;
 	}
 
-	const float _hy = float(-ay + nh);
-	const float _nw = float(nw);
-	const float _ay = float(-ay);
+	const float _hy = float(int32_t(nh - ay));
+	const float _nw = float(int32_t(nw));
+	const float _ay = float(int32_t(-ay));
 
 	buffer_data[0] = 0.f;
 	buffer_data[1] = _hy;
@@ -89,71 +89,6 @@ char_detail_t load_char(float *buffer_data, FT_Face face, uint32_t index) {
 	buffer_data[13] = _ay;
 	buffer_data[14] = 1.f;
 	buffer_data[15] = 0.f;
-
-	return res;
-}
-
-char_detail_t load_char(glm::vec2 *pos_buffer, glm::vec2 *cord_buffer,
-						FT_Face face, uint32_t index) {
-
-	char_detail_t res;
-	FT_Load_Glyph(face, FT_Get_Char_Index(face, index), FT_LOAD_DEFAULT);
-	FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
-	const FT_Bitmap *bitmap = &face->glyph->bitmap;
-
-	const long ax = face->glyph->advance.x >> 6;
-	const long bx = face->glyph->metrics.horiBearingX >> 6;
-	const long nw = next_size(ax);
-
-	const long ay =
-		(face->glyph->metrics.height - face->glyph->metrics.horiBearingY) >> 6;
-	const long ch = face->glyph->metrics.height >> 6;
-	const long nh = next_size(ch);
-
-	const uint32_t width = bitmap->width;
-	const uint32_t height = bitmap->rows;
-
-	{
-		byte buffer[32768];
-		ASSERT(nw * nh < 32768);
-
-		const byte *bitmap_buffer = bitmap->buffer;
-
-		for (long i = 0; i < nw; ++i) {
-			for (long j = 0; j < nh; ++j) {
-				buffer[i * nw + j] =
-					(i >= height || j >= width)
-						? 0
-						: bitmap_buffer[(height - i - 1) * width + j];
-			}
-		}
-
-		res.char_data.texture_id =
-			Texture2DCollection::create_ttf_from_memory(buffer, nw, nh);
-		res.char_data.advance = ax;
-		res.char_data.bearing = bx;
-		res.height = ch;
-	}
-
-	const float _hy = float(nh - ay);
-	const float _nw = float(nw);
-	const float _ay = float(-ay);
-
-	pos_buffer[0] = glm::vec2(0.0f, _hy);
-	pos_buffer[1] = glm::vec2(0.0f, _ay);
-	pos_buffer[2] = glm::vec2(_nw, _hy);
-	pos_buffer[3] = glm::vec2(_nw, _ay);
-
-	for(int i = 0; i < 4; ++i)
-	{
-		printf("index: %d, i %d, x: %f, y: %f\n", index, i, pos_buffer[i].x, pos_buffer[i].y);
-	}
-	fflush(stdout);
-
-	cord_buffer[0] = glm::vec2(0.0f, 1.0f);
-	cord_buffer[1] = glm::vec2(0.0f, 0.0f);
-	cord_buffer[2] = glm::vec2(1.0f, 1.0f);
-	cord_buffer[3] = glm::vec2(1.0f, 0.0f);
 
 	return res;
 }
@@ -219,81 +154,42 @@ Text::Text(byte *font_buffer, ulong font_bufer_size, uint32_t size) {
     glGenVertexArrays(1, &m_vertexArray);
     glBindVertexArray(m_vertexArray);
 
-	glm::vec2 position[128 * 4];
-	glm::vec2 coordiante[128 * 4];
+	float vertex_data[2048];
 
 	for (uint32_t i = 0; i < 128; ++i) {
-		char_detail_t detail =
-			load_char(&position[i * 4], &coordiante[i * 4], face, i);
+		char_detail_t detail = load_char(&vertex_data[i * 16], face, i);
 		m_charData[i] = detail.char_data;
 		m_lineSize = max(m_lineSize, detail.height);
 	}
 
-	//	float vertex_data[2048];
-	//	for (uint32_t i = 0; i < 128; ++i) {
-	//		char_detail_t detail = load_char(&vertex_data[i * 16], face, i);
-	//		m_charData[i] = detail.char_data;
-	//		m_lineSize = max(m_lineSize, detail.height);
-	//	}
-
     FT_Done_Face(face);
     FT_Done_FreeType(lib);
 
-	GLuint buffers[2];
-	glGenBuffers(2, buffers);
+	GLuint buffer;
+	glGenBuffers(1, &buffer);
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-	glBufferData(GL_ARRAY_BUFFER, 128 * 4 * sizeof(glm::vec2), position,
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data,
 				 GL_STATIC_DRAW);
+
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0,        // attribute
-						  2,        // size
-						  GL_FLOAT, // type
-						  GL_FALSE, // normalized?
-						  0,        // stride
-						  nullptr   // array buffer offset
+	glVertexAttribPointer(0,                          // attribute
+						  2,                          // size
+						  GL_FLOAT,                   // type
+						  GL_FALSE,                   // normalized?
+						  sizeof(float[4]),           // stride
+						  reinterpret_cast<void *>(0) // array buffer offset
 						  );
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-	glBufferData(GL_ARRAY_BUFFER, 128 * 4 * sizeof(glm::vec2), coordiante,
-				 GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1,        // attribute
-						  2,        // size
-						  GL_FLOAT, // type
-						  GL_FALSE, // normalized?
-						  0,        // stride
-						  nullptr   // array buffer offset
-						  );
-
-	//	GLuint buffer;
-	//	glGenBuffers(1, &buffer);
-
-	//	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	//	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data,
-	//				 GL_STATIC_DRAW);
-
-	//    glEnableVertexAttribArray(0);
-	//	glVertexAttribPointer(
-	//		0,                                         // attribute
-	//		2,                                         // size
-	//		GL_FLOAT,                                  // type
-	//		GL_FALSE,                                  // normalized?
-	//		0,                                         // stride
-	//		reinterpret_cast<void *>(sizeof(float[4])) // array buffer
-	//offset
-	//		);
-
-	//	glEnableVertexAttribArray(1);
-	//	glVertexAttribPointer(
-	//		1,                                         // attribute
-	//		2,                                         // size
-	//		GL_FLOAT,                                  // type
-	//		GL_FALSE,                                  // normalized?
-	//		sizeof(float[2]),                          // stride
-	//		reinterpret_cast<void *>(sizeof(float[4])) // array buffer
-	//offset
-	//		);
+	glVertexAttribPointer(
+		1,                                         // attribute
+		2,                                         // size
+		GL_FLOAT,                                  // type
+		GL_FALSE,                                  // normalized?
+		sizeof(float[4]),                          // stride
+		reinterpret_cast<void *>(sizeof(float[2])) // array buffer offset
+		);
 
     glBindVertexArray(0);
 }
@@ -328,9 +224,9 @@ uint32_t Text::render(const char *text, uint32_t x, uint32_t y) const {
 		cursorX += char_.bearing;
 		if (text[i] != ' ') {
 			Texture2DCollection::bind(char_.texture_id);
-			glm::mat4 model =
-				glm::translate(glm::mat4(1.0f),
-							   glm::vec3(float(cursorX), float(cursorY), 0.0f));
+			glm::mat4 model = glm::translate(
+				glm::mat4(1.0f),
+				glm::vec3(float(cursorX), float(cursorY - 10), 0.0f));
 
 			Uniforms::setUniform(text_program.model_id, model);
 			glDrawArrays(GL_TRIANGLE_STRIP, index * 4, 4);
@@ -339,6 +235,7 @@ uint32_t Text::render(const char *text, uint32_t x, uint32_t y) const {
 		cursorX += (char_.advance - char_.bearing);
 	}
 	glBindVertexArray(0);
+
 	return viewport_height - cursorY;
 }
 

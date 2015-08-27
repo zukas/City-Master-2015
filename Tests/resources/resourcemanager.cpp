@@ -6,37 +6,59 @@ FILE *__g_resource_handle { nullptr };
 void set_malloc_function(malloc_function func) { __g__malloc = func; }
 void init_resources() {	if(__g_resource_handle == nullptr) __g_resource_handle = fopen("rc_pack.crp", "rb"); }
 void deinit_resources() { if(__g_resource_handle) fclose(__g_resource_handle); __g_resource_handle = nullptr; }
-resource load_binery_resource(size_t start, size_t size) {
+resource load_binery_resource(void *buffer, size_t start, size_t size) {
 resource res;
 if(__g_resource_handle) {
 fseek(__g_resource_handle, start, SEEK_SET);
-res.buffer = (unsigned char *)__g__malloc(size);
+res.buffer = (unsigned char *)buffer;
 res.size = fread(res.buffer, 1, size, __g_resource_handle);
 }
 return res;
 }
-resource get_res_freesans_ttf () { return load_binery_resource(0, 1563256); }
-resource get_res_venus_dds () { return load_binery_resource(1563256, 699216); }
-resource get_res_ganymede_dds () { return load_binery_resource(2262472, 699216); }
-resource get_res_uranus_dds () { return load_binery_resource(2961688, 699216); }
-resource get_res_enceladus_dds () { return load_binery_resource(3660904, 699216); }
-resource get_res_sun_dds () { return load_binery_resource(4360120, 699216); }
-resource get_res_saturn_dds () { return load_binery_resource(5059336, 699216); }
-resource get_res_neptune_dds () { return load_binery_resource(5758552, 699216); }
-resource get_res_rhea_dds () { return load_binery_resource(6457768, 699216); }
-resource get_res_mercury_dds () { return load_binery_resource(7156984, 699216); }
-resource get_res_titan_dds () { return load_binery_resource(7856200, 699216); }
-resource get_res_earth_dds () { return load_binery_resource(8555416, 699216); }
-resource get_res_mimas_dds () { return load_binery_resource(9254632, 699216); }
-resource get_res_moon_dds () { return load_binery_resource(9953848, 699216); }
-resource get_res_europa_dds () { return load_binery_resource(10653064, 699216); }
-resource get_res_dione_dds () { return load_binery_resource(11352280, 699216); }
-resource get_res_jupiter_dds () { return load_binery_resource(12051496, 699216); }
-resource get_res_mars_dds () { return load_binery_resource(12750712, 699216); }
-resource get_res_iapetus_dds () { return load_binery_resource(13449928, 699216); }
-resource get_res_io_dds () { return load_binery_resource(14149144, 699216); }
-resource get_res_tethys_dds () { return load_binery_resource(14848360, 699216); }
-resource get_res_callisto_dds () { return load_binery_resource(15547576, 699216); }
+resource get_res_freesans_ttf (void* ptr_) { return load_binery_resource(ptr_, 0, 1563256); }
+size_t get_res_freesans_ttf_size () { return 1563256; }
+resource get_res_venus_dds (void* ptr_) { return load_binery_resource(ptr_, 1563256, 699216); }
+size_t get_res_venus_dds_size () { return 699216; }
+resource get_res_ganymede_dds (void* ptr_) { return load_binery_resource(ptr_, 2262472, 699216); }
+size_t get_res_ganymede_dds_size () { return 699216; }
+resource get_res_uranus_dds (void* ptr_) { return load_binery_resource(ptr_, 2961688, 699216); }
+size_t get_res_uranus_dds_size () { return 699216; }
+resource get_res_enceladus_dds (void* ptr_) { return load_binery_resource(ptr_, 3660904, 699216); }
+size_t get_res_enceladus_dds_size () { return 699216; }
+resource get_res_sun_dds (void* ptr_) { return load_binery_resource(ptr_, 4360120, 699216); }
+size_t get_res_sun_dds_size () { return 699216; }
+resource get_res_saturn_dds (void* ptr_) { return load_binery_resource(ptr_, 5059336, 699216); }
+size_t get_res_saturn_dds_size () { return 699216; }
+resource get_res_neptune_dds (void* ptr_) { return load_binery_resource(ptr_, 5758552, 699216); }
+size_t get_res_neptune_dds_size () { return 699216; }
+resource get_res_rhea_dds (void* ptr_) { return load_binery_resource(ptr_, 6457768, 699216); }
+size_t get_res_rhea_dds_size () { return 699216; }
+resource get_res_mercury_dds (void* ptr_) { return load_binery_resource(ptr_, 7156984, 699216); }
+size_t get_res_mercury_dds_size () { return 699216; }
+resource get_res_titan_dds (void* ptr_) { return load_binery_resource(ptr_, 7856200, 699216); }
+size_t get_res_titan_dds_size () { return 699216; }
+resource get_res_earth_dds (void* ptr_) { return load_binery_resource(ptr_, 8555416, 699216); }
+size_t get_res_earth_dds_size () { return 699216; }
+resource get_res_mimas_dds (void* ptr_) { return load_binery_resource(ptr_, 9254632, 699216); }
+size_t get_res_mimas_dds_size () { return 699216; }
+resource get_res_moon_dds (void* ptr_) { return load_binery_resource(ptr_, 9953848, 699216); }
+size_t get_res_moon_dds_size () { return 699216; }
+resource get_res_europa_dds (void* ptr_) { return load_binery_resource(ptr_, 10653064, 699216); }
+size_t get_res_europa_dds_size () { return 699216; }
+resource get_res_dione_dds (void* ptr_) { return load_binery_resource(ptr_, 11352280, 699216); }
+size_t get_res_dione_dds_size () { return 699216; }
+resource get_res_jupiter_dds (void* ptr_) { return load_binery_resource(ptr_, 12051496, 699216); }
+size_t get_res_jupiter_dds_size () { return 699216; }
+resource get_res_mars_dds (void* ptr_) { return load_binery_resource(ptr_, 12750712, 699216); }
+size_t get_res_mars_dds_size () { return 699216; }
+resource get_res_iapetus_dds (void* ptr_) { return load_binery_resource(ptr_, 13449928, 699216); }
+size_t get_res_iapetus_dds_size () { return 699216; }
+resource get_res_io_dds (void* ptr_) { return load_binery_resource(ptr_, 14149144, 699216); }
+size_t get_res_io_dds_size () { return 699216; }
+resource get_res_tethys_dds (void* ptr_) { return load_binery_resource(ptr_, 14848360, 699216); }
+size_t get_res_tethys_dds_size () { return 699216; }
+resource get_res_callisto_dds (void* ptr_) { return load_binery_resource(ptr_, 15547576, 699216); }
+size_t get_res_callisto_dds_size () { return 699216; }
 
 const char *get_res_particles_render_frag_glsl () { return "#version 330\n\nuniform sampler2D tsampler[1];\nuniform int tcount;\n\nsmooth in vec2 vTexCoord;\nsmooth in vec4 vColorPart;\n//in vec4 gl_FragCoord;\n\nout vec4 FragColor;\n\nvoid main()\n{\n    vec2 uv = vTexCoord.xy;\n//    uv.y *= -1.0;\n    vec3 vTexColor = texture2D(tsampler[0], uv).xyz;\n    float alpha = 0.0;\n    for(float i = 0.001; i < 1.0; i+=i)\n    {\n        if(vTexColor.r > i && vTexColor.g > i && vTexColor.b > i)\n        {\n            alpha = i;\n        }\n    }\n    if(alpha < 0.05)\n    {\n        discard;\n    }\n    else\n    {\n        alpha -= gl_FragCoord.z * 0.01;\n        FragColor = vec4(vColorPart.xyz, vColorPart.w * alpha);\n    }\n}\n"; }
 const char *get_res_skybox_frag_glsl () { return "#version 330\n\nuniform samplerCube tsampler[1];\nsmooth in vec4 UV;\nout vec4 outColour;\n\nvoid main()\n{\n    outColour = texture(tsampler[0], UV);\n}\n"; }
@@ -44,8 +66,8 @@ const char *get_res_basic_frag_glsl () { return "#version 330\n\nin vec3 colour;
 const char *get_res_particles_render_geom_glsl () { return "#version 330\n\nuniform mat4 viewMatrix;\nuniform mat4 projectionMatrix;\n\nuniform vec3 vQuad1, vQuad2;\n\nlayout(points) in;\nlayout(triangle_strip) out;\nlayout(max_vertices = 4) out;\n\nin vec3 vColorPass[1];\nin float fLifeTimePass[1];\nin float fSizePass[1];\nin float iTypePass[1];\n\nsmooth out vec2 vTexCoord;\nsmooth out vec4 vColorPart;\n\nvoid main()\n{\n        vec3 vPosOld = gl_in[0].gl_Position.xyz;\n        float fSize = fSizePass[0];\n        mat4 mVP = projectionMatrix* viewMatrix;\n\n//        float fdiv = fSize * (vQuad1+vQuad2).x / 2;\n        float val = fLifeTimePass[0];// / 500.0;\n        vColorPart = vec4(vColorPass[0], 1.0);\n\n        vec3 vPos = vPosOld + ((-vQuad1-vQuad2) * fSize);\n        vTexCoord = vec2(0.0, 0.0);\n        gl_Position = mVP * vec4(vPos, 1.0);\n        EmitVertex();\n\n        vPos = vPosOld + ((-vQuad1+vQuad2) * fSize);\n        vTexCoord = vec2(0.0, 1.0);\n        gl_Position = mVP * vec4(vPos, 1.0);\n        EmitVertex();\n\n        vPos = vPosOld + ((vQuad1-vQuad2) * fSize);\n        vTexCoord = vec2(1.0, 0.0);\n        gl_Position = mVP * vec4(vPos, 1.0);\n        EmitVertex();\n\n        vPos = vPosOld + ((vQuad1+vQuad2) * fSize);\n        vTexCoord = vec2(1.0, 1.0);\n        gl_Position = mVP * vec4(vPos, 1.0);\n        EmitVertex();\n\n        EndPrimitive();\n}\n"; }
 const char *get_res_particles_update_frag_glsl () { return "#version 330\n\nout vec4 vColor;\n\nvoid main()\n{\n    vColor = vec4(1.0, 1.0, 1.0, 1.0);\n}\n"; }
 const char *get_res_object_frag_glsl () { return "#version 330\n\nuniform sampler2D tsampler[2];\nuniform int tcount;\nuniform vec3 lightPosition;\nuniform float lightStrength;\nuniform int objectSelected;\n\nin vec2 UV;\nin vec3 Position_worldspace;\nin vec3 Normal_cameraspace;\nin vec3 EyeDirection_cameraspace;\nin vec3 LightDirection_cameraspace;\n\nout vec3 colour;\n\nvoid main()\n{\n\n    vec4 tmpc = texture2D(tsampler[0], UV);\n//    for(int i = 0; i < tcount; i++)\n//    {\n//        if(i == 0)\n//        {\n//            tmpc+=texture2D(tsampler[0], UV);\n//        }\n//        else if(i == 1)\n//        {\n//            tmpc+=texture2D(tsampler[1], UV);\n//        }\n//        else if(i == 2)\n//        {\n//            tmpc+=texture2D(tsampler[2], UV);\n//        }\n//        else if(i == 3)\n//        {\n//            tmpc+=texture2D(tsampler[3], UV);\n//        }\n//        else if(i == 4)\n//        {\n//            tmpc+=texture2D(tsampler[4], UV);\n//        }\n//    }\n//    if(tcount == 0)\n//    {\n//        tmpc = vec4(UV.x, UV.y, 0.35, 1.0);\n//    }\n\n    vec3 LightColor = vec3(1,0.92,0.90);\n    if(objectSelected == 1)\n    {\n        LightColor = vec3(0.89,0.42,0.48);\n    }\n    float LightPower = length( lightPosition ) * lightStrength;\n\n    vec3 MaterialDiffuseColor = tmpc.rgb;\n    vec3 MaterialAmbientColor = vec3(0.82,0.82,0.82) * MaterialDiffuseColor;\n    vec3 MaterialSpecularColor = vec3(0.25,0.25,0.25);\n\n    float distance = length( lightPosition - Position_worldspace );\n\n    vec3 n = normalize( Normal_cameraspace );\n    vec3 l = normalize( LightDirection_cameraspace );\n    float cosTheta = clamp( dot( n,l ), 0.1, 1 );\n\n    vec3 E = normalize(EyeDirection_cameraspace);\n    vec3 R = reflect(-l,n);\n    float cosAlpha = clamp(dot( E,R ), 0, 1);\n\n    colour = MaterialAmbientColor * LightColor +\n            MaterialDiffuseColor * LightColor  * cosTheta / (distance*distance) +\n            MaterialSpecularColor * LightColor  * pow(cosAlpha,5) / (distance*distance);\n\n\n}\n"; }
-const char *get_res_text_frag_glsl () { return "#version 330\n\nin vec2 texCoord;\nout vec4 outColour;\n\nuniform sampler2D tsampler[1];\nuniform vec4 colour;\n\nvoid main()\n{\n        vec4 textColour = texture2D(tsampler[0], texCoord);\n        outColour = vec4(textColour.r, textColour.r, textColour.r, textColour.r) * colour;\n}\n"; }
-const char *get_res_text_vert_glsl () { return "#version 330\n\nuniform mat4 modelMatrix;\nuniform mat4 projectionMatrix;\n\nlayout (location = 0) in vec2 inPosition;\nlayout (location = 1) in vec2 inCoord;\n\nout vec2 texCoord;\n\nvoid main()\n{\n        gl_Position = projectionMatrix*modelMatrix*vec4(inPosition, 0.0, 1.0);\n        texCoord = inCoord;\n}\n"; }
+const char *get_res_text_frag_glsl () { return "#version 330\n\nin vec2 texCoord;\nout vec4 outColour;\n\nuniform sampler2D texture;\nuniform vec4 colour;\n\nvoid main() {\n    vec4 textColour = texture2D(texture, texCoord);\n    outColour = vec4(textColour.r, textColour.r,\n                     textColour.r, textColour.r) *\n            colour;\n}\n"; }
+const char *get_res_text_vert_glsl () { return "#version 330\n\nuniform mat4 modelMatrix;\nuniform mat4 projectionMatrix;\n\nlayout(location = 0) in vec2 inPosition;\nlayout(location = 1) in vec2 inCoord;\n\nout vec2 texCoord;\n\nvoid main() {\n    gl_Position = projectionMatrix * modelMatrix *\n            vec4(inPosition, 0.0, 1.0);\n    texCoord = inCoord;\n}\n"; }
 const char *get_res_basic_vert_glsl () { return "#version 330\n\nlayout(location = 0) in vec3 inPosition;\nlayout(location = 1) in vec3 inColour;\n\nuniform mat4 viewMatrix;\nuniform mat4 projectionMatrix;\nuniform mat4 modelMatrix;\n\nout vec3 colour;\n\nvoid main()\n{\n    colour = inColour;\n    mat4 MVP = (projectionMatrix * viewMatrix * modelMatrix);\n    gl_Position =  MVP * vec4(inPosition, 1.0);\n}\n\n"; }
 const char *get_res_particles_render_vert_glsl () { return "#version 330\n\nlayout (location = 0) in vec3 vPosition;\nlayout (location = 2) in vec3 vColor;\nlayout (location = 3) in float fLifeTime;\nlayout (location = 4) in float fSize;\nlayout (location = 5) in float iType;\n\nuniform mat4 viewMatrix;\n\nout vec3 vColorPass;\nout float fLifeTimePass;\nout float fSizePass;\nout float iTypePass;\n\nvoid main()\n{\n   gl_Position = vec4(vPosition, 1.0);\n   vColorPass = vColor;\n   fSizePass = fSize;\n   fLifeTimePass = fLifeTime;\n   iTypePass = iType;\n}\n"; }
 const char *get_res_particles_update_vert_glsl () { return "#version 330\n\nlayout (location = 0) in vec3 vPosition;\nlayout (location = 1) in vec3 vVelocity;\nlayout (location = 2) in vec3 vColor;\nlayout (location = 3) in float fLifeTime;\nlayout (location = 4) in float fSize;\nlayout (location = 5) in float iType;\nlayout (location = 6) in float reuse;\n\nout vec3 vPositionPass;\nout vec3 vVelocityPass;\nout vec3 vColorPass;\nout float fLifeTimePass;\nout float fSizePass;\nout float iTypePass;\nout float reusePass;\n\nvoid main()\n{\n    vPositionPass = vPosition;\n    vVelocityPass = vVelocity;\n    vColorPass = vColor;\n    fLifeTimePass = fLifeTime;\n    fSizePass = fSize;\n    iTypePass = iType;\n    reusePass = reuse;\n}\n"; }

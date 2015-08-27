@@ -113,7 +113,7 @@ int Mesh::textureCount() const
 
 void Mesh::render(Program &program)
 {
-    PROF;
+	PROF("Render mesh");
 	glBindVertexArray(m_vertexArray);
 
 	if(program.type() != Selection)

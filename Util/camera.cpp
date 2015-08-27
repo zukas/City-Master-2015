@@ -21,8 +21,6 @@ void Camera::calcQuads()
 Camera::Camera(GLFWwindow *window) :
 	m_window(window)
 {
-
-
 	m_viewMat = glm::lookAt(
 					m_eye,
 					m_view,
@@ -52,7 +50,7 @@ void Camera::rotateHorizontal(float delta)
 
 	m_update = 1;
 	m_view -= m_eye;
-	auto offset =  (m_view.y > 0 ? PI : -PI) *  m_velocity * delta * m_sensitivity;
+	auto offset =  (m_view.y > 0 ? PI : -PI) *  m_velocity * delta;
 	m_view = glm::rotate(m_view, offset, glm::vec3(0.f, diff.y * dir.y, 0.f));
 	m_view += m_eye;
 
@@ -80,36 +78,36 @@ void Camera::rotateVertical(float delta)
 
 	m_update = 1;
 	m_view -= m_eye;
-	auto offset = -PI * m_velocity * delta * m_sensitivity;
+	auto offset = -PI * m_velocity * delta;
 	m_view = glm::rotate(m_view, offset, glm::cross(glm::vec3(diff.x * dir.x, 0.f, diff.z * dir.z), m_up) );
 	m_view += m_eye;
 }
 
 void Camera::move(float delta)
 {
-	m_update = 1;
 	auto diff = m_view - m_eye;
 	auto dir = glm::cos(glm::normalize(diff));
 	auto tmp = glm::vec3(diff.x * dir.x , 0.f, diff.z * dir.z) * delta * m_velocity;
 	auto plane = m_eye + tmp;
-	if(glm::distance(glm::vec3(0, 0.f, 0), glm::vec3(plane.x, 0.f, plane.z)) >= max_distance)
+	if(glm::distance(glm::vec3(0, 0.f, 0), plane) >= max_distance)
 	{
 		return;
 	}
+	m_update = 1;
 	m_view += tmp;
 	m_eye = std::move(plane);
 }
 void Camera::strafe(float delta)
 {
-	m_update = 1;
 	auto diff = glm::cross(m_view - m_eye, m_up);
 	auto dir = glm::cos(glm::normalize(diff));
 	auto tmp = glm::vec3(diff.x * dir.x , 0.f, diff.z * dir.z) * delta * m_velocity;
 	auto plane = m_eye + tmp;
-	if(glm::distance(glm::vec3(0, 0.f, 0), glm::vec3(plane.x, 0.f, plane.z)) >= max_distance)
+	if(glm::distance(glm::vec3(0, 0.f, 0), plane) >= max_distance)
 	{
 		return;
 	}
+	m_update = 1;
 	m_view += tmp;
 	m_eye = std::move(plane);
 
@@ -117,14 +115,15 @@ void Camera::strafe(float delta)
 
 void Camera::zoom(float delta)
 {
-
-	m_update = 1;
 	auto diff = m_view - m_eye;
 	auto dir = glm::cos(glm::normalize(diff));
 
-	auto tmp = glm::normalize(diff * dir) * delta * m_speed;
+	auto tmp = (diff * dir) * delta * m_velocity;
 	auto plane = m_eye + tmp;
-
+	if(glm::distance(glm::vec3(0, 0.f, 0), plane) >= max_distance)
+	{
+		return;
+	}
 	m_update = 1;
 	m_view += tmp;
 	m_eye = plane;

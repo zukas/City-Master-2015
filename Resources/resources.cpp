@@ -502,11 +502,11 @@ void generate_resource_manager(const char **files, size_t size,
 
                     bin->header_o +=
                         sprintf(&bin->header_f[bin->header_o],
-                                manager_header_binery_function, name);
+								manager_header_binery_function, name, name);
 
                     bin->source_o += sprintf(&bin->source_f[bin->source_o],
                                              manager_source_binery_function,
-                                             name, info.offset, info.size);
+											 name, info.offset, info.size, name, info.size);
                 } else {
 
                     lit->header_o +=

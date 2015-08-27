@@ -62,7 +62,7 @@ Texture2D &Mesh3D::texture(uint32_t index)
 }
 
 void Mesh3D::render() const {
-    PROF;
+	PROF("Render 3D mesh");
 	const GLuint vertex_aray_ = m_vertex_array;
     const uint32_t size_ = m_elem_size;
 

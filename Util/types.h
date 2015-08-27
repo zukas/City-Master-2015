@@ -6,7 +6,6 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-
 #ifdef DEBUG_BUILD
 #define ASSERT(exp) assert(exp)
 #else
@@ -71,19 +70,31 @@ struct vec2 {
     float y;
 };
 
-struct colour {
-    float r{0.f};
-    float g{0.f};
-    float b{0.f};
-    colour() = default;
-    colour(unsigned char red, unsigned char green, unsigned char blue)
-        : r(red / 255.f), g(green / 255.f), b(blue / 255.f) {}
-    colour(float red, float green, float blue) : r(red), g(green), b(blue) {}
+struct rect {
+	float x;
+	float y;
+	float w;
+	float h;
+};
+
+class colour {
+  public:
+	byte r;
+	byte g;
+	byte b;
+	byte a;
+	colour() : r(0), g(0), b(0), a(255) {}
+	colour(byte r_, byte g_, byte b_, byte a_ = 255)
+		: r(r_), g(g_), b(b_), a(a_) {}
+	operator glm::vec4() const {
+		return glm::vec4(float(r) / 255.f, float(g) / 255.f, float(b) / 255.f,
+						 float(a) / 255.f);
+	}
 };
 
 struct colour_vertex {
     vec3 p;
-    colour c;
+	vec3 c;
 };
 
 struct uv_vertex {

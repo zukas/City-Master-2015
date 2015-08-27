@@ -126,7 +126,7 @@ Mesh3D *Model::mesh(int index)
 
 void Model::render(Program &program, const glm::mat4 &parent_transform)
 {
-    PROF;
+	PROF("Render model");
 	if(program.type() == Selection)
 	{
 		if(!m_selectable) return;

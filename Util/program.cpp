@@ -6,7 +6,6 @@
 #include <GLFW/glfw3.h>
 #include <fstream>
 
-
 RefCount Program::g_counter;
 
 void Program::cleanUp() {
@@ -29,14 +28,12 @@ Program::Program(const std::string &vertex, const std::string &fragment,
 }
 
 Program::Program(Program &&other)
-    : m_programID(other.m_programID),
-	  m_type(other.m_type), m_ids(other.m_ids) {
+	: m_programID(other.m_programID), m_type(other.m_type), m_ids(other.m_ids) {
     other.m_programID = 0;
 }
 
 Program::Program(const Program &other)
-    :  m_programID(other.m_programID),
-	  m_type(other.m_type), m_ids(other.m_ids) {
+	: m_programID(other.m_programID), m_type(other.m_type), m_ids(other.m_ids) {
 	g_counter + m_programID;
 }
 
@@ -51,12 +48,6 @@ Program::~Program() {
 
 void Program::use() {
     glUseProgram(m_programID);
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    m_viewport.x = viewport[0];
-    m_viewport.y = viewport[1];
-    m_viewport.w = viewport[2];
-    m_viewport.h = viewport[3];
 }
 
 ProgramType Program::type() const { return m_type; }
@@ -235,7 +226,7 @@ void Program::setColour(const glm::vec4 &vec) {
     glProgramUniform4fv(m_programID, m_ids.glsl_colour, 1, &vec[0]);
 }
 
-Viewport Program::getViewport() const { return m_viewport; }
+rect Program::getViewport() const { return {}; }
 
 Program &Program::operator=(Program &&other) {
     cleanUp();
@@ -255,81 +246,83 @@ Program &Program::operator=(const Program &other) {
     return *this;
 }
 
-//UniformManager::UniformManager(Program *prog) : m_prog(prog) {}
+// UniformManager::UniformManager(Program *prog) : m_prog(prog) {}
 
-//void UniformManager::setUniform(const char *name, bool value) {
+// void UniformManager::setUniform(const char *name, bool value) {
 //	glint id = glGetUniformLocation(m_prog->program(), name);
 //	glProgramUniform1i(m_prog->program(), id, value);
 //}
 
-//void UniformManager::setUniform(const char *name, GLID value) {
+// void UniformManager::setUniform(const char *name, GLID value) {
 //	glint id = glGetUniformLocation(m_prog->program(), name);
 //	glProgramUniform1ui(m_prog->program(), id, value);
 //}
 
-//void UniformManager::setUniform(const char *name, glint value) {
+// void UniformManager::setUniform(const char *name, glint value) {
 //	glint id = glGetUniformLocation(m_prog->program(), name);
 //	glProgramUniform1i(m_prog->program(), id, value);
 //}
 
-//void UniformManager::setUniform(const char *name, float value) {
+// void UniformManager::setUniform(const char *name, float value) {
 //	glint id = glGetUniformLocation(m_prog->program(), name);
 //	glProgramUniform1f(m_prog->program(), id, value);
 //}
 
-//void UniformManager::setUniform(const char *name, const glm::vec2 &vec) {
+// void UniformManager::setUniform(const char *name, const glm::vec2 &vec) {
 //	glint id = glGetUniformLocation(m_prog->program(), name);
 //	glProgramUniform2fv(m_prog->program(), id, 1, &vec[0]);
 //}
 
-//void UniformManager::setUniform(const char *name, const glm::vec3 &vec) {
+// void UniformManager::setUniform(const char *name, const glm::vec3 &vec) {
 //	glint id = glGetUniformLocation(m_prog->program(), name);
 //	glProgramUniform3fv(m_prog->program(), id, 1, &vec[0]);
 //}
 
-//void UniformManager::setUniform(const char *name, const glm::vec4 &vec) {
+// void UniformManager::setUniform(const char *name, const glm::vec4 &vec) {
 //	glint id = glGetUniformLocation(m_prog->program(), name);
 //	glProgramUniform4fv(m_prog->program(), id, 1, &vec[0]);
 //}
 
-//void UniformManager::setUniform(const char *name, const glm::mat4 &mat) {
+// void UniformManager::setUniform(const char *name, const glm::mat4 &mat) {
 //	glint id = glGetUniformLocation(m_prog->program(), name);
-//	glProgramUniformMatrix4fv(m_prog->program(), id, 1, GL_FALSE, &mat[0][0]);
+//	glProgramUniformMatrix4fv(m_prog->program(), id, 1, GL_FALSE,
+//&mat[0][0]);
 //}
 
-//void UniformManager::setUniform(glint id, bool value) {
+// void UniformManager::setUniform(glint id, bool value) {
 //	glProgramUniform1ui(m_prog->program(), id, value);
 //}
 
-//void UniformManager::setUniform(glint id, GLID value) {
+// void UniformManager::setUniform(glint id, GLID value) {
 //	glProgramUniform1ui(m_prog->program(), id, value);
 //}
 
-//void UniformManager::setUniform(glint id, glint value) {
+// void UniformManager::setUniform(glint id, glint value) {
 //	glProgramUniform1i(m_prog->program(), id, value);
 //}
 
-//void UniformManager::setUniform(glint id, float value) {
+// void UniformManager::setUniform(glint id, float value) {
 //	glProgramUniform1f(m_prog->program(), id, value);
 //}
 
-//void UniformManager::setUniform(glint id, const glm::vec2 &vec) {
+// void UniformManager::setUniform(glint id, const glm::vec2 &vec) {
 //	glProgramUniform2fv(m_prog->program(), id, 1, &vec[0]);
 //}
 
-//void UniformManager::setUniform(glint id, const glm::vec3 &vec) {
+// void UniformManager::setUniform(glint id, const glm::vec3 &vec) {
 //	glProgramUniform3fv(m_prog->program(), id, 1, &vec[0]);
 //}
 
-//void UniformManager::setUniform(glint id, const glm::vec4 &vec) {
+// void UniformManager::setUniform(glint id, const glm::vec4 &vec) {
 //	glProgramUniform4fv(m_prog->program(), id, 1, &vec[0]);
 //}
 
-//void UniformManager::setUniform(glint id, const glm::mat4 &mat) {
-//	glProgramUniformMatrix4fv(m_prog->program(), id, 1, GL_FALSE, &mat[0][0]);
+// void UniformManager::setUniform(glint id, const glm::mat4 &mat) {
+//	glProgramUniformMatrix4fv(m_prog->program(), id, 1, GL_FALSE,
+//&mat[0][0]);
 //}
 
-//glint UniformManager::resolveUniform(const char *name) const {
+// glint UniformManager::resolveUniform(const char *name) const {
 //	return glGetUniformLocation(m_prog->program(), name);
 //}
 
@@ -395,9 +388,8 @@ uint32_t ProgramCompiler::compileProgram(const Shader *shaders, uint32_t size) {
 	return programId;
 }
 
-
-void ProgramCompiler::resolveUniforms(uint32_t programId, uint32_t *uniforms, uint32_t size)
-{
+void ProgramCompiler::resolveUniforms(uint32_t programId, uint32_t *uniforms,
+									  uint32_t size) {
 	GLint count;
 	glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &count);
 	ASSERT((uint32_t)count == size);
@@ -405,54 +397,57 @@ void ProgramCompiler::resolveUniforms(uint32_t programId, uint32_t *uniforms, ui
 	char name[256];
 	GLsizei length;
 
-	for(uint32_t i = 0; i < size; ++i)
-	{
+	for (uint32_t i = 0; i < size; ++i) {
 		GLint _size;
 		GLenum _type;
 		glGetActiveUniform(programId, i, 256, &length, &_size, &_type, name);
 		uint32_t crc32 = crypto::crc32(name, length);
 		uniforms[i] = crc32;
+
+		uint32_t loc_ = glGetUniformLocation(programId, name);
+		printf("name: %s, location: %u, i: %u\n", name, loc_, i);
 	}
 }
 
-
-void UniformManager::setUniform(uint32_t programId, uint32_t uniformId, int32_t value)
-{
-
+uint32_t Uniforms::getUniformId(const uint32_t *uniforms, uint32_t size,
+								uint32_t uniformHash) {
+	uint32_t id = 0;
+	for (uint32_t i = 0; id == 0 && i < size; ++i) {
+		if (uniforms[i] == uniformHash) {
+			id = i;
+		}
+	}
+	return id;
 }
 
-
-void UniformManager::setUniform(uint32_t programId, uint32_t uniformId, uint32_t value)
-{
-
+void Uniforms::setUniform(uint32_t uniformId, int32_t value) {
+	glUniform1i(uniformId, value);
 }
 
-
-void UniformManager::setUniform(uint32_t programId, uint32_t uniformId, float_t value)
-{
-
+void Uniforms::setUniform(uint32_t uniformId, uint32_t value) {
+	glUniform1ui(uniformId, value);
 }
 
-
-void UniformManager::setUniform(uint32_t programId, uint32_t uniformId, const glm::vec2 &vec)
-{
-
+void Uniforms::setUniform(uint32_t uniformId, float_t value) {
+	glUniform1f(uniformId, value);
 }
 
-
-void UniformManager::setUniform(uint32_t programId, uint32_t uniformId, const glm::vec3 &vec)
-{
-
+void Uniforms::setUniform(uint32_t uniformId, const glm::vec2 &value) {
+	glUniform2fv(uniformId, 1, &value[0]);
 }
 
-
-void UniformManager::setUniform(uint32_t programId, uint32_t uniformId, const glm::vec4 &vec)
-{
-
+void Uniforms::setUniform(uint32_t uniformId, const glm::vec3 &value) {
+	glUniform3fv(uniformId, 1, &value[0]);
 }
 
+void Uniforms::setUniform(uint32_t uniformId, const glm::vec4 &value) {
+	glUniform4fv(uniformId, 1, &value[0]);
+}
 
-void UniformManager::setUniform(uint32_t programId, uint32_t uniformId, const glm::mat4 &mat)
-{
+void Uniforms::setUniform(uint32_t uniformId, const glm::mat3 &value) {
+	glUniformMatrix3fv(uniformId, 1, GL_FALSE, &value[0][0]);
+}
 
+void Uniforms::setUniform(uint32_t uniformId, const glm::mat4 &value) {
+	glUniformMatrix4fv(uniformId, 1, GL_FALSE, &value[0][0]);
 }

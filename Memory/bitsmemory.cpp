@@ -12,22 +12,21 @@ struct alignas(32) manager {
   size_t size;
 };
 
-manager *BitsMemory::mem_manager = nullptr;
-
-void BitsMemory::init(size_t size) {
-  assert(mem_manager == nullptr);
-  void *tmp = ::malloc(size + sizeof(manager));
-  mem_manager = new (tmp) manager();
-  mem_manager->mem_block = mem_manager->current_block =
-	  ptr_add(tmp, sizeof(manager));
-  mem_manager->size = size;
-  mem_manager->index = 0;
+BitsMemory::BitsMemory(size_t size)
+{
+	void *tmp = ::malloc(size + sizeof(manager));
+	mem_manager = new (tmp) manager();
+	mem_manager->mem_block = mem_manager->current_block =
+		ptr_add(tmp, sizeof(manager));
+	mem_manager->size = size;
+	mem_manager->index = 0;
 }
 
-void BitsMemory::deinit() {
-  assert(mem_manager != nullptr);
-  ::free(mem_manager);
-  mem_manager = nullptr;
+BitsMemory::~BitsMemory()
+{
+	assert(mem_manager != nullptr);
+	::free(mem_manager);
+	mem_manager = nullptr;
 }
 
 void *BitsMemory::malloc(size_t size) {

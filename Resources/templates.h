@@ -14,7 +14,8 @@ constexpr const char *manager_header{
     // GENERATED LITERAL RESOURCE GETTERS
     "%s" NL "#endif //RESOURCES_H"};
 
-constexpr const char *manager_header_binery_function{"resource get_%s ();" NL};
+constexpr const char *manager_header_binery_function{
+	"resource get_%s (void*);" NL "size_t get_%s_size();" NL};
 
 constexpr const char *manager_header_literal_function{
 	"const char *get_%s ();" NL};
@@ -28,10 +29,10 @@ constexpr const char *manager_source{
     "__g_resource_handle = fopen(\"%s\", \"rb\"); }" NL
     "void deinit_resources() { if(__g_resource_handle) "
     "fclose(__g_resource_handle); __g_resource_handle = nullptr; }" NL
-    "resource load_binery_resource(size_t start, size_t size) {" NL
-    "resource res;" NL "if(__g_resource_handle) {" NL
+	"resource load_binery_resource(void *buffer, size_t start, size_t size) "
+	"{" NL "resource res;" NL "if(__g_resource_handle) {" NL
 	"fseek(__g_resource_handle, start, SEEK_SET);" NL
-	"res.buffer = (unsigned char *)__g__malloc(size);" NL
+	"res.buffer = (unsigned char *)buffer;" NL
 	"res.size = fread(res.buffer, 1, size, __g_resource_handle);" NL "}" NL
     "return res;" NL "}" NL
     // GENERATED BINERY RESOURCE GETTERS
@@ -40,6 +41,7 @@ constexpr const char *manager_source{
     "%s" NL};
 
 constexpr const char *manager_source_binery_function{
-    "resource get_%s () { return load_binery_resource(%lu, %lu); }" NL};
+	"resource get_%s (void* ptr_) { return load_binery_resource(ptr_, %lu, "
+	"%lu); }" NL "size_t get_%s_size () { return %lu; }" NL};
 
 #endif // TEMPLATES_H

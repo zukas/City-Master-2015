@@ -12,6 +12,7 @@
 #include "Util/skybox.h"
 #include "Util/particlesystem.h"
 #include "saturnrings.h"
+#include "solarsystem.h"
 
 class glProgram
 {
@@ -26,7 +27,9 @@ class glProgram
         Program m_objectSelectionProgram;
         Camera m_camera;
 
-		SaturnRings rings;
+		SolarSystem system;
+
+//		SaturnRings rings;
         Text m_text;
         Lamp m_lamp;
         SkyBox m_box;
@@ -35,7 +38,8 @@ class glProgram
         Axis m_axis;
         std::vector<Model > m_models;
         class GLFWwindow *m_window { nullptr };
-        float m_frameRate { 0 };
+		float m_maxFrameRate { 0.f };
+		float m_minFrameRate { 6000.f };
 
     public:
         glProgram();

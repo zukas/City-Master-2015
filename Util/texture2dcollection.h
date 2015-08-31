@@ -8,13 +8,8 @@
 #endif
 
 class Texture2DCollection {
-  private:
-    static uint32_t _texture_size;
-
   public:
     Texture2DCollection() = delete;
-
-    static uint32_t texture_size();
 
 	static uint32_t create_dss_from_memory(byte *buffer, uint32_t size);
 

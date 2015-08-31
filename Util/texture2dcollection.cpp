@@ -4,11 +4,6 @@
 #include <GL/glew.h>
 #include <string.h>
 
-uint32_t Texture2DCollection::_texture_size{0};
-
-
-uint32_t Texture2DCollection::texture_size() { return _texture_size; }
-
 uint32_t Texture2DCollection::create_dss_from_memory(byte *buffer,
 													 uint32_t size) {
 	uint32_t sampler_id_;
@@ -54,8 +49,7 @@ uint32_t Texture2DCollection::create_ttf_from_memory(byte *buffer,
 	return texture_id_;
 }
 
-void Texture2DCollection::destroy(uint32_t texture_id)
-{
+void Texture2DCollection::destroy(uint32_t texture_id) {
 	glDeleteTextures(1, &texture_id);
 	glDeleteSamplers(1, &texture_id);
 }
@@ -71,12 +65,10 @@ void Texture2DCollection::bind(const uint32_t *texture_ids, uint32_t size,
 							   uint32_t start_unit) {
 	ASSERT(texture_ids != nullptr);
     ASSERT(size > 0);
-	ASSERT(size < _texture_size);
 	const uint32_t size_ = size + start_unit;
 	for (uint32_t i = start_unit; i < size_; ++i) {
         glActiveTexture(GL_TEXTURE0 + i);
 		const uint32_t id = texture_ids[i];
-		glUniform1i(id, i);
 		glBindTexture(GL_TEXTURE_2D, id);
 		glBindSampler(i, id);
     }

@@ -3,11 +3,9 @@
 #include "Memory/utils.h"
 
 #include <GL/glew.h>
-#include <algorithm>
 #include <GLFW/glfw3.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/matrix_interpolation.hpp>
-#include <glm/gtx/transform.hpp>
+#include <algorithm>
+
 //#include "Import/loader.h"
 #include "Util/clock.h"
 #include "Util/shapes.h"
@@ -19,6 +17,9 @@
 #include "Util/viewport.h"
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_interpolation.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include "resources/resourcemanager.h"
 #include "Util/texture2dcollection.h"
@@ -201,6 +202,88 @@ Model Planet::generate(float parent_size) {
 	return mod;
 }
 
+struct loc_size_t {
+	PlanetType type;
+	float size;
+	float distance;
+};
+
+struct calc_loc_size_t {
+	glm::vec3 location;
+	float size;
+	uint32_t parts;
+};
+
+void init_calc_location(const loc_size_t *input, calc_loc_size_t *output,
+						uint32_t size, float parent_size) {
+
+	loc_size_t in = input[0];
+	float calc_size;
+	float calc_distance;
+	uint32_t parts;
+
+	switch (t.type) {
+	case SUN:
+		calc_size = size_scaling(15.f, in.size);
+		calc_distance =
+			in.distance > 0.f ? distance_scaling(100000.f, in.distance) : 0.f;
+		parts = 128;
+		break;
+	case PLANET:
+		calc_size = size_scaling(40.f, in.size);
+		calc_distance = distance_scaling(200.f, in.distance);
+		parts = 64;
+		break;
+	case MOON:
+		calc_size = size_scaling(255.f, in.size);
+		calc_distance = distance_scaling(2000.f, in.distance);
+		parts = 32;
+		break;
+	default:
+		break;
+	}
+
+	calc_loc_size_t &out = output[0];
+	out.location = {parent_size + (calc_distance > 0.f ? calc_size + calc_distance : 0.f),
+					0.f, 0.f};
+	out.size = calc_size / 2.f;
+
+	for(uint32_t i = 0; i < size; ++i) {
+
+	}
+
+}
+
+void init_home_solar_system(SolarSystem &system) {
+
+	model_phx_data_t _phx_data[21]{{25.6f * day, 0.f, {}, {}, 8},
+								   {
+									58.6f * day, 88.f * day,
+								   },
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {},
+								   {}};
+}
+
 glProgram::glProgram() {
 
 	if (!glfwInit()) {
@@ -231,7 +314,6 @@ glProgram::glProgram() {
 
 	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetCursorPos(m_window, halfWindowWidth, halfWindowHeight);
-	m_camera = {m_window};
 	m_lamp = {glm::vec3(0.f, 0.f, 5.f), 500.f};
 
 	Viewport::update({0, 0, windowWidth, windowHeight});
@@ -460,8 +542,7 @@ glProgram::glProgram() {
 		Shader text_[2]{{VERTEX, get_res_text_vert_glsl()},
 						{FRAGMENT, get_res_text_frag_glsl()}};
 
-		Text::init(text_, 2, "projectionMatrix"_h, "modelMatrix"_h, "colour"_h,
-				   "texture"_h);
+		Text::init(text_, 2, "projectionMatrix"_h, "modelMatrix"_h, "colour"_h);
 	}
 
 	auto freesans_buffer = get_res_freesans_ttf(
@@ -515,21 +596,21 @@ glProgram::glProgram() {
 }
 
 void glProgram::exec() {
-	int frameCount = 0;
-	auto startTime = std::chrono::high_resolution_clock::now();
+	Clock::update();
+	uint32_t frame = 0;
 	do {
+		uint64_t start = Clock::now();
+		glfwPollEvents();
 		m_mouse.update();
 		m_keyboard.update();
 		render();
-		glfwPollEvents();
-		++frameCount;
-		m_frameRate = frameCount /
-					  (std::chrono::duration_cast<std::chrono::duration<float>>(
-						   std::chrono::high_resolution_clock::now() -
-						   startTime).count());
-		if (frameCount == 600) {
-			startTime = std::chrono::high_resolution_clock::now();
-			frameCount = 0;
+		Clock::update();
+		if (++frame > 60) {
+			float rate = 1000000000.f / (Clock::now() - start);
+			if (rate > m_maxFrameRate)
+				m_maxFrameRate = rate;
+			else if (rate < m_minFrameRate)
+				m_minFrameRate = rate;
 		}
 
 	} while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
@@ -542,7 +623,6 @@ void glProgram::render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		{
 			PROF("Setup before render");
-			Clock::update();
 			m_camera.calcViewport();
 
 			m_objectProgram.use();
@@ -559,7 +639,8 @@ void glProgram::render() {
 		{
 			PROF("Creating frame rate text");
 			char buf[128];
-			std::sprintf(buf, "FPS: %.2f", m_frameRate);
+			std::sprintf(buf, "MAX FPS: %.2f\nMIN FPS: %.2f", m_maxFrameRate,
+						 m_minFrameRate);
 			{
 				PROF("Rendering text");
 				Text::beginRender();

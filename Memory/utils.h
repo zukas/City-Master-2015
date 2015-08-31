@@ -1,8 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <cstddef>
-#include <cstdint>
+#include <stddef.h>
+#include <stdint.h>
 
 constexpr void *ptr_add(void *ptr, size_t size) {
   return reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(ptr) + size);

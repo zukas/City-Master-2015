@@ -12,7 +12,6 @@ class Camera
 		static constexpr float max_distance { 5000.f };
 
     private:
-        GLFWwindow *m_window;
         glm::mat4 m_viewMat;
         glm::mat4 m_projectionMat;
 		glm::vec3 m_eye { -100.f, 88.f, 594.f };
@@ -29,7 +28,7 @@ class Camera
         void calcQuads();
 
     public:
-        Camera(GLFWwindow *window = nullptr);
+		Camera();
         void calcViewport();
 		void rotateHorizontal(float delta);
 		void rotateVertical(float delta);

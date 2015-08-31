@@ -6,6 +6,7 @@ class BitsMemory final{
 	private:
 		struct manager *mem_manager;
 	public:
+		BitsMemory();
 		BitsMemory(size_t size);
 		~BitsMemory();
 
@@ -14,6 +15,7 @@ class BitsMemory final{
 		void *malloc_aligend_32(size_t size);
 		void *malloc_aligend_64(size_t size);
 		void clear();
+		void swap(BitsMemory &other);
 };
 
 

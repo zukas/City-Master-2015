@@ -32,7 +32,7 @@ class Text {
   public:
 	static void init(const Shader *shaders, uint32_t size,
 					 uint32_t projection_hash, uint32_t model_hash,
-					 uint32_t colour_hash, uint32_t texture_hash);
+					 uint32_t colour_hash);
 
 	static void beginRender();
 	static void endRender();

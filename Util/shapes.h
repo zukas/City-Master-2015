@@ -6,6 +6,7 @@
 namespace sphare
 {
 	shape create(float radius, int slices, int stacks);
+    void create(uv_vertex *vertexes, uint32_t indexes, float radius, uint32_t slices, uint32_t stacks);
 }
 
 namespace cube

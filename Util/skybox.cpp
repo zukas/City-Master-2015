@@ -109,18 +109,18 @@ SkyBox::~SkyBox()
 
 void SkyBox::render(Camera &camera)
 {
-	GLint OldCullFaceMode;
-	glGetIntegerv(GL_CULL_FACE_MODE, &OldCullFaceMode);
-	glCullFace(GL_FRONT);
-	glDepthMask (GL_FALSE);
-	m_program.use();
-	glBindVertexArray(m_vertexArray);
-	camera.update(m_program);
-	m_program.setModelMatrix(m_model);
-	m_program.setSampers(1);
-	m_texture.bind(0);
-	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertexs));
-	glDepthMask (GL_TRUE);
-	glCullFace(OldCullFaceMode);
+//	GLint OldCullFaceMode;
+//	glGetIntegerv(GL_CULL_FACE_MODE, &OldCullFaceMode);
+//	glCullFace(GL_FRONT);
+//	glDepthMask (GL_FALSE);
+//	m_program.use();
+//	glBindVertexArray(m_vertexArray);
+//	camera.update(m_program);
+//	m_program.setModelMatrix(m_model);
+//	m_program.setSampers(1);
+//	m_texture.bind(0);
+//	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertexs));
+//	glDepthMask (GL_TRUE);
+//	glCullFace(OldCullFaceMode);
 }
 

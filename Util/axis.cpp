@@ -105,12 +105,12 @@ void Axis::init()
 
 void Axis::render(Camera &camera)
 {
-	if(m_vertexArray)
-	{
-		m_program.use();
-		camera.update(m_program);
-		glBindVertexArray(m_vertexArray);
-		glDrawArrays(GL_LINES, 0, sizeof(axisBuffer));
-		glBindVertexArray(0);
-	}
+//	if(m_vertexArray)
+//	{
+//		m_program.use();
+//		camera.update(m_program);
+//		glBindVertexArray(m_vertexArray);
+//		glDrawArrays(GL_LINES, 0, sizeof(axisBuffer));
+//		glBindVertexArray(0);
+//	}
 }

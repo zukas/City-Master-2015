@@ -1,7 +1,6 @@
 #version 330
 
-uniform sampler2D tsampler[2];
-uniform int tcount;
+uniform sampler2D texture;
 uniform vec3 lightPosition;
 uniform float lightStrength;
 uniform int objectSelected;
@@ -12,12 +11,13 @@ in vec3 Normal_cameraspace;
 in vec3 EyeDirection_cameraspace;
 in vec3 LightDirection_cameraspace;
 
-out vec3 colour;
+out vec4 colour;
 
 void main()
 {
 
-    vec4 tmpc = texture2D(tsampler[0], UV);
+    vec4 tmpc = texture2D(texture, UV);
+    colour = tmpc;
 //    for(int i = 0; i < tcount; i++)
 //    {
 //        if(i == 0)
@@ -46,30 +46,30 @@ void main()
 //        tmpc = vec4(UV.x, UV.y, 0.35, 1.0);
 //    }
 
-    vec3 LightColor = vec3(1,0.92,0.90);
-    if(objectSelected == 1)
-    {
-        LightColor = vec3(0.89,0.42,0.48);
-    }
-    float LightPower = length( lightPosition ) * lightStrength;
+//    vec3 LightColor = vec3(1,0.92,0.90);
+//    if(objectSelected == 1)
+//    {
+//        LightColor = vec3(0.89,0.42,0.48);
+//    }
+//    float LightPower = length( lightPosition ) * lightStrength;
 
-    vec3 MaterialDiffuseColor = tmpc.rgb;
-    vec3 MaterialAmbientColor = vec3(0.82,0.82,0.82) * MaterialDiffuseColor;
-    vec3 MaterialSpecularColor = vec3(0.25,0.25,0.25);
+//    vec3 MaterialDiffuseColor = tmpc.rgb;
+//    vec3 MaterialAmbientColor = vec3(0.82,0.82,0.82) * MaterialDiffuseColor;
+//    vec3 MaterialSpecularColor = vec3(0.25,0.25,0.25);
 
-    float distance = length( lightPosition - Position_worldspace );
+//    float distance = length( lightPosition - Position_worldspace );
 
-    vec3 n = normalize( Normal_cameraspace );
-    vec3 l = normalize( LightDirection_cameraspace );
-    float cosTheta = clamp( dot( n,l ), 0.1, 1 );
+//    vec3 n = normalize( Normal_cameraspace );
+//    vec3 l = normalize( LightDirection_cameraspace );
+//    float cosTheta = clamp( dot( n,l ), 0.1, 1 );
 
-    vec3 E = normalize(EyeDirection_cameraspace);
-    vec3 R = reflect(-l,n);
-    float cosAlpha = clamp(dot( E,R ), 0, 1);
+//    vec3 E = normalize(EyeDirection_cameraspace);
+//    vec3 R = reflect(-l,n);
+//    float cosAlpha = clamp(dot( E,R ), 0, 1);
 
-    colour = MaterialAmbientColor * LightColor +
-            MaterialDiffuseColor * LightColor  * cosTheta / (distance*distance) +
-            MaterialSpecularColor * LightColor  * pow(cosAlpha,5) / (distance*distance);
+//    colour = MaterialAmbientColor * LightColor +
+//            MaterialDiffuseColor * LightColor  * cosTheta / (distance*distance) +
+//            MaterialSpecularColor * LightColor  * pow(cosAlpha,5) / (distance*distance);
 
 
 }

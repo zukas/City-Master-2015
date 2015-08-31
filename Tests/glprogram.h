@@ -23,11 +23,12 @@ class glProgram
         static constexpr float halfWindowHeight { windowHeight / 2.f };
 
     private:
-        Program m_objectProgram;
-        Program m_objectSelectionProgram;
+//        uint32_t m_objectProgram;
+//        Program m_objectSelectionProgram;
         Camera m_camera;
 
 		SolarSystem system;
+        solar_program_t program;
 
 //		SaturnRings rings;
         Text m_text;

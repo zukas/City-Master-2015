@@ -14,6 +14,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <new>
+
 constexpr float year{5 * 60 * 1000.f};
 constexpr float size_div{6371.f};
 constexpr float distance_div{14959.78707f};
@@ -71,18 +73,25 @@ uint16_t calculate_matrixes(const glm::mat4 &parent_model,
 
 uint32_t SolarSystem::solar_model_id{0};
 
-SolarSystem::SolarSystem() {}
+SolarSystem::SolarSystem()
+	: m_memory(nullptr), m_model_phx_data(nullptr), m_model_matrixes(nullptr),
+	  m_model_gfx_data(nullptr) {}
 
 void SolarSystem::init(uint16_t size, uint32_t model_id) {
+	deinit();
     solar_model_id = model_id;
-    m_memory = malloc((sizeof(model_phx_data_t) + sizeof(model_gfx_data_t) +
-                       sizeof(glm::mat4)) *
-                      size);
-    m_model_phx_data = (model_phx_data_t *)m_memory;
-    m_model_matrixes =
-        (glm::mat4 *)ptr_add(m_memory, sizeof(model_phx_data_t) * size);
-    m_model_gfx_data = (model_gfx_data_t *)ptr_add(
-        m_memory, (sizeof(model_phx_data_t) + sizeof(glm::mat4)) * size);
+	m_memory = nullptr;
+	m_model_phx_data = nullptr;
+	m_model_matrixes = nullptr;
+	m_model_gfx_data = nullptr;
+
+	//    m_memory = malloc((sizeof(model_phx_data_t) + sizeof(model_gfx_data_t)
+	//    +
+	//                       sizeof(glm::mat4)) *
+	//                      size);
+	m_model_phx_data = new model_phx_data_t[size];
+	m_model_matrixes = new glm::mat4[size];
+	m_model_gfx_data = new model_gfx_data_t[size];
     m_size = size;
 }
 

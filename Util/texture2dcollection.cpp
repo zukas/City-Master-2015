@@ -2,14 +2,19 @@
 #include "SOIL/SOIL.h"
 
 #include <GL/glew.h>
-#include <string.h>
+#include <stdio.h>
 
 uint32_t Texture2DCollection::create_dss_from_memory(byte *buffer,
 													 uint32_t size) {
-	uint32_t sampler_id_;
+	uint32_t sampler_id_ { 0 };
 	uint32_t texture_id_ = SOIL_load_OGL_texture_from_memory(
 		buffer, size, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_DDS_LOAD_DIRECT);
+
+	if(texture_id_ == 0)
+	{
+		fprintf(stderr, "Failed to create DDS: %s", SOIL_last_result());
+	}
     glBindTexture(GL_TEXTURE_2D, texture_id_);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     GL_LINEAR_MIPMAP_LINEAR);
@@ -27,8 +32,8 @@ uint32_t Texture2DCollection::create_dss_from_memory(byte *buffer,
 uint32_t Texture2DCollection::create_ttf_from_memory(byte *buffer,
 													 uint32_t width,
 													 uint32_t height) {
-	uint32_t texture_id_;
-	uint32_t sampler_id_;
+	uint32_t texture_id_ { 0 };
+	uint32_t sampler_id_ { 0 };
 
 	glGenTextures(1, &texture_id_);
 	glBindTexture(GL_TEXTURE_2D, texture_id_);

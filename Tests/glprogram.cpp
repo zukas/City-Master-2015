@@ -212,7 +212,6 @@ struct base_phx_t {
 struct calc_phx_t {
     glm::vec3 location;
     float size;
-    uint32_t parts;
 };
 
 uint32_t do_calc_phx(const base_phx_t *input, calc_phx_t *output,
@@ -221,24 +220,20 @@ uint32_t do_calc_phx(const base_phx_t *input, calc_phx_t *output,
     const base_phx_t in = input[0];
     uint32_t c_count = in.children;
     uint32_t processed = 1;
-    uint32_t parts;
     float calc_size;
     float calc_distance;
 
     switch (in.type) {
     case SUN:
-        parts = 128;
         calc_size = size_scaling(15.f, in.size);
         calc_distance =
             in.distance > 0.f ? distance_scaling(100000.f, in.distance) : 0.f;
         break;
     case PLANET:
-        parts = 64;
         calc_size = size_scaling(40.f, in.size);
         calc_distance = distance_scaling(200.f, in.distance);
         break;
     case MOON:
-        parts = 32;
         calc_size = size_scaling(255.f, in.size);
         calc_distance = distance_scaling(2000.f, in.distance);
         break;
@@ -251,7 +246,6 @@ uint32_t do_calc_phx(const base_phx_t *input, calc_phx_t *output,
                         (calc_distance > 0.f ? calc_size + calc_distance : 0.f),
                     0.f, 0.f};
     out.size = calc_size / 2.f;
-    out.parts = parts;
 
     for (; c_count != 0; --c_count) {
         processed +=
@@ -292,113 +286,453 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
     }
 
     system.init(21, model_id);
-    {
-        model_phx_data_t _sun{_calc_phx[0].location, 25.6f * day, 0.f, 0.f, 8};
-        model_bin_data_t _bin {
 
-        };
+	const uint32_t sun_parts = 64;
+	const uint32_t planet_parts = 32;
+	const uint32_t moon_parts = 16;
 
-        system.set(0, );
+	uint32_t index = 0;
+	BitsMemory mem(1024 * 1024 * 2);
+	{
+		/// SUN
+		const uint32_t texture_size = get_res_sun_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(sun_parts);
+		const uint32_t index_size = sphare::index_size(sun_parts);
+
+		byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size);
+		get_res_sun_dds(_buffer);
+
+		uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size);
+		uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size);
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, sun_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 25.6f * day,
+									   0.f, 0.f, 8},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _mercury{_calc_phx[1].location, 58.6f * day,
-                                  88.f * day, 0.1 * degree, 0};
+		/// MERCURY
+		const uint32_t texture_size = get_res_mercury_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
+		const uint32_t index_size = sphare::index_size(planet_parts);
+
+		byte _buffer[texture_size];
+		get_res_mercury_dds(_buffer);
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 58.6f * day,
+									   88.f * day, 0.1 * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _venus{_calc_phx[2].location, 116.75f * day,
-                                224.701f * day, 177.f * degree, 0};
+		/// VENUS
+		const uint32_t texture_size = get_res_venus_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
+		const uint32_t index_size = sphare::index_size(planet_parts);
+
+		byte _buffer[texture_size];
+		get_res_venus_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 116.75f * day,
+									   224.701f * day, 177.f * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _earth{_calc_phx[3].location, day, year, 23.f * degree,
-                                1};
+		/// EARTH
+		const uint32_t texture_size = get_res_earth_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
+		const uint32_t index_size = sphare::index_size(planet_parts);
+
+		byte _buffer[texture_size];
+		get_res_earth_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, day, year,
+									   23.f * degree, 1},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _moon{_calc_phx[4].location, 0.f, 29.530589 * day,
-                               6.687f * degree, 0};
+		/// MOON
+		const uint32_t texture_size = get_res_moon_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_moon_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   29.530589 * day, 6.687f * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _mars{_calc_phx[5].location, 1.02876421707f * day,
-                               686.971f * day, 25.f * degree, 0};
+		/// MARS
+		const uint32_t texture_size = get_res_mars_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
+		const uint32_t index_size = sphare::index_size(planet_parts);
+
+		byte _buffer[texture_size];
+		get_res_mars_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location,
+									   1.02876421707f * day, 686.971f * day,
+									   25.f * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _jupiter{_calc_phx[6].location, 9.97f * hour,
-                                  11.86f * year, 3.f * degree, 4};
+		/// JUPITER
+		const uint32_t texture_size = get_res_jupiter_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
+		const uint32_t index_size = sphare::index_size(planet_parts);
+
+		byte _buffer[texture_size];
+		get_res_jupiter_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 9.97f * hour,
+									   11.86f * year, 3.f * degree, 4},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _europa{_calc_phx[7].location, 0.f, 3.551181f * day,
-                                 0.1f * degree, 0};
+		/// EUROPA
+		const uint32_t texture_size = get_res_europa_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_europa_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   3.551181f * day, 0.1f * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _io{_calc_phx[8].location, 0.f, 1.769137786f * day,
-                             0.05f * degree, 0};
+		/// IO
+		const uint32_t texture_size = get_res_io_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_io_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   1.769137786f * day, 0.05f * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _ganymade{_calc_phx[9].location, 0.f,
-                                   7.15455296f * day, 2.214f * degree, 0};
+		/// GANYMADE
+		const uint32_t texture_size = get_res_ganymede_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_ganymede_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   7.15455296f * day, 2.214f * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _callisto{_calc_phx[10].location, 0.f,
-                                   16.6890184f * day, 2.017f * degree, 0};
+		/// CALLISTO
+		const uint32_t texture_size = get_res_callisto_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_callisto_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   16.6890184f * day, 2.017f * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _saturn{_calc_phx[11].location, 10.65f * hour,
-                                 29.f * year, 26.7f * degree, 7};
+		/// SATURN
+		const uint32_t texture_size = get_res_saturn_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
+		const uint32_t index_size = sphare::index_size(planet_parts);
+
+		byte _buffer[texture_size];
+		get_res_saturn_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 10.65f * hour,
+									   29.f * year, 26.7f * degree, 7},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _titan{_calc_phx[12].location, 0.f, 15.945f * day, 0.f,
-                                0};
+		/// TITAN
+		const uint32_t texture_size = get_res_titan_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_titan_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   15.945f * day, 0.f, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _enceladus{_calc_phx[13].location, 0.f,
-                                    1.370218f * day, 0.017f * degree, 0};
+		/// ENCELADUS
+		const uint32_t texture_size = get_res_enceladus_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_enceladus_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   1.370218f * day, 0.017f * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _rhea{_calc_phx[14].location, 0.f, 4.518212f * day,
-                               0.f, 0};
+		/// RHEA
+		const uint32_t texture_size = get_res_rhea_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_rhea_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   4.518212f * day, 0.f, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _dione{_calc_phx[15].location, 0.f, 2.736915f * day,
-                                0.f, 0};
+		/// DIONE
+		const uint32_t texture_size = get_res_dione_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_dione_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   2.736915f * day, 0.f, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _tethys{_calc_phx[16].location, 0.f, 1.887802f * day,
-                                 0.f, 0};
+		/// TETHYS
+		const uint32_t texture_size = get_res_tethys_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_tethys_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   1.887802f * day, 0.f, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _iapetus{_calc_phx[17].location, 0.f, 79.3215f * day,
-                                  0.f, 0};
+		/// IAPETUS
+		const uint32_t texture_size = get_res_iapetus_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_iapetus_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   79.3215f * day, 0.f, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _mimas{_calc_phx[18].location, 0.f, 0.942f * day, 0.f,
-                                0};
+		/// MIMAS
+		const uint32_t texture_size = get_res_mimas_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
+		const uint32_t index_size = sphare::index_size(moon_parts);
+
+		byte _buffer[texture_size];
+		get_res_mimas_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+									   0.942f * day, 0.f, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 
     {
-        model_phx_data_t _uranus{_calc_phx[19].location, 17.233333333f * hour,
-                                 84.016846f * year, 97.77f * degree, 0};
-    }
+		/// URANUS
+		const uint32_t texture_size = get_res_uranus_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
+		const uint32_t index_size = sphare::index_size(planet_parts);
 
-    {
-        model_phx_data_t _neptune{_calc_phx[20].location, 16.266666667f * hour,
-                                  165 * year, 28.32f * degree, 0};
+		byte _buffer[texture_size];
+		get_res_uranus_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location,
+									   17.233333333f * hour, 84.016846f * year,
+									   97.77f * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
+    }
+	{
+		/// NEPTUNE
+		const uint32_t texture_size = get_res_neptune_dds_size();
+		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
+		const uint32_t index_size = sphare::index_size(planet_parts);
+
+		byte _buffer[texture_size];
+		get_res_neptune_dds(_buffer);
+
+		uv_vertex vertexes[vertex_size];
+		uint32_t indexes[index_size];
+
+		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
+
+		system.set(0, model_phx_data_t{_calc_phx[index].location,
+									   16.266666667f * hour, 165 * year,
+									   28.32f * degree, 0},
+				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
+									vertex_size, index_size});
+		++index;
     }
 }
 
@@ -473,6 +807,8 @@ glProgram::glProgram() {
             Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
     }
 
+	init_home_solar_system(system, program.model_id);
+
     //    m_objectProgram.createShader({VERTEX, get_res_object_vert_glsl()});
     //    m_objectProgram.createShader({FRAGMENT, get_res_object_frag_glsl()});
     //    m_objectProgram.createProgram();
@@ -489,189 +825,196 @@ glProgram::glProgram() {
 
     //    m_axis.init();
 
-    float mercury_distance = 57910000.f;
-    float venus_distance = 108200000.f;
-    float earth_distance = 149597870.691f;
-    float moon_distance = 384400.f;
-    float mars_distance = 227900000.f;
-    float jupiter_distance = 778500000.f;
-    float europa_distance = 670900.f;
-    float io_distance = 421700.f;
-    float callisto_distance = 1882700.f;
-    float ganymede_distance = 1070400.f;
-    float saturn_distance = 1433000000.f;
+	//    float mercury_distance = 57910000.f;
+	//    float venus_distance = 108200000.f;
+	//    float earth_distance = 149597870.691f;
+	//    float moon_distance = 384400.f;
+	//    float mars_distance = 227900000.f;
+	//    float jupiter_distance = 778500000.f;
+	//    float europa_distance = 670900.f;
+	//    float io_distance = 421700.f;
+	//    float callisto_distance = 1882700.f;
+	//    float ganymede_distance = 1070400.f;
+	//    float saturn_distance = 1433000000.f;
 
-    float sun_size = 696000.f;
-    float mercury_size = 2440.f;
-    float venus_size = 6052.f;
-    float earth_size = 6371.f;
-    float moon_size = 1737.1f;
-    float mars_size = 3390.f;
-    float jupiter_size = 69911.f;
-    float europa_size = 1560.8f;
-    float io_size = 1821.6f;
-    float callisto_size = 2410.3f;
-    float ganymede_size = 2634.1f;
-    float saturn_size = 58232.f;
+	//    float sun_size = 696000.f;
+	//    float mercury_size = 2440.f;
+	//    float venus_size = 6052.f;
+	//    float earth_size = 6371.f;
+	//    float moon_size = 1737.1f;
+	//    float mars_size = 3390.f;
+	//    float jupiter_size = 69911.f;
+	//    float europa_size = 1560.8f;
+	//    float io_size = 1821.6f;
+	//    float callisto_size = 2410.3f;
+	//    float ganymede_size = 2634.1f;
+	//    float saturn_size = 58232.f;
 
-    BitsMemory mem(1024 * 1024 * 20);
-    //    set_malloc_function(BitsMemory::malloc_aligend_64);
+	//    BitsMemory mem(1024 * 1024 * 20);
+	//    //    set_malloc_function(BitsMemory::malloc_aligend_64);
 
-    Planet sun;
-    sun.setup("sun", sun_size, 0.f, 0.f, 25.6f * day,
-              {0.f, 0.f, 0.f /*7.25f * degree*/}, SUN,
-              get_res_sun_dds(mem.malloc_aligend_32(get_res_sun_dds_size())));
+	//    Planet sun;
+	//    sun.setup("sun", sun_size, 0.f, 0.f, 25.6f * day,
+	//              {0.f, 0.f, 0.f /*7.25f * degree*/}, SUN,
+	//              get_res_sun_dds(mem.malloc_aligend_32(get_res_sun_dds_size())));
 
-    Planet mercury;
-    mercury.setup(
-        "mercury", mercury_size, mercury_distance, day * 88.f, day * 58.6f,
-        {0.f, 0.f, 0.1 * degree}, PLANET,
-        get_res_mercury_dds(mem.malloc_aligend_32(get_res_mercury_dds_size())));
+	//    Planet mercury;
+	//    mercury.setup(
+	//        "mercury", mercury_size, mercury_distance, day * 88.f, day *
+	//        58.6f,
+	//        {0.f, 0.f, 0.1 * degree}, PLANET,
+	//        get_res_mercury_dds(mem.malloc_aligend_32(get_res_mercury_dds_size())));
 
-    Planet venus;
-    venus.setup(
-        "venus", venus_size, venus_distance, day * 224.701f, day * 116.75f,
-        {0.f, 0.f, 177.f * degree}, PLANET,
-        get_res_venus_dds(mem.malloc_aligend_32(get_res_venus_dds_size())));
+	//    Planet venus;
+	//    venus.setup(
+	//        "venus", venus_size, venus_distance, day * 224.701f, day *
+	//        116.75f,
+	//        {0.f, 0.f, 177.f * degree}, PLANET,
+	//        get_res_venus_dds(mem.malloc_aligend_32(get_res_venus_dds_size())));
 
-    Planet earth;
-    earth.setup(
-        "earth", earth_size, earth_distance, year, day,
-        {0.f, 0.f, 23.f * degree}, PLANET,
-        get_res_earth_dds(mem.malloc_aligend_32(get_res_earth_dds_size())));
+	//    Planet earth;
+	//    earth.setup(
+	//        "earth", earth_size, earth_distance, year, day,
+	//        {0.f, 0.f, 23.f * degree}, PLANET,
+	//        get_res_earth_dds(mem.malloc_aligend_32(get_res_earth_dds_size())));
 
-    Planet moon;
-    moon.setup(
-        "moon", moon_size, moon_distance, day * 29.530589f, 0.f,
-        {0.f, 0.f, 6.687f * degree}, MOON,
-        get_res_moon_dds(mem.malloc_aligend_32(get_res_moon_dds_size())));
+	//    Planet moon;
+	//    moon.setup(
+	//        "moon", moon_size, moon_distance, day * 29.530589f, 0.f,
+	//        {0.f, 0.f, 6.687f * degree}, MOON,
+	//        get_res_moon_dds(mem.malloc_aligend_32(get_res_moon_dds_size())));
 
-    earth.setChildrenCount(1);
-    earth.setChild(0, &moon);
+	//    earth.setChildrenCount(1);
+	//    earth.setChild(0, &moon);
 
-    Planet mars;
-    mars.setup(
-        "mars", mars_size, mars_distance, 686.971f * day, 1.02876421707f * day,
-        {0.f, 0.f, 25.f * degree}, PLANET,
-        get_res_mars_dds(mem.malloc_aligend_32(get_res_mars_dds_size())));
+	//    Planet mars;
+	//    mars.setup(
+	//        "mars", mars_size, mars_distance, 686.971f * day, 1.02876421707f *
+	//        day,
+	//        {0.f, 0.f, 25.f * degree}, PLANET,
+	//        get_res_mars_dds(mem.malloc_aligend_32(get_res_mars_dds_size())));
 
-    Planet jupiter;
-    jupiter.setup(
-        "jupiter", jupiter_size, jupiter_distance, 11.86f * year, 9.97f * hour,
-        {0.f, 0.f, 3.f * degree}, PLANET,
-        get_res_jupiter_dds(mem.malloc_aligend_32(get_res_jupiter_dds_size())));
+	//    Planet jupiter;
+	//    jupiter.setup(
+	//        "jupiter", jupiter_size, jupiter_distance, 11.86f * year, 9.97f *
+	//        hour,
+	//        {0.f, 0.f, 3.f * degree}, PLANET,
+	//        get_res_jupiter_dds(mem.malloc_aligend_32(get_res_jupiter_dds_size())));
 
-    Planet europa;
-    europa.setup(
-        "europa", europa_size, europa_distance, 3.551181f * day, 0.f,
-        {0.f, 0.f, 0.1f * degree}, MOON,
-        get_res_europa_dds(mem.malloc_aligend_32(get_res_europa_dds_size())));
+	//    Planet europa;
+	//    europa.setup(
+	//        "europa", europa_size, europa_distance, 3.551181f * day, 0.f,
+	//        {0.f, 0.f, 0.1f * degree}, MOON,
+	//        get_res_europa_dds(mem.malloc_aligend_32(get_res_europa_dds_size())));
 
-    Planet io;
-    io.setup("io", io_size, io_distance, 1.769137786f * day, 0.f,
-             {0.f, 0.f, 0.05f * degree}, MOON,
-             get_res_io_dds(mem.malloc_aligend_32(get_res_io_dds_size())));
+	//    Planet io;
+	//    io.setup("io", io_size, io_distance, 1.769137786f * day, 0.f,
+	//             {0.f, 0.f, 0.05f * degree}, MOON,
+	//             get_res_io_dds(mem.malloc_aligend_32(get_res_io_dds_size())));
 
-    Planet ganymede;
-    ganymede.setup("ganymede", ganymede_size, ganymede_distance,
-                   7.15455296f * day, 0.f, {0.f, 0.f, 2.214f * degree}, MOON,
-                   get_res_ganymede_dds(
-                       mem.malloc_aligend_32(get_res_ganymede_dds_size())));
+	//    Planet ganymede;
+	//    ganymede.setup("ganymede", ganymede_size, ganymede_distance,
+	//                   7.15455296f * day, 0.f, {0.f, 0.f, 2.214f * degree},
+	//                   MOON,
+	//                   get_res_ganymede_dds(
+	//                       mem.malloc_aligend_32(get_res_ganymede_dds_size())));
 
-    Planet callisto;
-    callisto.setup("callisto", callisto_size, callisto_distance,
-                   16.6890184f * day, 0.f, {0.f, 0.f, 2.017f * degree}, MOON,
-                   get_res_callisto_dds(
-                       mem.malloc_aligend_32(get_res_callisto_dds_size())));
+	//    Planet callisto;
+	//    callisto.setup("callisto", callisto_size, callisto_distance,
+	//                   16.6890184f * day, 0.f, {0.f, 0.f, 2.017f * degree},
+	//                   MOON,
+	//                   get_res_callisto_dds(
+	//                       mem.malloc_aligend_32(get_res_callisto_dds_size())));
 
-    jupiter.setChildrenCount(4);
-    jupiter.setChild(0, &europa);
-    jupiter.setChild(1, &io);
-    jupiter.setChild(2, &ganymede);
-    jupiter.setChild(3, &callisto);
+	//    jupiter.setChildrenCount(4);
+	//    jupiter.setChild(0, &europa);
+	//    jupiter.setChild(1, &io);
+	//    jupiter.setChild(2, &ganymede);
+	//    jupiter.setChild(3, &callisto);
 
-    Planet saturn;
-    saturn.setup(
-        "saturn", saturn_size, saturn_distance, 29.f * year, 10.65f * hour,
-        {0.f, 0.f, 26.7f * degree}, PLANET,
-        get_res_saturn_dds(mem.malloc_aligend_32(get_res_saturn_dds_size())));
+	//    Planet saturn;
+	//    saturn.setup(
+	//        "saturn", saturn_size, saturn_distance, 29.f * year, 10.65f *
+	//        hour,
+	//        {0.f, 0.f, 26.7f * degree}, PLANET,
+	//        get_res_saturn_dds(mem.malloc_aligend_32(get_res_saturn_dds_size())));
 
-    Planet titan;
-    titan.setup(
-        "titan", 2576.f, 1221870.f, 15.945f * day, 0.f,
-        {0.f, 0.f, 0.f * degree}, MOON,
-        get_res_titan_dds(mem.malloc_aligend_32(get_res_titan_dds_size())));
+	//    Planet titan;
+	//    titan.setup(
+	//        "titan", 2576.f, 1221870.f, 15.945f * day, 0.f,
+	//        {0.f, 0.f, 0.f * degree}, MOON,
+	//        get_res_titan_dds(mem.malloc_aligend_32(get_res_titan_dds_size())));
 
-    Planet enceladus;
-    enceladus.setup("enceladus", 252.f, 238020.f, 1.370218f * day, 0.f,
-                    {0.f, 0.f, 0.017f * degree}, MOON,
-                    get_res_enceladus_dds(
-                        mem.malloc_aligend_32(get_res_enceladus_dds_size())));
+	//    Planet enceladus;
+	//    enceladus.setup("enceladus", 252.f, 238020.f, 1.370218f * day, 0.f,
+	//                    {0.f, 0.f, 0.017f * degree}, MOON,
+	//                    get_res_enceladus_dds(
+	//                        mem.malloc_aligend_32(get_res_enceladus_dds_size())));
 
-    Planet rhea;
-    rhea.setup(
-        "rhea", 763.8f, 527108.f, 4.518212f * day, 0.f,
-        {0.f, 0.f, 0.f * degree}, MOON,
-        get_res_rhea_dds(mem.malloc_aligend_32(get_res_rhea_dds_size())));
+	//    Planet rhea;
+	//    rhea.setup(
+	//        "rhea", 763.8f, 527108.f, 4.518212f * day, 0.f,
+	//        {0.f, 0.f, 0.f * degree}, MOON,
+	//        get_res_rhea_dds(mem.malloc_aligend_32(get_res_rhea_dds_size())));
 
-    Planet dione;
-    dione.setup(
-        "dione", 561.4f, 377400.f, 2.736915f * day, 0.f,
-        {0.f, 0.f, 0.f * degree}, MOON,
-        get_res_dione_dds(mem.malloc_aligend_32(get_res_dione_dds_size())));
+	//    Planet dione;
+	//    dione.setup(
+	//        "dione", 561.4f, 377400.f, 2.736915f * day, 0.f,
+	//        {0.f, 0.f, 0.f * degree}, MOON,
+	//        get_res_dione_dds(mem.malloc_aligend_32(get_res_dione_dds_size())));
 
-    Planet tethys;
-    tethys.setup(
-        "tethys", 531.1f, 294619.f, 1.887802f * day, 0.f,
-        {0.f, 0.f, 0.f * degree}, MOON,
-        get_res_tethys_dds(mem.malloc_aligend_32(get_res_tethys_dds_size())));
+	//    Planet tethys;
+	//    tethys.setup(
+	//        "tethys", 531.1f, 294619.f, 1.887802f * day, 0.f,
+	//        {0.f, 0.f, 0.f * degree}, MOON,
+	//        get_res_tethys_dds(mem.malloc_aligend_32(get_res_tethys_dds_size())));
 
-    Planet iapetus;
-    iapetus.setup(
-        "iapetus", 734.5f, 3560820.f, 79.3215f * day, 0.f,
-        {0.f, 0.f, 0.f * degree}, MOON,
-        get_res_iapetus_dds(mem.malloc_aligend_32(get_res_iapetus_dds_size())));
+	//    Planet iapetus;
+	//    iapetus.setup(
+	//        "iapetus", 734.5f, 3560820.f, 79.3215f * day, 0.f,
+	//        {0.f, 0.f, 0.f * degree}, MOON,
+	//        get_res_iapetus_dds(mem.malloc_aligend_32(get_res_iapetus_dds_size())));
 
-    Planet mimas;
-    mimas.setup(
-        "mimas", 198.2f, 185539.f, 0.942f * day, 0.f, {0.f, 0.f, 0.f * degree},
-        MOON,
-        get_res_mimas_dds(mem.malloc_aligend_32(get_res_mimas_dds_size())));
+	//    Planet mimas;
+	//    mimas.setup(
+	//        "mimas", 198.2f, 185539.f, 0.942f * day, 0.f, {0.f, 0.f, 0.f *
+	//        degree},
+	//        MOON,
+	//        get_res_mimas_dds(mem.malloc_aligend_32(get_res_mimas_dds_size())));
 
-    saturn.setChildrenCount(7);
-    saturn.setChild(0, &titan);
-    saturn.setChild(1, &enceladus);
-    saturn.setChild(2, &rhea);
-    saturn.setChild(3, &dione);
-    saturn.setChild(4, &tethys);
-    saturn.setChild(5, &iapetus);
-    saturn.setChild(6, &mimas);
+	//    saturn.setChildrenCount(7);
+	//    saturn.setChild(0, &titan);
+	//    saturn.setChild(1, &enceladus);
+	//    saturn.setChild(2, &rhea);
+	//    saturn.setChild(3, &dione);
+	//    saturn.setChild(4, &tethys);
+	//    saturn.setChild(5, &iapetus);
+	//    saturn.setChild(6, &mimas);
 
-    Planet uranus;
-    uranus.setup(
-        "uranus", 25362.f, 2870671400.f, 84.016846f * year,
-        17.233333333f * hour, {0.f, 0.f, 97.77f * degree}, PLANET,
-        get_res_uranus_dds(mem.malloc_aligend_32(get_res_uranus_dds_size())));
+	//    Planet uranus;
+	//    uranus.setup(
+	//        "uranus", 25362.f, 2870671400.f, 84.016846f * year,
+	//        17.233333333f * hour, {0.f, 0.f, 97.77f * degree}, PLANET,
+	//        get_res_uranus_dds(mem.malloc_aligend_32(get_res_uranus_dds_size())));
 
-    Planet neptune;
-    neptune.setup(
-        "neptune", 24622.f, 4503000000.f, 165 * year, 16.266666667f * hour,
-        {0.f, 0.f, 28.32f * degree}, PLANET,
-        get_res_neptune_dds(mem.malloc_aligend_32(get_res_neptune_dds_size())));
+	//    Planet neptune;
+	//    neptune.setup(
+	//        "neptune", 24622.f, 4503000000.f, 165 * year, 16.266666667f *
+	//        hour,
+	//        {0.f, 0.f, 28.32f * degree}, PLANET,
+	//        get_res_neptune_dds(mem.malloc_aligend_32(get_res_neptune_dds_size())));
 
-    sun.setChildrenCount(8);
-    sun.setChild(0, &mercury);
-    sun.setChild(1, &venus);
-    sun.setChild(2, &earth);
-    sun.setChild(3, &mars);
-    sun.setChild(4, &jupiter);
-    sun.setChild(5, &saturn);
-    sun.setChild(6, &uranus);
-    sun.setChild(7, &neptune);
+	//    sun.setChildrenCount(8);
+	//    sun.setChild(0, &mercury);
+	//    sun.setChild(1, &venus);
+	//    sun.setChild(2, &earth);
+	//    sun.setChild(3, &mars);
+	//    sun.setChild(4, &jupiter);
+	//    sun.setChild(5, &saturn);
+	//    sun.setChild(6, &uranus);
+	//    sun.setChild(7, &neptune);
 
-    m_models.push_back(sun.generate());
-
-    mem.clear();
+	//    m_models.push_back(sun.generate());
 
     {
         Shader text_[2]{{VERTEX, get_res_text_vert_glsl()},
@@ -680,10 +1023,15 @@ glProgram::glProgram() {
         Text::init(text_, 2, "projectionMatrix"_h, "modelMatrix"_h, "colour"_h);
     }
 
-    auto freesans_buffer = get_res_freesans_ttf(
-        mem.malloc_aligend_32(get_res_freesans_ttf_size()));
-    m_text = {freesans_buffer.buffer, freesans_buffer.size, 32};
-    m_text.setColour(colour(150, 160, 170, 255));
+	{
+
+		const uint32_t ttf_size = get_res_freesans_ttf_size();
+		byte ttf_buffer[ttf_size];
+
+		get_res_freesans_ttf(ttf_buffer);
+		m_text = {ttf_buffer, ttf_size, 32};
+		m_text.setColour(colour(150, 160, 170, 255));
+	}
     //    glDebugger::init({freesans_buffer.buffer, freesans_buffer.size, 14});
 
     deinit_resources();
@@ -759,6 +1107,12 @@ void glProgram::render() {
         {
             PROF("Setup before render");
             m_camera.update();
+			Uniforms::setUniform(program.projection_id, m_camera.projection());
+			Uniforms::setUniform(program.view_id, m_camera.view());
+
+			system.prepare();
+
+			system.render();
 
             //            m_objectProgram.use();
             //            m_lamp.update(m_objectProgram);

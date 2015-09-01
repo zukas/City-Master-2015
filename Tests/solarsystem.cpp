@@ -6,6 +6,7 @@
 #include "Util/mesh3dcollection.h"
 #include "Util/texture2dcollection.h"
 #include "Util/profiler.h"
+#include "Util/utils.h"
 
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
@@ -74,24 +75,25 @@ uint16_t calculate_matrixes(const glm::mat4 &parent_model,
 uint32_t SolarSystem::solar_model_id{0};
 
 SolarSystem::SolarSystem()
-	: m_memory(nullptr), m_model_phx_data(nullptr), m_model_matrixes(nullptr),
-	  m_model_gfx_data(nullptr) {}
+    : m_memory(nullptr), m_model_phx_data(nullptr), m_model_matrixes(nullptr),
+      m_model_gfx_data(nullptr) {}
 
 void SolarSystem::init(uint16_t size, uint32_t model_id) {
-	deinit();
+    deinit();
     solar_model_id = model_id;
-	m_memory = nullptr;
-	m_model_phx_data = nullptr;
-	m_model_matrixes = nullptr;
-	m_model_gfx_data = nullptr;
+    m_memory = nullptr;
+    m_model_phx_data = nullptr;
+    m_model_matrixes = nullptr;
+    m_model_gfx_data = nullptr;
 
-	//    m_memory = malloc((sizeof(model_phx_data_t) + sizeof(model_gfx_data_t)
-	//    +
-	//                       sizeof(glm::mat4)) *
-	//                      size);
-	m_model_phx_data = new model_phx_data_t[size];
-	m_model_matrixes = new glm::mat4[size];
-	m_model_gfx_data = new model_gfx_data_t[size];
+    m_memory = malloc((sizeof(model_phx_data_t) + sizeof(model_gfx_data_t) +
+                       sizeof(glm::mat4)) *
+                      size);
+    m_model_phx_data = (model_phx_data_t *)m_memory;
+    m_model_matrixes =
+        (glm::mat4 *)ptr_add(m_memory, sizeof(model_phx_data_t) * size);
+    m_model_gfx_data = (model_gfx_data_t *)ptr_add(
+        m_memory, (sizeof(model_phx_data_t) + sizeof(glm::mat4)) * size);
     m_size = size;
 }
 
@@ -105,7 +107,7 @@ void SolarSystem::set(uint16_t index, const model_phx_data_t &model_phx,
                       const model_bin_data_t &model_bin) {
 
     m_model_phx_data[index] = model_phx;
-    m_model_matrixes[index] = glm::mat4(1.f);
+    m_model_matrixes[index] = glm::translate(glm::mat4(1.f), model_phx.location);
 
     model_gfx_data_t gfx_data{
         Texture2DCollection::create_dss_from_memory(model_bin.texture_data,
@@ -128,7 +130,7 @@ void SolarSystem::render() {
     const glm::mat4 *model_matrixes = m_model_matrixes;
     const model_gfx_data_t *model_gfx_data = m_model_gfx_data;
 
-    for (uint16_t i; i < m_size; ++i) {
+    for (uint16_t i = 0; i < m_size; ++i) {
         Uniforms::setUniform(solar_model_id, model_matrixes[i]);
         const model_gfx_data_t tmp = model_gfx_data[i];
         Texture2DCollection::bind(tmp.texture);

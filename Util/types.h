@@ -63,11 +63,17 @@ struct vec3 {
     vec3 operator*(float scaler) {
         return {x * scaler, y * scaler, z * scaler};
     }
+    bool operator == (const vec3 &other) const {
+        return x == other.x && y == other.y && z == other.z;
+    }
 };
 
 struct vec2 {
     float x;
     float y;
+    bool operator == (const vec2 &other) const {
+        return x == other.x && y == other.y;
+    }
 };
 
 struct rect {
@@ -101,6 +107,10 @@ struct uv_vertex {
     vec3 p;
     vec3 n;
     vec2 uv;
+    bool operator == (const uv_vertex &other) const {
+        return p == other.p && n == other.n && uv == other.uv;
+    }
+
 };
 
 typedef std::vector<uv_vertex> uv_vertex_array;

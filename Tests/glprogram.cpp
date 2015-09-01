@@ -299,18 +299,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(sun_parts);
 		const uint32_t index_size = sphare::index_size(sun_parts);
 
-		byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size);
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_sun_dds(_buffer);
 
-		uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size);
-		uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size);
+        uv_vertex* vertexes =  (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
-		sphare::create(vertexes, indexes, _calc_phx[index].size, sun_parts);
+        sphare::create(vertexes, indexes, _calc_phx[index].size, sun_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 25.6f * day,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 25.6f * day,
 									   0.f, 0.f, 8},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -320,17 +321,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
 		const uint32_t index_size = sphare::index_size(planet_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_mercury_dds(_buffer);
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 58.6f * day,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 58.6f * day,
 									   88.f * day, 0.1 * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -340,18 +343,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
 		const uint32_t index_size = sphare::index_size(planet_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_venus_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 116.75f * day,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 116.75f * day,
 									   224.701f * day, 177.f * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -361,18 +365,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
 		const uint32_t index_size = sphare::index_size(planet_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_earth_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, day, year,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, day, year,
 									   23.f * degree, 1},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -382,18 +387,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_moon_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   29.530589 * day, 6.687f * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -403,19 +409,20 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
 		const uint32_t index_size = sphare::index_size(planet_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_mars_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location,
+        system.set(index, model_phx_data_t{_calc_phx[index].location,
 									   1.02876421707f * day, 686.971f * day,
 									   25.f * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -425,18 +432,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
 		const uint32_t index_size = sphare::index_size(planet_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_jupiter_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 9.97f * hour,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 9.97f * hour,
 									   11.86f * year, 3.f * degree, 4},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -446,18 +454,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_europa_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   3.551181f * day, 0.1f * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -467,18 +476,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_io_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   1.769137786f * day, 0.05f * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -488,18 +498,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_ganymede_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   7.15455296f * day, 2.214f * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -509,18 +520,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_callisto_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   16.6890184f * day, 2.017f * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -530,18 +542,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
 		const uint32_t index_size = sphare::index_size(planet_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_saturn_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 10.65f * hour,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 10.65f * hour,
 									   29.f * year, 26.7f * degree, 7},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -551,18 +564,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_titan_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   15.945f * day, 0.f, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -572,18 +586,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_enceladus_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   1.370218f * day, 0.017f * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -593,18 +608,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_rhea_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   4.518212f * day, 0.f, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -614,18 +630,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_dione_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   2.736915f * day, 0.f, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -635,18 +652,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_tethys_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   1.887802f * day, 0.f, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -656,18 +674,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_iapetus_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   79.3215f * day, 0.f, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -677,18 +696,19 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(moon_parts);
 		const uint32_t index_size = sphare::index_size(moon_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_mimas_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, moon_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location, 0.f,
+        system.set(index, model_phx_data_t{_calc_phx[index].location, 0.f,
 									   0.942f * day, 0.f, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 
@@ -698,19 +718,20 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
 		const uint32_t index_size = sphare::index_size(planet_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_uranus_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location,
+        system.set(index, model_phx_data_t{_calc_phx[index].location,
 									   17.233333333f * hour, 84.016846f * year,
 									   97.77f * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 	{
@@ -719,19 +740,20 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 		const uint32_t vertex_size = sphare::vertex_size(planet_parts);
 		const uint32_t index_size = sphare::index_size(planet_parts);
 
-		byte _buffer[texture_size];
+        byte* _buffer = (byte*)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_neptune_dds(_buffer);
 
-		uv_vertex vertexes[vertex_size];
-		uint32_t indexes[index_size];
+        uv_vertex* vertexes = (uv_vertex*) mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+        uint32_t* indexes = (uint32_t*) mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
 		sphare::create(vertexes, indexes, _calc_phx[index].size, planet_parts);
 
-		system.set(0, model_phx_data_t{_calc_phx[index].location,
+        system.set(index, model_phx_data_t{_calc_phx[index].location,
 									   16.266666667f * hour, 165 * year,
 									   28.32f * degree, 0},
 				   model_bin_data_t{_buffer, vertexes, indexes, texture_size,
 									vertex_size, index_size});
+        mem.clear();
 		++index;
     }
 }
@@ -1107,6 +1129,7 @@ void glProgram::render() {
         {
             PROF("Setup before render");
             m_camera.update();
+            glUseProgram(program.program_id);
 			Uniforms::setUniform(program.projection_id, m_camera.projection());
 			Uniforms::setUniform(program.view_id, m_camera.view());
 

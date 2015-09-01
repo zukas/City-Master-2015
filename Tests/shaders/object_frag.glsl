@@ -18,6 +18,9 @@ void main()
 
     vec4 tmpc = texture2D(texture, UV);
     colour = tmpc;
+
+//    colour = vec4(UV.x, UV.y, UV.y, 1.0);
+
 //    for(int i = 0; i < tcount; i++)
 //    {
 //        if(i == 0)

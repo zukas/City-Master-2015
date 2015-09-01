@@ -90,7 +90,7 @@ void print_profiler_results() {
     const uint16_t size = __current_index;
 	for (uint16_t i = 0; i < size; ++i) {
 		const prof_info info = __profiler_data[i];
-		printf("%45s, %8u, %18.6f, %12.6f\n", __given_names[i], info.counter,
+		printf("%80s, %8u, %18.6f, %12.6f\n", __given_names[i], info.counter,
 			   double(info.duration) / 1000000.f,
 			   (double)(info.duration / 1000000.f) / info.counter);
     }

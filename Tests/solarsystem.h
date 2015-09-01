@@ -5,7 +5,7 @@
 #include "Util/types.h"
 
 struct model_phx_data_t {
-    glm::vec3 location;
+	float distance;
     float rotation_speed;
     float orbital_speed;
     float axis_tilt;

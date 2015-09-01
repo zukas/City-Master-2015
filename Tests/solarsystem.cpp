@@ -26,48 +26,81 @@ constexpr float day{year / days_in_year};
 constexpr float hour{day / 23.9344722f};
 constexpr float degree{0.0174532925f};
 
+void stringify(char *buffer, glm::mat4 mat) {
+	sprintf(buffer, "%.3f %.3f %.3f %.3f\n"
+					"%.3f %.3f %.3f %.3f\n"
+					"%.3f %.3f %.3f %.3f\n"
+					"%.3f %.3f %.3f %.3f",
+			mat[0][0], mat[0][1], mat[0][2], mat[0][3], mat[1][0], mat[1][1],
+			mat[1][2], mat[1][3], mat[2][0], mat[2][1], mat[2][2], mat[2][3],
+			mat[3][0], mat[3][1], mat[3][2], mat[3][3]);
+}
+
+glm::mat4 moved_matrix(float dst) {
+	return glm::mat4{{1.f, 0.f, 0.f, 0.f},
+					 {0.f, 1.f, 0.f, 0.f},
+					 {0.f, 0.f, 1.f, 0.f},
+					 {dst, 0.f, 0.f, 1.f}};
+}
+
+glm::quat rot_quat(float h_ang) {
+	return glm::quat{glm::cos(h_ang), 0.f, glm::sin(h_ang), 0.f};
+}
+
+glm::quat base_rot(float current, float val) {
+	return val != 0 ? rot_quat(PI * (current / val)) : glm::quat();
+}
+
 uint16_t calculate_matrixes(const glm::mat4 &parent_model,
                             const model_phx_data_t *model_phx_data,
                             glm::mat4 *model_matrixes) {
-    PROF("Calculating solar object matrixes and processing children");
+	PROF("Preparing solar object");
     uint16_t process_count = 1;
     uint16_t children_count;
     glm::mat4 base_matrix;
     {
-        PROF("Calculating solar object matrixes");
+		PROF("Calculating solar object matrix");
         float current = Clock::getDuration();
         const model_phx_data_t phx_data = model_phx_data[0];
         children_count = phx_data.children_count;
 
-        const glm::mat4 l_rot =
-            phx_data.rotation_speed > 0.f
-                ? glm::mat4_cast(
-                      glm::angleAxis(PI2 * (current / phx_data.rotation_speed),
-                                     glm::vec3(0.f, 1.f, 0.f)))
-                : glm::mat4(1.f);
-        const glm::mat4 o_rot =
-            phx_data.orbital_speed > 0.f
-                ? glm::mat4_cast(
-                      glm::angleAxis(PI2 * (current / phx_data.orbital_speed),
-                                     glm::vec3(0.f, 1.f, 0.f)))
-                : glm::mat4(1.f);
+		const glm::quat l_rot = base_rot(current, phx_data.rotation_speed);
+		const glm::quat o_rot = base_rot(current, phx_data.orbital_speed);
+		const glm::quat o_rot_i = -o_rot;
+		const glm::mat4 mat = moved_matrix(phx_data.distance);
 
-        const glm::mat4 mat = glm::translate(glm::mat4(1.f), phx_data.location);
+		const glm::quat tilt =
+			o_rot_i * glm::quat_cast(glm::eulerAngleZ(phx_data.axis_tilt));
 
-        const glm::mat4 tilt = glm::inverse(o_rot) *
-                               glm::eulerAngleYXZ(0.f, 0.f, phx_data.axis_tilt);
+		//		char buffer[1024];
+		//		stringify(buffer, l_rot);
+		//		printf("START OBJECT %p\n%s\n\n",model_phx_data,buffer);
+		//		stringify(buffer, o_rot);
+		//		printf("%s\n\n", buffer);
+		//		stringify(buffer, mat);
+		//		printf("%s\n\n", buffer);
+		//		stringify(buffer, tilt);
+		//		printf("%s\n\n", buffer);
+		base_matrix = glm::mat4_cast(o_rot) * mat * glm::mat4_cast(tilt);
 
-        base_matrix = o_rot * mat * tilt;
-        model_matrixes[0] = parent_model * base_matrix * l_rot;
+		//            base_matrix = o_rot * mat * tilt;
+		model_matrixes[0] = parent_model * base_matrix * glm::mat4_cast(l_rot);
+
+		//		stringify(buffer, base_matrix);
+		//		printf("\n%s\n\n", buffer);
+		//		stringify(buffer, model_matrixes[0]);
+		//		printf("%s\n\nEND OBJECT %p\n\n", buffer,
+		// model_matrixes);
     }
-    if (children_count != 0) {
-        base_matrix = parent_model * base_matrix;
-        for (; children_count != 0; --children_count) {
-            process_count +=
-                calculate_matrixes(base_matrix, &model_phx_data[process_count],
-                                   &model_matrixes[process_count]);
+
+	if (children_count != 0) {
+		base_matrix = parent_model * base_matrix;
+		for (; children_count != 0; --children_count) {
+			process_count +=
+				calculate_matrixes(base_matrix, &model_phx_data[process_count],
+								   &model_matrixes[process_count]);
         }
-    }
+	}
 
     return process_count;
 }
@@ -107,7 +140,7 @@ void SolarSystem::set(uint16_t index, const model_phx_data_t &model_phx,
                       const model_bin_data_t &model_bin) {
 
     m_model_phx_data[index] = model_phx;
-    m_model_matrixes[index] = glm::translate(glm::mat4(1.f), model_phx.location);
+	m_model_matrixes[index] = moved_matrix(model_phx.distance);
 
     model_gfx_data_t gfx_data{
         Texture2DCollection::create_dss_from_memory(model_bin.texture_data,
@@ -120,9 +153,12 @@ void SolarSystem::set(uint16_t index, const model_phx_data_t &model_phx,
 }
 
 void SolarSystem::prepare() {
+	//	printf("BEGIN PREPARE STAGE\n");
     uint16_t processed =
         calculate_matrixes(glm::mat4(1.f), m_model_phx_data, m_model_matrixes);
     ASSERT(processed == m_size);
+	//	printf("END PREPARE STAGE\n");
+	//	fflush(stdout);
 }
 
 void SolarSystem::render() {

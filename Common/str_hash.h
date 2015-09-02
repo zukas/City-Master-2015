@@ -1,22 +1,10 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include <stdint.h>
+#include <stddef.h>
 
-glm::mat4 scale_mat4(const glm::vec3 scale);
-
-glm::mat4 translate_mat4(const glm::vec3 translate);
-
-glm::mat4 transform_mat4(const glm::quat &rotation,
-                         const glm::vec3 &translation, const glm::vec3 &scale,
-                         const glm::mat4 &base = glm::mat4(1.f));
-
-void stringify(char *buffer, glm::mat4 mat);
-void stringify(char *buffer, glm::vec3 vec);
-
-namespace crypto {
-static constexpr uint32_t crc_table[256]{
+constexpr uint32_t crc_table[256]{
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
     0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
     0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91, 0x1db71064, 0x6ab020f2,
@@ -79,10 +67,9 @@ constexpr size_t strlen_c(const char *str) {
 }
 
 constexpr uint32_t sid(const char *str) { return crc32(str, strlen_c(str)); }
-}
 
-constexpr uint32_t operator"" _h(const char *source, size_t length) {
-    return crypto::crc32(source, length);
+constexpr  uint32_t operator"" _h(const char *source, size_t length) {
+    return crc32(source, length);
 }
 
 #endif // UTILS_H

@@ -1,11 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "types.h"
-#include "program.h"
 #include <glm/glm.hpp>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 class Camera {
     static constexpr float max_distance{5000.f};

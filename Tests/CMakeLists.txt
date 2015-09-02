@@ -27,6 +27,7 @@ file(GLOB SRC_FILES
     "*.hpp"
     "resources/*.h"
     "resources/*.cpp"
+    "${CMAKE_SOURCE_DIR}/Common/*.h"
     )
 
 add_custom_target(resources ALL

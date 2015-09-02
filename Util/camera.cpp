@@ -1,30 +1,22 @@
 #include "camera.h"
+#include "clock.h"
+#include "types.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include "clock.h"
-#include "utils.h"
-#include "gldebugger.h"
-
-// void Camera::calcQuads() {
-//	glm::vec3 tmp = m_view - m_eye;
-//	tmp = glm::normalize(tmp);
-//	m_quads[0] = glm::cross(tmp, m_up);
-//	m_quads[0] = glm::normalize(m_quads[0]);
-//	m_quads[1] = glm::cross(tmp, m_quads[0]);
-//	m_quads[1] = glm::normalize(m_quads[1]);
-//}
 
 Camera::Camera() {
     m_viewMat = glm::lookAt(m_eye, m_view, m_up);
 
-    m_projectionMat = glm::perspective(45.f, 16.0f / 9.0f, 0.005f, 5000.0f); //CONVERT TO CONSTEXPR
+    m_projectionMat = glm::perspective(45.f, 16.0f / 9.0f, 0.005f,
+                                       5000.0f); // CONVERT TO CONSTEXPR
     //	calcQuads();
 }
 
 void Camera::update() {
-    m_viewMat = glm::lookAt(m_eye, m_view, m_up); //no need to store here
+    m_viewMat = glm::lookAt(m_eye, m_view, m_up); // no need to store here
     //    calcQuads();
 }
 
@@ -73,7 +65,7 @@ void Camera::move(float delta) {
     }
 
     m_view += tmp;
-    m_eye = std::move(plane);
+    m_eye = ::move(plane);
 }
 void Camera::strafe(float delta) {
     auto diff = glm::cross(m_view - m_eye, m_up);
@@ -86,7 +78,7 @@ void Camera::strafe(float delta) {
     }
 
     m_view += tmp;
-    m_eye = std::move(plane);
+    m_eye = ::move(plane);
 }
 
 void Camera::zoom(float delta) {
@@ -110,9 +102,3 @@ const glm::mat4 &Camera::projection() const { return m_projectionMat; }
 float Camera::distance() const {
     return glm::distance(glm::vec3(0.f, 0.f, 0.f), m_eye);
 }
-
-// void Camera::update(Program &program) {
-//	program.setViewMatrix(m_viewMat);
-//	program.setProjectionMatrix(m_projectionMat);
-////	program.setQuads(m_quads);
-//}

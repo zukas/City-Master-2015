@@ -1,17 +1,16 @@
 #ifndef GLPROGRAM_H
 #define GLPROGRAM_H
 
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 #include "Util/program.h"
 #include "Util/camera.h"
 #include "Util/lamp.h"
-#include "Util/model.h"
-#include "Util/axis.h"
 #include "Util/text.h"
 #include "Util/mouse.h"
 #include "Util/keyboard.h"
-#include "Util/skybox.h"
-#include "Util/particlesystem.h"
-#include "saturnrings.h"
 #include "solarsystem.h"
 
 class glProgram
@@ -23,24 +22,17 @@ class glProgram
         static constexpr float halfWindowHeight { windowHeight / 2.f };
 
     private:
-//        uint32_t m_objectProgram;
-//        Program m_objectSelectionProgram;
-        Camera m_camera;
-
-		SolarSystem system;
         solar_program_t program;
-
-//		SaturnRings rings;
+        SolarSystem system;
+        Camera m_camera;
         Text m_text;
         Lamp m_lamp;
-        SkyBox m_box;
         Mouse m_mouse;
         Keyboard m_keyboard;
-        Axis m_axis;
-        std::vector<Model > m_models;
+
         class GLFWwindow *m_window { nullptr };
-		float m_maxFrameRate { 0.f };
-		float m_minFrameRate { 6000.f };
+        float m_maxFrameRate { 0.f };
+        float m_minFrameRate { 6000.f };
 
     public:
         glProgram();

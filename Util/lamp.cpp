@@ -1,14 +1,13 @@
 #include "lamp.h"
 
-Lamp::Lamp(glm::vec3 postion, float strength) :
-    m_position(std::move(postion)),
-    m_strength(strength)
+Lamp::Lamp(const glm::vec3 &postion, float strength) :
+    m_light(postion, strength)
 {
 
 }
 
-void Lamp::update(Program &program)
+const glm::vec4 &Lamp::getLight() const
 {
-    program.setLightStrength(m_strength);
-    program.setLigthPosition(m_position);
+    return m_light;
 }
+

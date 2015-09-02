@@ -1,5 +1,5 @@
 #include "profiler.h"
-#include "utils.h"
+#include "Common/str_hash.h"
 
 #include <time.h>
 #include <stdio.h>
@@ -57,8 +57,8 @@ void end(uint16_t idx) {
 
 Profiler::Profiler(const char *name, const char *file, const char *func,
 				   unsigned line) {
-	const uint32_t file_id = crypto::sid(file);
-	const uint32_t func_id = crypto::sid(func);
+    const uint32_t file_id = sid(file);
+    const uint32_t func_id = sid(func);
 
     const uint16_t size = __current_index;
     for (uint16_t i = 0; i < size; ++i) {

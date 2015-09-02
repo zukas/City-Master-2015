@@ -1,4 +1,5 @@
 #include "text.h"
+#include "program.h"
 #include "texture2dcollection.h"
 #include "viewport.h"
 #include "profiler.h"

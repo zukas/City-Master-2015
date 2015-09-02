@@ -1,7 +1,6 @@
 #ifndef GLDEBUGGER_H
 #define GLDEBUGGER_H
 
-#include <functional>
 #include "text.h"
 
 class glDebugger

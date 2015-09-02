@@ -1,7 +1,6 @@
 #ifndef SOLARSYSTEM_H
 #define SOLARSYSTEM_H
 
-#include <glm/glm.hpp>
 #include "Util/types.h"
 
 struct model_phx_data_t {
@@ -47,6 +46,7 @@ class SolarSystem {
 
     void prepare();
     void render();
+    void render_selection();
 };
 
 struct solar_program_t {

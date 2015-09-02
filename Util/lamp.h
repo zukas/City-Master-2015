@@ -1,18 +1,14 @@
 #ifndef LAMP_H
 #define LAMP_H
 
-#include "types.h"
-#include "program.h"
 #include <glm/glm.hpp>
 
 class Lamp
 {
-        glm::vec3 m_position;
-        float m_strength;
-
+        glm::vec4 m_light;
     public:
-        Lamp(glm::vec3 postion = {}, float strength = 100.f);
-        void update(Program &program);
+        Lamp(const glm::vec3 &postion = {}, float strength = 100.f);
+        const glm::vec4 &getLight() const;
 };
 
 #endif // LAMP_H

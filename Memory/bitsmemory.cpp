@@ -1,5 +1,5 @@
 #include "bitsmemory.h"
-#include "utils.h"
+#include "Common/ptr_arithm.h"
 
 #include <cassert>
 #include <cstdlib>

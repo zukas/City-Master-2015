@@ -2,6 +2,7 @@
 #define VIEWPORT_H
 
 #include "types.h"
+#include <glm/glm.hpp>
 
 class Viewport {
 

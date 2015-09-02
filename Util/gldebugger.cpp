@@ -3,8 +3,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <stdio.h>
-#include <cstdarg>
-#include <cstring>
+#include <stdarg.h>
+#include <string.h>
 
 glDebugger::glDebugger() {}
 
@@ -24,14 +24,14 @@ void glDebugger::inspect(const char *file, const char *function, int line) {
 
 void glDebugger::log(const char *format, ...) {
 	char buffer[log_size];
-	std::va_list args;
+    va_list args;
 	va_start(args, format);
-	auto size = std::vsnprintf(buffer, log_size, format, args);
+    auto size = vsnprintf(buffer, log_size, format, args);
 	va_end(args);
 
 	auto &obj = glDebugger::get();
 	obj.m_first = new message{new char[size + 1]{0}, obj.m_first};
-	std::strncpy(obj.m_first->text, buffer, size + 1);
+    strncpy(obj.m_first->text, buffer, size + 1);
 }
 
 void glDebugger::flush() {

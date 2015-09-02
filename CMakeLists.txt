@@ -25,7 +25,7 @@ else ("${BUILD_TYPE}" STREQUAL "RELEASE")
 add_definitions(-DDEBUG_BUILD)
 endif ("${BUILD_TYPE}" STREQUAL "RELEASE")
 
-add_definitions(-DGLM_FORCE_RADIANS)
+add_definitions(-DGLM_FORCE_RADIANS -DGLM_FORCE_SSE2)
 
 set(OpenGL
     GL

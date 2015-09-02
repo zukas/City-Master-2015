@@ -1,6 +1,7 @@
 #version 330
 
 uniform sampler2D texture;
+uniform int objectId;
 uniform vec3 lightPosition;
 uniform float lightStrength;
 uniform int objectSelected;
@@ -15,9 +16,11 @@ out vec4 colour;
 
 void main()
 {
+    if(objectId == 0) {
+        colour = texture2D(texture, UV);
+    } else {
 
-    vec4 tmpc = texture2D(texture, UV);
-    colour = tmpc;
+    }
 
 //    colour = vec4(UV.x, UV.y, UV.y, 1.0);
 

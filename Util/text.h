@@ -1,8 +1,6 @@
 #ifndef TEXT_H
 #define TEXT_H
-
-#include "texture.h"
-#include "program.h"
+#include "types.h"
 #include <glm/glm.hpp>
 
 struct char_data_t {
@@ -30,7 +28,7 @@ class Text {
 	colour m_colour;
 
   public:
-	static void init(const Shader *shaders, uint32_t size,
+    static void init(const struct Shader *shaders, uint32_t size,
 					 uint32_t projection_hash, uint32_t model_hash,
 					 uint32_t colour_hash);
 

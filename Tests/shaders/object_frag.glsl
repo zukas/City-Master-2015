@@ -16,11 +16,7 @@ out vec4 colour;
 
 void main()
 {
-    if(objectId == 0) {
         colour = texture2D(texture, UV);
-    } else {
-
-    }
 
 //    colour = vec4(UV.x, UV.y, UV.y, 1.0);
 

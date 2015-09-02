@@ -31,7 +31,6 @@ float distance_scaling(float amp, float x) {
 
 enum ObjectType { SUN, PLANET, MOON, SHALLOW_MOON };
 
-
 struct base_phx_t {
     ObjectType type;
     float size;
@@ -112,9 +111,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
                                  {PLANET, 25362.f, 2870671400.f, 0},
                                  {PLANET, 24622.f, 4503000000.f, 0}};
 
-        uint32_t processed_count = do_calc_phx(_base_phx, _calc_phx, 0.f)
-
-        ASSERT(processed_count == 21);
+		uint32_t processed_count = do_calc_phx(_base_phx, _calc_phx, 0.f);
+		ASSERT(processed_count == 21);
     }
 
     system.init(21, model_id);
@@ -720,7 +718,7 @@ glProgram::glProgram() {
                                  {FRAGMENT, get_res_object_frag_glsl()}};
         program.program_id = ProgramCompiler::compileProgram(_solar_shaders, 2);
 
-        const int _uni_size = 4;
+		const int _uni_size = 4;
         uint32_t _solar_uni[_uni_size];
         ProgramCompiler::resolveUniforms(program.program_id, _solar_uni,
                                          _uni_size);
@@ -813,7 +811,8 @@ void glProgram::exec() {
             else if (rate < m_minFrameRate)
                 m_minFrameRate = rate;
         }
-        if(frame == 1000) return;
+//		if (frame == 1000)
+//			return;
 
     } while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
              glfwWindowShouldClose(m_window) == 0);

@@ -9,8 +9,7 @@
 #include "Util/camera.h"
 #include "Util/lamp.h"
 #include "Util/text.h"
-#include "Util/mouse.h"
-#include "Util/keyboard.h"
+#include "Util/controlinput.h"
 #include "solarsystem.h"
 
 class glProgram
@@ -27,12 +26,10 @@ class glProgram
         Camera m_camera;
         Text m_text;
         Lamp m_lamp;
-        Mouse m_mouse;
-        Keyboard m_keyboard;
+        ControlInput m_input;
 
         class GLFWwindow *m_window { nullptr };
-        float m_maxFrameRate { 0.f };
-        float m_minFrameRate { 6000.f };
+        float m_frameRate { 0.f };
 
     public:
         glProgram();
@@ -41,6 +38,7 @@ class glProgram
     private:
         void render();
         void handleSelection(double x, double y);
+        void handle_input(const control &ctl);
 };
 
 #endif // GLPROGRAM_H

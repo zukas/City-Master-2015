@@ -794,7 +794,7 @@ glProgram::glProgram() {
 //    m_keyboard.rotateVertical(
 //        [=](float diff) { m_camera.rotateVertical(diff); });
 
-    glfwSwapInterval(1);
+    glfwSwapInterval(2);
 }
 
 void glProgram::exec() {
@@ -876,15 +876,23 @@ void glProgram::handleSelection(double x, double y) {
 
 void glProgram::handle_input(const control &ctl)
 {
-    if(ctl.val & MOVE_X_P) {
-        m_camera.move(ctl.delta);
-    } else if( ctl.val & MOVE_X_N) {
-        m_camera.move(-ctl.delta);
+    if(ctl.val & ROT_X) {
+        m_camera.rotateHorizontal(ctl.delta[0]);
     }
 
-    if(ctl.val & MOVE_Y_P) {
-        m_camera.strafe(ctl.delta);
-    } else if( ctl.val & MOVE_Y_N) {
-        m_camera.strafe(-ctl.delta);
+    if(ctl.val & ROT_Y) {
+        m_camera.rotateVertical(ctl.delta[1]);
+    }
+
+    if(ctl.val & MOVE_X) {
+        m_camera.move(ctl.delta[2]);
+    }
+
+    if(ctl.val & MOVE_Y) {
+        m_camera.strafe(ctl.delta[3]);
+    }
+
+    if(ctl.val & ZOOM) {
+        m_camera.zoom(ctl.delta[4]);
     }
 }

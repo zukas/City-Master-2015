@@ -15,8 +15,8 @@
 class glProgram
 {
         static constexpr const char * windowTitle { "Testing helppers" };
-        static constexpr int windowWidth { 1280 };
-        static constexpr int windowHeight { 720 };
+        static constexpr int windowWidth { 1024 };
+        static constexpr int windowHeight { 576 };
         static constexpr float halfWindowWidth { windowWidth / 2.f };
         static constexpr float halfWindowHeight { windowHeight / 2.f };
 

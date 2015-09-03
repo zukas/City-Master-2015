@@ -3,23 +3,20 @@
 
 enum navigation : unsigned int {
     NONE = 0,
-    ROT_X_P = 1,
-    ROT_X_N = 2,
-    ROT_Y_P = 4,
-    ROT_Y_N = 8,
-    MOVE_X_P = 16,
-    MOVE_X_N = 32,
-    MOVE_Y_P = 64,
-    MOVE_Y_N = 128,
-    ZOOM_P = 256,
-    ZOOM_N = 512
+    ROT_X = 1,
+    ROT_Y = 2,
+    MOVE_X = 4,
+    MOVE_Y = 8,
+    ZOOM = 16
 };
 
 typedef unsigned int control_value;
 
+constexpr float navigation_delta { 25.f };
+
 struct control {
     control_value val;
-    float delta;
+    float delta[5];
 };
 
 class ControlInput {

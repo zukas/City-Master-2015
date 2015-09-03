@@ -4,6 +4,7 @@
 #include "Common/str_hash.h"
 
 #include "Util/clock.h"
+#include "Util/mouse.h"
 #include "Util/shapes.h"
 #include "Util/gldebugger.h"
 #include "Util/profiler.h"
@@ -14,8 +15,7 @@
 
 #include <stdio.h>
 
-
-constexpr float year{5 * 60 * 1000.f};
+constexpr float year{30 * 60 * 1000.f};
 constexpr float size_div{6371.f};
 constexpr float distance_div{14959.78707f};
 constexpr float rat{distance_div / size_div};
@@ -755,46 +755,7 @@ glProgram::glProgram() {
 
     deinit_resources();
 
-//    m_mouse = {m_window};
-//    m_keyboard = {m_window};
-
-//    m_mouse.onClickLeft(std::bind(&glProgram::handleSelection, this,
-//                                  std::placeholders::_1,
-//                                  std::placeholders::_2));
-
-//    m_mouse.onDragLeft([=](MoveDirection event, float diff) {
-//        if (event == MOVE_Y) {
-//            m_camera.move(diff);
-//        } else if (event == MOVE_X) {
-//            m_camera.strafe(diff);
-//        } else if (event == MOVE_Z) {
-//            m_camera.zoom(diff);
-//        }
-//    });
-
-//    m_mouse.onDragRight([=](MoveDirection event, float diff) {
-//        if (event == MOVE_Y) {
-//            m_camera.rotateVertical(diff);
-//        } else if (event == MOVE_X) {
-//            m_camera.rotateHorizontal(diff);
-//        } else if (event == MOVE_Z) {
-//            m_camera.zoom(diff);
-//        }
-//    });
-
-//    m_keyboard.moveX([=](float diff) { m_camera.move(diff); });
-
-//    m_keyboard.moveY([=](float diff) { m_camera.strafe(diff); });
-
-//    m_keyboard.moveZ([=](float diff) { m_camera.zoom(diff); });
-
-//    m_keyboard.rotateHorizontal(
-//        [=](float diff) { m_camera.rotateHorizontal(diff); });
-
-//    m_keyboard.rotateVertical(
-//        [=](float diff) { m_camera.rotateVertical(diff); });
-
-    glfwSwapInterval(2);
+	glfwSwapInterval(1);
 }
 
 void glProgram::exec() {
@@ -803,14 +764,17 @@ void glProgram::exec() {
     uint64_t start = Clock::now();
     do {
         glfwPollEvents();
+		Mouse::update(m_window);
         handle_input(m_input.poll(m_window));
         render();
         Clock::update();
-        if (++frame == 30) {
+		if (++frame % 30 == 0) {
             m_frameRate = 30000000000.f / (Clock::now() - start);
-            frame = 0;
             start = Clock::now();
         }
+		if (frame == 1000)
+			return;
+
     } while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
              glfwWindowShouldClose(m_window) == 0);
 }
@@ -874,25 +838,24 @@ void glProgram::handleSelection(double x, double y) {
     //    }
 }
 
-void glProgram::handle_input(const control &ctl)
-{
-    if(ctl.val & ROT_X) {
+void glProgram::handle_input(const control &ctl) {
+	if (ctl.val & ROT_X) {
         m_camera.rotateHorizontal(ctl.delta[0]);
     }
 
-    if(ctl.val & ROT_Y) {
+	if (ctl.val & ROT_Y) {
         m_camera.rotateVertical(ctl.delta[1]);
     }
 
-    if(ctl.val & MOVE_X) {
+	if (ctl.val & MOVE_X) {
         m_camera.move(ctl.delta[2]);
     }
 
-    if(ctl.val & MOVE_Y) {
+	if (ctl.val & MOVE_Y) {
         m_camera.strafe(ctl.delta[3]);
     }
 
-    if(ctl.val & ZOOM) {
+	if (ctl.val & ZOOM) {
         m_camera.zoom(ctl.delta[4]);
     }
 }

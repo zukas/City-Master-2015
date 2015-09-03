@@ -15,14 +15,14 @@ typedef unsigned int control_value;
 constexpr float navigation_delta { 25.f };
 
 struct control {
-    control_value val;
-    float delta[5];
+	control_value val { 0 };
+	float delta[5] { 0 };
 };
 
 class ControlInput {
   public:
     ControlInput();
-    control poll(struct GLFWwindow *window);
+	control poll(struct GLFWwindow *window);
 };
 
 #endif // CONTROLINPUT_H

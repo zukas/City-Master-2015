@@ -1,21 +1,27 @@
 #version 330
+out vec4 colour;
 
 uniform sampler2D position_texture;
+uniform sampler2D normal_texture;
 uniform sampler2D colour_texture;
 uniform vec2 screen_size;
-
-out vec4 colour;
+uniform int render_type;
 
 void main()
 {
     vec2 _coord = gl_FragCoord.xy / screen_size;
-    vec3 _pos = texture2D(position_texture, _coord).xyz;
-    vec3 _colour = texture2D(colour_texture, _coord).xyz;
+    vec3 _pos = texture2D(position_texture, _coord).rgb;
+    vec3 _normal = texture2D(normal_texture, _coord).rgb;
+    vec3 _colour = texture2D(colour_texture, _coord).rgb;
     _coord = normalize(_coord);
 
-    if(_colour.r == 0) _colour.r = _coord.x + 0.2;
-    if(_colour.g == 0) _colour.g = 0.4;
-    if(_colour.b == 0) _colour.b = _coord.y + 0.6;
-
-    colour = vec4(_colour, 1.0);
+    if(render_type == 0) {
+        colour = vec4(_pos, 1.0);
+    } else if(render_type == 1) {
+        colour = vec4(_normal, 1.0);
+    } else if(render_type == 2) {
+        colour = vec4(_colour, 1.0);
+    } else {
+        colour = vec4(_coord.xy, 0, 1.0);
+    }
 }

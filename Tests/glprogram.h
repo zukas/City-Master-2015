@@ -27,6 +27,7 @@ struct light_pass_program_t {
 		uint32_t view_id;
 		uint32_t model_id;
 		uint32_t screen_size_id;
+		uint32_t render_type_id;
 
 };
 

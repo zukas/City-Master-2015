@@ -25,6 +25,8 @@ class GBuffer {
 	void begin_render_pass();
 	void end_render_pass();
 
+	void blit_buffer(uint32_t id);
+
 };
 
 #endif // GBUFFER_H

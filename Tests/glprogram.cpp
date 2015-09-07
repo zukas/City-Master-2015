@@ -733,6 +733,12 @@ glProgram::glProgram() {
 			Uniforms::getUniformId(_solar_uni, _uni_size, "viewMatrix"_h);
 		m_geom_pass_program.model_id =
 			Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
+
+		glUseProgram(m_geom_pass_program.program_id);
+		Uniforms::setUniform(
+			Uniforms::getUniformId(_solar_uni, _uni_size, "texture_diffuse"_h),
+			0);
+		glUseProgram(0);
 	}
 
     {
@@ -741,7 +747,7 @@ glProgram::glProgram() {
 		m_light_pass_program.program_id =
 			ProgramCompiler::compileProgram(_solar_shaders, 2);
 
-		const int _uni_size = 3;
+		const int _uni_size = 6;
         uint32_t _solar_uni[_uni_size];
 		ProgramCompiler::resolveUniforms(m_light_pass_program.program_id,
 										 _solar_uni, _uni_size);
@@ -749,6 +755,19 @@ glProgram::glProgram() {
 			Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
 		m_light_pass_program.screen_size_id =
 			Uniforms::getUniformId(_solar_uni, _uni_size, "screen_size"_h);
+		m_light_pass_program.render_type_id =
+			Uniforms::getUniformId(_solar_uni, _uni_size, "render_type"_h);
+		glUseProgram(m_light_pass_program.program_id);
+		Uniforms::setUniform(
+			Uniforms::getUniformId(_solar_uni, _uni_size, "position_texture"_h),
+			0);
+		Uniforms::setUniform(
+			Uniforms::getUniformId(_solar_uni, _uni_size, "normal_texture"_h),
+			1);
+		Uniforms::setUniform(
+			Uniforms::getUniformId(_solar_uni, _uni_size, "colour_texture"_h),
+			2);
+		glUseProgram(0);
     }
 
 	init_home_solar_system(m_solar_system, m_geom_pass_program.model_id);
@@ -802,12 +821,12 @@ void glProgram::exec() {
 void glProgram::render() {
     PROF("Render loop iteration");
     {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         {
             PROF("Setup before render");
             m_camera.update();
         }
-//		m_gbuffer.begin_frame();
+		//		m_gbuffer.begin_frame();
 		geom_pass();
 
 		//		glEnable(GL_STENCIL_TEST);
@@ -822,17 +841,17 @@ void glProgram::render() {
 		// Viewport::height(),
 		//						  GL_COLOR_BUFFER_BIT,
 		// GL_LINEAR);
-        {
-            PROF("Creating frame rate text");
-            char buf[128];
-            sprintf(buf, "FPS: %.2f", m_frameRate);
-            {
-                PROF("Rendering text");
-                Text::beginRender();
-                m_text.render(buf, 20, 40);
-                Text::endRender();
-            }
-        }
+		{
+			PROF("Creating frame rate text");
+			char buf[128];
+			sprintf(buf, "FPS: %.2f", m_frameRate);
+			{
+				PROF("Rendering text");
+				Text::beginRender();
+				m_text.render(buf, 20, 40);
+				Text::endRender();
+			}
+		}
     }
 
     glfwSwapBuffers(m_window);
@@ -885,9 +904,9 @@ void glProgram::handle_input(const control &ctl) {
 
 void glProgram::geom_pass() {
 
+	glUseProgram(m_geom_pass_program.program_id);
 	m_gbuffer.begin_geom_pass();
 
-	glUseProgram(m_geom_pass_program.program_id);
 	Uniforms::setUniform(m_geom_pass_program.projection_id,
 						 m_camera.projection());
 	Uniforms::setUniform(m_geom_pass_program.view_id, m_camera.view());
@@ -900,12 +919,13 @@ void glProgram::geom_pass() {
 
 void glProgram::light_pass() {
 
+	glUseProgram(m_light_pass_program.program_id);
 	m_gbuffer.begin_render_pass();
 
-	glUseProgram(m_light_pass_program.program_id);
 	Uniforms::setUniform(m_light_pass_program.model_id, glm::mat4(1.f));
 	Uniforms::setUniform(m_light_pass_program.screen_size_id,
 						 glm::vec2(Viewport::width(), Viewport::height()));
+	Uniforms::setUniform(m_light_pass_program.render_type_id, 1);
 
 	m_screen.render();
 	m_gbuffer.end_render_pass();

@@ -56,4 +56,5 @@ struct solar_program_t {
     uint32_t model_id;
 };
 
+
 #endif // SOLARSYSTEM_H

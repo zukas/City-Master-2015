@@ -72,7 +72,10 @@ void ProgramCompiler::resolveUniforms(uint32_t programId, uint32_t *uniforms,
                                       uint32_t size) {
     GLint count;
     glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &count);
-    ASSERT((uint32_t)count == size);
+	if((uint32_t)count != size) {
+		printf("Incorrect uniform count, expected: %u, but requested: %u\n", count, size);
+		ASSERT((uint32_t)count == size);
+	}
 
     char name[256];
     GLsizei length;
@@ -81,11 +84,12 @@ void ProgramCompiler::resolveUniforms(uint32_t programId, uint32_t *uniforms,
         GLint _size;
         GLenum _type;
         glGetActiveUniform(programId, i, 256, &length, &_size, &_type, name);
+		uint32_t _loc = glGetUniformLocation(programId, name);
+		ASSERT(_loc == i);
         uint32_t _crc32 = crc32(name, length);
-        uniforms[i] = _crc32;
+		uniforms[_loc] = _crc32;
 
-        uint32_t loc_ = glGetUniformLocation(programId, name);
-        printf("name: %s, location: %u, i: %u\n", name, loc_, i);
+		printf("name: %s, location: %u, i: %u\n", name, _loc, i);
     }
 }
 

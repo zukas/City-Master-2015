@@ -10,6 +10,7 @@
 #include "Util/profiler.h"
 #include "Util/viewport.h"
 #include "Util/texture2dcollection.h"
+#include "Util/mesh3dcollection.h"
 
 #include "resources/resourcemanager.h"
 
@@ -692,7 +693,6 @@ glProgram::glProgram() {
 
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
     glfwSetCursorPos(m_window, halfWindowWidth, halfWindowHeight);
-    m_lamp = {glm::vec3(0.f, 0.f, 5.f), 500.f};
 
     Viewport::update({0, 0, windowWidth, windowHeight});
 
@@ -716,24 +716,42 @@ glProgram::glProgram() {
 
     init_resources();
 
-    {
-        Shader _solar_shaders[2]{{VERTEX, get_res_object_vert_glsl()},
-                                 {FRAGMENT, get_res_object_frag_glsl()}};
-        program.program_id = ProgramCompiler::compileProgram(_solar_shaders, 2);
+	{
+		Shader _solar_shaders[2]{
+			{VERTEX, get_res_object_differed_geom_pass_vert_glsl()},
+			{FRAGMENT, get_res_object_differed_geom_pass_frag_glsl()}};
+		m_geom_pass_program.program_id =
+			ProgramCompiler::compileProgram(_solar_shaders, 2);
 
-        const int _uni_size = 4;
+		const int _uni_size = 4;
+		uint32_t _solar_uni[_uni_size];
+		ProgramCompiler::resolveUniforms(m_geom_pass_program.program_id,
+										 _solar_uni, _uni_size);
+		m_geom_pass_program.projection_id =
+			Uniforms::getUniformId(_solar_uni, _uni_size, "projectionMatrix"_h);
+		m_geom_pass_program.view_id =
+			Uniforms::getUniformId(_solar_uni, _uni_size, "viewMatrix"_h);
+		m_geom_pass_program.model_id =
+			Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
+	}
+
+    {
+		Shader _solar_shaders[2]{{VERTEX, get_res_light_pass_vert_glsl()},
+								 {FRAGMENT, get_res_light_pass_frag_glsl()}};
+		m_light_pass_program.program_id =
+			ProgramCompiler::compileProgram(_solar_shaders, 2);
+
+		const int _uni_size = 3;
         uint32_t _solar_uni[_uni_size];
-        ProgramCompiler::resolveUniforms(program.program_id, _solar_uni,
-                                         _uni_size);
-        program.projection_id =
-            Uniforms::getUniformId(_solar_uni, _uni_size, "projectionMatrix"_h);
-        program.view_id =
-            Uniforms::getUniformId(_solar_uni, _uni_size, "viewMatrix"_h);
-        program.model_id =
-            Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
+		ProgramCompiler::resolveUniforms(m_light_pass_program.program_id,
+										 _solar_uni, _uni_size);
+		m_light_pass_program.model_id =
+			Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
+		m_light_pass_program.screen_size_id =
+			Uniforms::getUniformId(_solar_uni, _uni_size, "screen_size"_h);
     }
 
-    init_home_solar_system(system, program.model_id);
+	init_home_solar_system(m_solar_system, m_geom_pass_program.model_id);
 
     {
         Shader text_[2]{{VERTEX, get_res_text_vert_glsl()},
@@ -751,9 +769,11 @@ glProgram::glProgram() {
         m_text = {ttf_buffer, ttf_size, 32};
         m_text.setColour(colour(150, 160, 170, 255));
     }
-    //    glDebugger::init({freesans_buffer.buffer, freesans_buffer.size, 14});
 
     deinit_resources();
+
+	m_gbuffer.init();
+	m_screen.init();
 
 	glfwSwapInterval(1);
 }
@@ -772,8 +792,8 @@ void glProgram::exec() {
             m_frameRate = 30000000000.f / (Clock::now() - start);
             start = Clock::now();
         }
-		if (frame == 1000)
-			return;
+		//		if (frame == 1000)
+		//			return;
 
     } while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
              glfwWindowShouldClose(m_window) == 0);
@@ -782,23 +802,26 @@ void glProgram::exec() {
 void glProgram::render() {
     PROF("Render loop iteration");
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         {
             PROF("Setup before render");
             m_camera.update();
-            glUseProgram(program.program_id);
-            Uniforms::setUniform(program.projection_id, m_camera.projection());
-            Uniforms::setUniform(program.view_id, m_camera.view());
         }
-        {
-            PROF("Prepare all objects");
-            system.prepare();
-        }
+//		m_gbuffer.begin_frame();
+		geom_pass();
 
-        {
-            PROF("Rendering all objects");
-            system.render();
-        }
+		//		glEnable(GL_STENCIL_TEST);
+		//		cencil_pass();
+		//		glDisable(GL_STENCIL_TEST);
+		light_pass();
+
+		//		m_gbuffer.begin_final_render();
+		//		glBlitFramebuffer(0, 0, Viewport::width(),
+		// Viewport::height(), 0, 0,
+		//						  Viewport::width(),
+		// Viewport::height(),
+		//						  GL_COLOR_BUFFER_BIT,
+		// GL_LINEAR);
         {
             PROF("Creating frame rate text");
             char buf[128];
@@ -857,5 +880,45 @@ void glProgram::handle_input(const control &ctl) {
 
 	if (ctl.val & ZOOM) {
         m_camera.zoom(ctl.delta[4]);
-    }
+	}
 }
+
+void glProgram::geom_pass() {
+
+	m_gbuffer.begin_geom_pass();
+
+	glUseProgram(m_geom_pass_program.program_id);
+	Uniforms::setUniform(m_geom_pass_program.projection_id,
+						 m_camera.projection());
+	Uniforms::setUniform(m_geom_pass_program.view_id, m_camera.view());
+
+	m_solar_system.prepare();
+	m_solar_system.render();
+
+	m_gbuffer.end_geom_pass();
+}
+
+void glProgram::light_pass() {
+
+	m_gbuffer.begin_render_pass();
+
+	glUseProgram(m_light_pass_program.program_id);
+	Uniforms::setUniform(m_light_pass_program.model_id, glm::mat4(1.f));
+	Uniforms::setUniform(m_light_pass_program.screen_size_id,
+						 glm::vec2(Viewport::width(), Viewport::height()));
+
+	m_screen.render();
+	m_gbuffer.end_render_pass();
+}
+
+ScreenRender::~ScreenRender() { Mesh3DCollection::destroy(m_mesh_id); }
+
+void ScreenRender::init() {
+	glm::vec3 vertexes[4]{
+		{-1.f, 1.f, 0.f}, {-1.f, -1.f, 0.f}, {1.f, -1.f, 0.f}, {1.f, 1.f, 0.f}};
+	uint32_t indexes[6]{0, 1, 2, 2, 3, 0};
+
+	m_mesh_id = Mesh3DCollection::create(vertexes, 4, indexes, 6);
+}
+
+void ScreenRender::render() { Mesh3DCollection::render_geometry(m_mesh_id, 6); }

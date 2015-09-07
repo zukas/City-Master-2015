@@ -11,8 +11,8 @@ void Viewport::update(const rect &viewport_) {
 
 const rect &Viewport::viewport() { return g_viewport; }
 
-float Viewport::viewportWidth() { return g_viewport.w; }
+float Viewport::width() { return g_viewport.w; }
 
-float Viewport::viewportHeight() { return g_viewport.h; }
+float Viewport::height() { return g_viewport.h; }
 
 const glm::mat4 &Viewport::ortho() { return g_ortho; }

@@ -14,8 +14,8 @@ class Viewport {
 	Viewport() = delete;
 	static void update(const rect &viewport_);
 	static const rect &viewport();
-	static float viewportWidth();
-	static float viewportHeight();
+	static float width();
+	static float height();
 	static const glm::mat4 &ortho();
 };
 

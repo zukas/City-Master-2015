@@ -62,7 +62,7 @@ control ControlInput::poll(GLFWwindow *window) {
 		if (y < navigation_delta) {
 			res.val |= MOVE_X;
 			res.delta[2] = _delta;
-		} else if (y > Viewport::viewportHeight() - navigation_delta) {
+		} else if (y > Viewport::height() - navigation_delta) {
 			res.val |= MOVE_X;
 			res.delta[2] = -_delta;
 		}
@@ -72,7 +72,7 @@ control ControlInput::poll(GLFWwindow *window) {
 		if (x < navigation_delta) {
 			res.val |= MOVE_Y;
 			res.delta[3] = -_delta;
-		} else if (x > Viewport::viewportWidth() - navigation_delta) {
+		} else if (x > Viewport::width() - navigation_delta) {
 			res.val |= MOVE_Y;
 			res.delta[3] = _delta;
 		}

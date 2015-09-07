@@ -51,9 +51,41 @@ uint32_t Mesh3DCollection::create(const uv_vertex *vertexes,
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer_[1]);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_size * sizeof(GLID), indexes,
-                 GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_size * sizeof(uint32_t),
+				 indexes, GL_STATIC_DRAW);
     glBindVertexArray(0);
+	return vertex_array_;
+}
+
+uint32_t Mesh3DCollection::create(const glm::vec3 *vertexes,
+								  uint32_t vertexe_size,
+								  const uint32_t *indexes,
+								  uint32_t index_size) {
+	uint32_t vertex_array_;
+	uint32_t buffer_[2];
+
+	glGenVertexArrays(1, &vertex_array_);
+
+	glBindVertexArray(vertex_array_);
+	glGenBuffers(2, buffer_);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer_[0]);
+
+	glBufferData(GL_ARRAY_BUFFER, vertexe_size * sizeof(glm::vec3), vertexes,
+				 GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0,                 // attribute
+						  3,                 // size
+						  GL_FLOAT,          // type
+						  GL_FALSE,          // normalized?
+						  sizeof(glm::vec3), // stride
+						  nullptr            // array buffer offset
+						  );
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer_[1]);
+
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_size * sizeof(uint32_t),
+				 indexes, GL_STATIC_DRAW);
+	glBindVertexArray(0);
 	return vertex_array_;
 }
 

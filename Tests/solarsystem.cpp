@@ -127,7 +127,7 @@ void SolarSystem::render() {
     const glm::mat4 *model_matrixes = m_model_matrixes;
     const model_gfx_data_t *model_gfx_data = m_model_gfx_data;
 
-    for (uint16_t i = 0; i < m_size; ++i) {
+    for (uint16_t i = 1; i < m_size; ++i) {
         Uniforms::setUniform(solar_model_id, model_matrixes[i]);
         const model_gfx_data_t tmp = model_gfx_data[i];
         Texture2DCollection::bind(tmp.texture);

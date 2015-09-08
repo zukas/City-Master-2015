@@ -41,15 +41,15 @@ void main()
     vec3 _light_direction = normalize(vec3(0, 0, 0)-_pos);
     float _distance = length(-_pos);
 
-    vec3 ambient = 0.2 * _colour;
+    vec3 ambient = 0.05 * _colour;
     vec3 normal = normalize(_normal);
 
-    float _diff = max(dot(_light_direction, _normal), 0.1);
+    float _diff = max(dot(_light_direction, _normal), 0.3);
     vec3 diffuse = _diff * _colour;
 
     vec3 _reflect_direction = reflect(-_light_direction, normal);
 
-    vec3 specular = vec3(0.2) * pow(max(dot(_view_direction, _reflect_direction), 0.0), 4.0);
+    vec3 specular = vec3(1.0 - _distance / 3000 ) * pow(max(dot(-_light_direction, _reflect_direction), 0.2), 2.0);
 
 
     if(render_type == 0) {

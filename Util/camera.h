@@ -24,6 +24,7 @@ class Camera {
     void zoom(float delta);
     const glm::mat4 &view() const;
     const glm::mat4 &projection() const;
+    const glm::vec3 &position() const;
     float distance() const;
 };
 

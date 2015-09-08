@@ -14,10 +14,10 @@ out vec2 UV;
 
 void main()
 {
-    vec4 tmp_normal = modelMatrix * vec4(inNormal, 0.0);
+    mat3 tmp_normal = transpose(inverse(mat3(modelMatrix)));
     vec4 tmp_world = modelMatrix * vec4(inPosition, 1.0);
     position = tmp_world.xyz;
-    normal = tmp_normal.xyz;
+    normal = tmp_normal * inNormal;
     gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4(inPosition, 1.0);
     UV = inUV;
 }

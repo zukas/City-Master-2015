@@ -22,6 +22,8 @@ class Texture2DCollection {
 
 	static void bind(const uint32_t *texture_ids, uint32_t size, uint32_t start_unit = 0);
 
+    static  void unbind(uint32_t unit = 0);
+
 	static void save(const char *filename, uint32_t texture_id);
 };
 

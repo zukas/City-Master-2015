@@ -28,6 +28,7 @@ struct light_pass_program_t {
 		uint32_t model_id;
 		uint32_t screen_size_id;
 		uint32_t render_type_id;
+        uint32_t camera_position_id;
 
 };
 
@@ -61,7 +62,7 @@ class glProgram {
 	point_light_t m_light;
 	Text m_text;
 	ControlInput m_input;
-
+    int render_type { 0 };
 	float m_frameRate{0.f};
 
   public:

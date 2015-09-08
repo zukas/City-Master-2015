@@ -19,11 +19,14 @@ uint32_t Texture2DCollection::create_dss_from_memory(byte *buffer,
                     GL_LINEAR_MIPMAP_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glGenSamplers(1, &sampler_id_);
+    glGenSamplers(1, &sampler_id_);
+
+    glSamplerParameteri(sampler_id_, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glSamplerParameteri(sampler_id_, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	ASSERT(texture_id_ == sampler_id_);
+    ASSERT(texture_id_ == sampler_id_);
 
 	return texture_id_;
 }
@@ -43,12 +46,12 @@ uint32_t Texture2DCollection::create_ttf_from_memory(byte *buffer,
 					GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glGenSamplers(1, &sampler_id_);
-	glSamplerParameteri(sampler_id_, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glSamplerParameteri(sampler_id_, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glSamplerParameteri(sampler_id_, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
+    glGenSamplers(1, &sampler_id_);
+    glSamplerParameteri(sampler_id_, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glSamplerParameteri(sampler_id_, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glSamplerParameteri(sampler_id_, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	ASSERT(texture_id_ == sampler_id_);
+    ASSERT(texture_id_ == sampler_id_);
 
 	return texture_id_;
 }
@@ -60,9 +63,9 @@ void Texture2DCollection::destroy(uint32_t texture_id) {
 
 void Texture2DCollection::bind(uint32_t texture_id, uint32_t unit) {
 	glActiveTexture(GL_TEXTURE0 + unit);
-	glUniform1i(texture_id, unit);
+//	glUniform1i(texture_id, unit);
 	glBindTexture(GL_TEXTURE_2D, texture_id);
-	glBindSampler(unit, texture_id);
+    glBindSampler(unit, texture_id);
 }
 
 void Texture2DCollection::bind(const uint32_t *texture_ids, uint32_t size,
@@ -74,8 +77,15 @@ void Texture2DCollection::bind(const uint32_t *texture_ids, uint32_t size,
         glActiveTexture(GL_TEXTURE0 + i);
 		const uint32_t id = texture_ids[i];
 		glBindTexture(GL_TEXTURE_2D, id);
-		glBindSampler(i, id);
-	}
+        glBindSampler(i, id);
+    }
+}
+
+void Texture2DCollection::unbind(uint32_t unit)
+{
+    glActiveTexture(GL_TEXTURE0 + unit);
+    glBindTexture(GL_TEXTURE_2D, unit);
+    glBindSampler(unit,0);
 }
 
 void Texture2DCollection::save(const char *filename, uint32_t texture_id) {

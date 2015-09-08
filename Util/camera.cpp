@@ -99,6 +99,11 @@ const glm::mat4 &Camera::view() const { return m_viewMat; }
 
 const glm::mat4 &Camera::projection() const { return m_projectionMat; }
 
+const glm::vec3 &Camera::position() const
+{
+    return m_eye;
+}
+
 float Camera::distance() const {
     return glm::distance(glm::vec3(0.f, 0.f, 0.f), m_eye);
 }

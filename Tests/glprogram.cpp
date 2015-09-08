@@ -757,6 +757,8 @@ glProgram::glProgram() {
 			Uniforms::getUniformId(_solar_uni, _uni_size, "screen_size"_h);
 		m_light_pass_program.render_type_id =
 			Uniforms::getUniformId(_solar_uni, _uni_size, "render_type"_h);
+        m_light_pass_program.camera_position_id =
+            Uniforms::getUniformId(_solar_uni, _uni_size, "camera_position"_h);
 		glUseProgram(m_light_pass_program.program_id);
 		Uniforms::setUniform(
 			Uniforms::getUniformId(_solar_uni, _uni_size, "position_texture"_h),
@@ -813,6 +815,16 @@ void glProgram::exec() {
         }
 		//		if (frame == 1000)
 		//			return;
+
+        if(glfwGetKey(m_window, GLFW_KEY_0) == GLFW_PRESS) {
+            render_type = 0;
+        } else if(glfwGetKey(m_window, GLFW_KEY_1) == GLFW_PRESS) {
+            render_type = 1;
+        } else if(glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS) {
+            render_type = 2;
+        } else if(glfwGetKey(m_window, GLFW_KEY_3) == GLFW_PRESS) {
+            render_type = 3;
+        }
 
     } while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
              glfwWindowShouldClose(m_window) == 0);
@@ -919,16 +931,19 @@ void glProgram::geom_pass() {
 
 void glProgram::light_pass() {
 
+    glEnable(GL_BLEND);
 	glUseProgram(m_light_pass_program.program_id);
 	m_gbuffer.begin_render_pass();
 
-	Uniforms::setUniform(m_light_pass_program.model_id, glm::mat4(1.f));
+    Uniforms::setUniform(m_light_pass_program.model_id, glm::mat4(1.f));
 	Uniforms::setUniform(m_light_pass_program.screen_size_id,
 						 glm::vec2(Viewport::width(), Viewport::height()));
-	Uniforms::setUniform(m_light_pass_program.render_type_id, 1);
+    Uniforms::setUniform(m_light_pass_program.render_type_id, render_type);
+    Uniforms::setUniform(m_light_pass_program.camera_position_id, m_camera.position());
 
 	m_screen.render();
 	m_gbuffer.end_render_pass();
+    glDisable(GL_BLEND);
 }
 
 ScreenRender::~ScreenRender() { Mesh3DCollection::destroy(m_mesh_id); }

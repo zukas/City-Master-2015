@@ -132,6 +132,7 @@ void SolarSystem::render() {
         const model_gfx_data_t tmp = model_gfx_data[i];
         Texture2DCollection::bind(tmp.texture);
         Mesh3DCollection::render_geometry(tmp.mesh, tmp.elem_count);
+        Texture2DCollection::unbind();
     }
 }
 

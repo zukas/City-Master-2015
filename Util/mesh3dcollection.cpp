@@ -34,7 +34,7 @@ uint32_t Mesh3DCollection::create(const uv_vertex *vertexes,
         1,                                          // attribute
         3,                                          // size
         GL_FLOAT,                                   // type
-        GL_FALSE,                                   // normalized?
+		GL_TRUE,                                   // normalized?
         sizeof(uv_vertex),                          // stride
         reinterpret_cast<void *>(sizeof(float) * 3) // array buffer offset
         );

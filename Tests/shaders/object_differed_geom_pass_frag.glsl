@@ -13,7 +13,7 @@ uniform sampler2D texture_diffuse;
 void main()
 {
     outPos = position;
-    outNormal = normalize(normal);
+    outNormal = normal;
     outColour = texture2D(texture_diffuse, UV);
 //    outUV = vec3(UV, 0.0);
 }

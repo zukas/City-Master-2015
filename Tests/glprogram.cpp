@@ -716,63 +716,64 @@ glProgram::glProgram() {
 
     init_resources();
 
-	{
-		Shader _solar_shaders[2]{
-			{VERTEX, get_res_object_differed_geom_pass_vert_glsl()},
-			{FRAGMENT, get_res_object_differed_geom_pass_frag_glsl()}};
-		m_geom_pass_program.program_id =
-			ProgramCompiler::compileProgram(_solar_shaders, 2);
-
-		const int _uni_size = 4;
-		uint32_t _solar_uni[_uni_size];
-		ProgramCompiler::resolveUniforms(m_geom_pass_program.program_id,
-										 _solar_uni, _uni_size);
-		m_geom_pass_program.projection_id =
-			Uniforms::getUniformId(_solar_uni, _uni_size, "projectionMatrix"_h);
-		m_geom_pass_program.view_id =
-			Uniforms::getUniformId(_solar_uni, _uni_size, "viewMatrix"_h);
-		m_geom_pass_program.model_id =
-			Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
-
-		glUseProgram(m_geom_pass_program.program_id);
-		Uniforms::setUniform(
-			Uniforms::getUniformId(_solar_uni, _uni_size, "texture_diffuse"_h),
-			0);
-		glUseProgram(0);
-	}
-
     {
-		Shader _solar_shaders[2]{{VERTEX, get_res_light_pass_vert_glsl()},
-								 {FRAGMENT, get_res_light_pass_frag_glsl()}};
-		m_light_pass_program.program_id =
-			ProgramCompiler::compileProgram(_solar_shaders, 2);
+        Shader _solar_shaders[2]{
+            {VERTEX, get_res_object_vert_glsl()},
+            {FRAGMENT, get_res_object_frag_glsl()}};
+        m_geom_pass_program.program_id =
+            ProgramCompiler::compileProgram(_solar_shaders, 2);
 
-		const int _uni_size = 6;
+        const int _uni_size = 4;
         uint32_t _solar_uni[_uni_size];
-		ProgramCompiler::resolveUniforms(m_light_pass_program.program_id,
-										 _solar_uni, _uni_size);
-		m_light_pass_program.model_id =
-			Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
-		m_light_pass_program.screen_size_id =
-			Uniforms::getUniformId(_solar_uni, _uni_size, "screen_size"_h);
-		m_light_pass_program.render_type_id =
-			Uniforms::getUniformId(_solar_uni, _uni_size, "render_type"_h);
-        m_light_pass_program.camera_position_id =
-            Uniforms::getUniformId(_solar_uni, _uni_size, "camera_position"_h);
-		glUseProgram(m_light_pass_program.program_id);
-		Uniforms::setUniform(
-			Uniforms::getUniformId(_solar_uni, _uni_size, "position_texture"_h),
-			0);
-		Uniforms::setUniform(
-			Uniforms::getUniformId(_solar_uni, _uni_size, "normal_texture"_h),
-			1);
-		Uniforms::setUniform(
-			Uniforms::getUniformId(_solar_uni, _uni_size, "colour_texture"_h),
-			2);
-		glUseProgram(0);
+        ProgramCompiler::resolveUniforms(m_geom_pass_program.program_id,
+                                         _solar_uni, _uni_size);
+        m_geom_pass_program.projection_id =
+            Uniforms::getUniformId(_solar_uni, _uni_size, "projectionMatrix"_h);
+        m_geom_pass_program.view_id =
+            Uniforms::getUniformId(_solar_uni, _uni_size, "viewMatrix"_h);
+        m_geom_pass_program.model_id =
+            Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
+
+        glUseProgram(m_geom_pass_program.program_id);
+        Uniforms::setUniform(
+            Uniforms::getUniformId(_solar_uni, _uni_size, "texture_diffuse"_h),
+            0);
+        glUseProgram(0);
     }
 
-	init_home_solar_system(m_solar_system, m_geom_pass_program.model_id);
+    {
+        Shader _solar_shaders[3]{{VERTEX, get_res_light_pass_vert_glsl()},
+                                 {FRAGMENT, get_res_light_pass_frag_glsl()},
+                                 {FRAGMENT, get_res_fxaa_frag_glsl()}};
+        m_light_pass_program.program_id =
+            ProgramCompiler::compileProgram(_solar_shaders, 3);
+
+        const int _uni_size = 6;
+        uint32_t _solar_uni[_uni_size];
+        ProgramCompiler::resolveUniforms(m_light_pass_program.program_id,
+                                         _solar_uni, _uni_size);
+        m_light_pass_program.model_id =
+            Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
+        m_light_pass_program.screen_size_id =
+            Uniforms::getUniformId(_solar_uni, _uni_size, "screen_size"_h);
+        m_light_pass_program.render_type_id =
+            Uniforms::getUniformId(_solar_uni, _uni_size, "render_type"_h);
+        m_light_pass_program.camera_position_id =
+            Uniforms::getUniformId(_solar_uni, _uni_size, "camera_position"_h);
+        glUseProgram(m_light_pass_program.program_id);
+        Uniforms::setUniform(
+            Uniforms::getUniformId(_solar_uni, _uni_size, "position_texture"_h),
+            0);
+        Uniforms::setUniform(
+            Uniforms::getUniformId(_solar_uni, _uni_size, "normal_texture"_h),
+            1);
+        Uniforms::setUniform(
+            Uniforms::getUniformId(_solar_uni, _uni_size, "colour_texture"_h),
+            2);
+        glUseProgram(0);
+    }
+
+    init_home_solar_system(m_solar_system, m_geom_pass_program.model_id);
 
     {
         Shader text_[2]{{VERTEX, get_res_text_vert_glsl()},
@@ -793,10 +794,10 @@ glProgram::glProgram() {
 
     deinit_resources();
 
-	m_gbuffer.init();
-	m_screen.init();
+    m_gbuffer.init();
+    m_screen.init();
 
-	glfwSwapInterval(1);
+    glfwSwapInterval(1);
 }
 
 void glProgram::exec() {
@@ -805,24 +806,24 @@ void glProgram::exec() {
     uint64_t start = Clock::now();
     do {
         glfwPollEvents();
-		Mouse::update(m_window);
+        Mouse::update(m_window);
         handle_input(m_input.poll(m_window));
         render();
         Clock::update();
-		if (++frame % 30 == 0) {
+        if (++frame % 30 == 0) {
             m_frameRate = 30000000000.f / (Clock::now() - start);
             start = Clock::now();
         }
-		//		if (frame == 1000)
-		//			return;
+        //		if (frame == 1000)
+        //			return;
 
-        if(glfwGetKey(m_window, GLFW_KEY_0) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_0) == GLFW_PRESS) {
             render_type = 0;
-        } else if(glfwGetKey(m_window, GLFW_KEY_1) == GLFW_PRESS) {
+        } else if (glfwGetKey(m_window, GLFW_KEY_1) == GLFW_PRESS) {
             render_type = 1;
-        } else if(glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS) {
+        } else if (glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS) {
             render_type = 2;
-        } else if(glfwGetKey(m_window, GLFW_KEY_3) == GLFW_PRESS) {
+        } else if (glfwGetKey(m_window, GLFW_KEY_3) == GLFW_PRESS) {
             render_type = 3;
         }
 
@@ -833,37 +834,37 @@ void glProgram::exec() {
 void glProgram::render() {
     PROF("Render loop iteration");
     {
-		//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         {
             PROF("Setup before render");
             m_camera.update();
         }
-		//		m_gbuffer.begin_frame();
-		geom_pass();
+        //		m_gbuffer.begin_frame();
+        geom_pass();
 
-		//		glEnable(GL_STENCIL_TEST);
-		//		cencil_pass();
-		//		glDisable(GL_STENCIL_TEST);
-		light_pass();
+        //		glEnable(GL_STENCIL_TEST);
+        //		cencil_pass();
+        //		glDisable(GL_STENCIL_TEST);
+//        light_pass();
 
-		//		m_gbuffer.begin_final_render();
-		//		glBlitFramebuffer(0, 0, Viewport::width(),
-		// Viewport::height(), 0, 0,
-		//						  Viewport::width(),
-		// Viewport::height(),
-		//						  GL_COLOR_BUFFER_BIT,
-		// GL_LINEAR);
-		{
-			PROF("Creating frame rate text");
-			char buf[128];
-			sprintf(buf, "FPS: %.2f", m_frameRate);
-			{
-				PROF("Rendering text");
-				Text::beginRender();
-				m_text.render(buf, 20, 40);
-				Text::endRender();
-			}
-		}
+        //		m_gbuffer.begin_final_render();
+        //		glBlitFramebuffer(0, 0, Viewport::width(),
+        // Viewport::height(), 0, 0,
+        //						  Viewport::width(),
+        // Viewport::height(),
+        //						  GL_COLOR_BUFFER_BIT,
+        // GL_LINEAR);
+        {
+            PROF("Creating frame rate text");
+            char buf[128];
+            sprintf(buf, "FPS: %.2f", m_frameRate);
+            {
+                PROF("Rendering text");
+                Text::beginRender();
+                m_text.render(buf, 20, 40);
+                Text::endRender();
+            }
+        }
     }
 
     glfwSwapBuffers(m_window);
@@ -893,67 +894,68 @@ void glProgram::handleSelection(double x, double y) {
 }
 
 void glProgram::handle_input(const control &ctl) {
-	if (ctl.val & ROT_X) {
+    if (ctl.val & ROT_X) {
         m_camera.rotateHorizontal(ctl.delta[0]);
     }
 
-	if (ctl.val & ROT_Y) {
+    if (ctl.val & ROT_Y) {
         m_camera.rotateVertical(ctl.delta[1]);
     }
 
-	if (ctl.val & MOVE_X) {
+    if (ctl.val & MOVE_X) {
         m_camera.move(ctl.delta[2]);
     }
 
-	if (ctl.val & MOVE_Y) {
+    if (ctl.val & MOVE_Y) {
         m_camera.strafe(ctl.delta[3]);
     }
 
-	if (ctl.val & ZOOM) {
+    if (ctl.val & ZOOM) {
         m_camera.zoom(ctl.delta[4]);
-	}
+    }
 }
 
 void glProgram::geom_pass() {
 
-	glUseProgram(m_geom_pass_program.program_id);
-	m_gbuffer.begin_geom_pass();
+    glUseProgram(m_geom_pass_program.program_id);
+//    m_gbuffer.begin_geom_pass();
 
-	Uniforms::setUniform(m_geom_pass_program.projection_id,
-						 m_camera.projection());
-	Uniforms::setUniform(m_geom_pass_program.view_id, m_camera.view());
+    Uniforms::setUniform(m_geom_pass_program.projection_id,
+                         m_camera.projection());
+    Uniforms::setUniform(m_geom_pass_program.view_id, m_camera.view());
 
-	m_solar_system.prepare();
-	m_solar_system.render();
+    m_solar_system.prepare();
+    m_solar_system.render();
 
-	m_gbuffer.end_geom_pass();
+//    m_gbuffer.end_geom_pass();
 }
 
 void glProgram::light_pass() {
 
     glEnable(GL_BLEND);
-	glUseProgram(m_light_pass_program.program_id);
-	m_gbuffer.begin_render_pass();
+    glUseProgram(m_light_pass_program.program_id);
+    m_gbuffer.begin_render_pass();
 
     Uniforms::setUniform(m_light_pass_program.model_id, glm::mat4(1.f));
-	Uniforms::setUniform(m_light_pass_program.screen_size_id,
-						 glm::vec2(Viewport::width(), Viewport::height()));
+    Uniforms::setUniform(m_light_pass_program.screen_size_id,
+                         glm::vec2(Viewport::width(), Viewport::height()));
     Uniforms::setUniform(m_light_pass_program.render_type_id, render_type);
-    Uniforms::setUniform(m_light_pass_program.camera_position_id, m_camera.position());
+    Uniforms::setUniform(m_light_pass_program.camera_position_id,
+                         m_camera.position());
 
-	m_screen.render();
-	m_gbuffer.end_render_pass();
+    m_screen.render();
+    m_gbuffer.end_render_pass();
     glDisable(GL_BLEND);
 }
 
 ScreenRender::~ScreenRender() { Mesh3DCollection::destroy(m_mesh_id); }
 
 void ScreenRender::init() {
-	glm::vec3 vertexes[4]{
-		{-1.f, 1.f, 0.f}, {-1.f, -1.f, 0.f}, {1.f, -1.f, 0.f}, {1.f, 1.f, 0.f}};
-	uint32_t indexes[6]{0, 1, 2, 2, 3, 0};
+    glm::vec3 vertexes[4]{
+        {-1.f, 1.f, 0.f}, {-1.f, -1.f, 0.f}, {1.f, -1.f, 0.f}, {1.f, 1.f, 0.f}};
+    uint32_t indexes[6]{0, 1, 2, 2, 3, 0};
 
-	m_mesh_id = Mesh3DCollection::create(vertexes, 4, indexes, 6);
+    m_mesh_id = Mesh3DCollection::create(vertexes, 4, indexes, 6);
 }
 
 void ScreenRender::render() { Mesh3DCollection::render_geometry(m_mesh_id, 6); }

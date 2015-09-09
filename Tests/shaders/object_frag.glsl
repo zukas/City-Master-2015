@@ -1,6 +1,6 @@
 #version 330
 
-uniform sampler2D texture;
+uniform sampler2D texture_diffuse;
 uniform int objectId;
 uniform vec3 lightPosition;
 uniform float lightStrength;
@@ -16,7 +16,7 @@ out vec4 colour;
 
 void main()
 {
-        colour = texture2D(texture, UV);
+        colour = texture2D(texture_diffuse, UV);
 
 //    colour = vec4(UV.x, UV.y, UV.y, 1.0);
 

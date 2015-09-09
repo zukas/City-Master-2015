@@ -70,6 +70,7 @@ void create2(uv_vertex *vertexes, uint32_t *indexes, float radius,
 
 void sphare::create(uv_vertex *vertexes, uint32_t *indexes, float radius,
                     uint32_t units) {
+
 	float _units = float(int32_t(units));
 	uint32_t index = 0;
 	uint32_t size = units * units + units;
@@ -88,7 +89,7 @@ void sphare::create(uv_vertex *vertexes, uint32_t *indexes, float radius,
 			float Y = glm::cos(phi);
 			float Z = glm::sin(theta) * glm::sin(phi);
 
-			vertexes[index++] = uv_vertex{glm::vec3{X, Y, Z} * radius, glm::vec3{0, 0, 0}, glm::vec2{U, V}};
+            vertexes[index++] = uv_vertex{glm::vec3{X, Y, Z} * radius, glm::normalize(glm::vec3{X, Y, Z}), glm::vec2{U, V}};
 		}
 	}
 
@@ -101,24 +102,24 @@ void sphare::create(uv_vertex *vertexes, uint32_t *indexes, float radius,
 		indexes[index * 6 + 4] = index;
 		indexes[index * 6 + 5] = index + 1;
 	}
-	size *= 6;
-	for(index = 0; index < size; ++index) {
+//	size *= 6;
+//	for(index = 0; index < size; ++index) {
 
-		glm::vec3 t1 = vertexes[indexes[index]].p;
-		glm::vec3 t2 = vertexes[indexes[(index + 1) % size]].p;
-		glm::vec3 t3 = vertexes[indexes[(index + 2) % size]].p;
+//		glm::vec3 t1 = vertexes[indexes[index]].p;
+//		glm::vec3 t2 = vertexes[indexes[(index + 1) % size]].p;
+//		glm::vec3 t3 = vertexes[indexes[(index + 2) % size]].p;
 
-		glm::vec3 v1 = t2 - t1;
-		glm::vec3 v2 = t3 - t1;
+//		glm::vec3 v1 = t2 - t1;
+//		glm::vec3 v2 = t3 - t1;
 
-		glm::vec3 normal;
+//		glm::vec3 normal;
 
-		normal.x = (v1.y * v2.z) - (v1.z * v2.y);
-		normal.y = (v1.z * v2.x) - (v1.x * v2.z);
-		normal.z = (v1.x * v2.y) - (v1.y * v2.x);
+//		normal.x = (v1.y * v2.z) - (v1.z * v2.y);
+//		normal.y = (v1.z * v2.x) - (v1.x * v2.z);
+//		normal.z = (v1.x * v2.y) - (v1.y * v2.x);
 
 
-		vertexes[indexes[index]].n = normal;
+//		vertexes[indexes[index]].n = normal;
 
-	}
+//	}
 }

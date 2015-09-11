@@ -35,7 +35,7 @@ Storage get_storage_type(const char *filename) {
         }
     }
 
-    const char *array[]{"jpg", "jpeg", "png", "tga", "dds", "ttf"};
+    const char *array[]{"jpg", "jpeg", "png", "tga", "dds", "ttf", "data"};
 
     for (size_t i = 0; i < sizeof(array) / sizeof(const char *) && t == TEXT;
          ++i) {
@@ -128,22 +128,22 @@ uint32_t file_hash(const char *filename) {
     uint32_t res{0};
     FILE *file = fopen64(filename, "rb");
     if (file) {
-		size_t file_size = 0;
-		size_t read_size = 0;
-		size_t tmp_size = 0;
-		char read_buffer[2048];
-		fseek(file, 0, SEEK_END);
-		file_size = ftell(file);
+        size_t file_size = 0;
+        size_t read_size = 0;
+        size_t tmp_size = 0;
+        char read_buffer[2048];
+        fseek(file, 0, SEEK_END);
+        file_size = ftell(file);
         rewind(file);
 
-		while (!feof(file)) {
-			tmp_size = fread(read_buffer, 1, sizeof(read_buffer), file);
-			read_size += tmp_size;
-			res = crc32_fast(read_buffer, tmp_size, res);
-		}
-		if (file_size != read_size) {
-			res = 0;
-		}
+        while (!feof(file)) {
+            tmp_size = fread(read_buffer, 1, sizeof(read_buffer), file);
+            read_size += tmp_size;
+            res = crc32_fast(read_buffer, tmp_size, res);
+        }
+        if (file_size != read_size) {
+            res = 0;
+        }
 
         fclose(file);
     }
@@ -438,7 +438,7 @@ resource_info write(FILE *out, FILE *in) {
     char buffer[2048];
     size_t wb = 0;
 
-//    printf("start: %lu, size: %lu\n", info.offset, info.size);
+    //    printf("start: %lu, size: %lu\n", info.offset, info.size);
     while (wb < info.size) {
         size_t rs = fread(buffer, 1, sizeof(buffer), in);
         wb += fwrite(buffer, 1, rs, out);
@@ -448,7 +448,7 @@ resource_info write(FILE *out, FILE *in) {
 
 size_t write(char *buffer, const char *name, FILE *in) {
 
-    const size_t buffer_size{16384};
+    const size_t buffer_size{16384 * 4};
     size_t buffer_offest{0};
 
     int c;
@@ -460,6 +460,12 @@ size_t write(char *buffer, const char *name, FILE *in) {
         if (c == '\n') {
             buffer_offest += snprintf(&buffer[buffer_offest],
                                       buffer_size - buffer_offest, "\\n");
+        } else if (c == '"') {
+            buffer_offest += snprintf(&buffer[buffer_offest],
+                                      buffer_size - buffer_offest, "\"");
+        } else if (c == '\\') {
+            buffer_offest += snprintf(&buffer[buffer_offest],
+                                      buffer_size - buffer_offest, "\\");
         }
         if (isprint(c) && c != EOF) {
             buffer_offest += snprintf(&buffer[buffer_offest],
@@ -502,11 +508,12 @@ void generate_resource_manager(const char **files, size_t size,
 
                     bin->header_o +=
                         sprintf(&bin->header_f[bin->header_o],
-								manager_header_binery_function, name, name);
+                                manager_header_binery_function, name, name);
 
-                    bin->source_o += sprintf(&bin->source_f[bin->source_o],
-                                             manager_source_binery_function,
-											 name, info.offset, info.size, name, info.size);
+                    bin->source_o +=
+                        sprintf(&bin->source_f[bin->source_o],
+                                manager_source_binery_function, name,
+                                info.offset, info.size, name, info.size);
                 } else {
 
                     lit->header_o +=
@@ -521,21 +528,21 @@ void generate_resource_manager(const char **files, size_t size,
     }
     size_t wb;
 
-	wb = sprintf(out_buffer, manager_header, bin->header_f, lit->header_f);
-	sprintf(tmp_buffer, "%s/resourcemanager.h", out_dir);
-	if (crc32_fast(out_buffer, wb) != file_hash(tmp_buffer)) {
-		_out = fopen(tmp_buffer, "wb");
-		fwrite(out_buffer, 1, wb, _out);
-		fclose(_out);
-	}
+    wb = sprintf(out_buffer, manager_header, bin->header_f, lit->header_f);
+    sprintf(tmp_buffer, "%s/resourcemanager.h", out_dir);
+    if (crc32_fast(out_buffer, wb) != file_hash(tmp_buffer)) {
+        _out = fopen(tmp_buffer, "wb");
+        fwrite(out_buffer, 1, wb, _out);
+        fclose(_out);
+    }
 
     sprintf(tmp_buffer, "%s/resourcemanager.cpp", out_dir);
     wb = sprintf(out_buffer, manager_source, binery_resource_file,
                  bin->source_f, lit->source_f);
 
-	if (crc32_fast(out_buffer, wb) != file_hash(tmp_buffer)) {
-		_out = fopen(tmp_buffer, "wb");
-		fwrite(out_buffer, 1, wb, _out);
-		fclose(_out);
-	}
+    if (crc32_fast(out_buffer, wb) != file_hash(tmp_buffer)) {
+        _out = fopen(tmp_buffer, "wb");
+        fwrite(out_buffer, 1, wb, _out);
+        fclose(_out);
+    }
 }

@@ -3,6 +3,8 @@ project(${TESTS} CXX)
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 file(GLOB RES_FILES
+    "smaa/*.shader"
+    "smaa/*.data"
     "shaders/*.glsl"
     "fonts/*.ttf"
     "textures/*.dds"

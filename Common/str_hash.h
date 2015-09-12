@@ -68,7 +68,7 @@ constexpr size_t strlen_c(const char *str) {
 
 constexpr uint32_t sid(const char *str) { return crc32(str, strlen_c(str)); }
 
-constexpr  uint32_t operator"" _h(const char *source, size_t length) {
+constexpr uint32_t operator"" _h(const char *source, size_t length) {
     return crc32(source, length);
 }
 

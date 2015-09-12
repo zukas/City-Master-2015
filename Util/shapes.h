@@ -4,7 +4,7 @@
 #include "types.h"
 
 namespace sphare {
-void create(uv_vertex *vertexes, uint32_t *indexes, float radius,
+void create(obj_3d_vertex *vertexes, uint32_t *indexes, float radius,
             uint32_t units);
 constexpr uint32_t vertex_size(int32_t units) {
 	return (units + 1) * (units + 1);

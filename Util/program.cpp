@@ -6,7 +6,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-uint32_t ProgramCompiler::compileProgram(const Shader *shaders, uint32_t size) {
+uint32_t ProgramCompiler::compileProgram(const ShaderSource *shaders,
+										 uint32_t size) {
     ASSERT(size > 0);
 
     uint32_t programId = glCreateProgram();
@@ -68,12 +69,90 @@ uint32_t ProgramCompiler::compileProgram(const Shader *shaders, uint32_t size) {
     return programId;
 }
 
+uint32_t ProgramCompiler::compileProgram(const char **vertex_shaders,
+										 uint32_t vertex_shader_count,
+										 const char **geometry_shaders,
+										 uint32_t geometry_shader_count,
+										 const char **fragment_shaders,
+										 uint32_t fragment_shader_count) {
+
+
+	uint32_t programId = glCreateProgram();
+
+	if(vertex_shader_count > 0) {
+		uint32_t shader_id = glCreateShader(GL_VERTEX_SHADER);
+		if(!compile_shaders(shader_id, vertex_shaders, vertex_shader_count)) {
+			exit(1);
+		} else {
+			glAttachShader(programId, shader_id);
+			glDeleteShader(shader_id);
+		}
+	}
+
+	if(geometry_shader_count > 0) {
+		uint32_t shader_id = glCreateShader(GL_GEOMETRY_SHADER);
+		if(!compile_shaders(shader_id, geometry_shaders, geometry_shader_count)) {
+			exit(1);
+		} else {
+			glAttachShader(programId, shader_id);
+			glDeleteShader(shader_id);
+		}
+	}
+
+	if(fragment_shader_count > 0) {
+		uint32_t shader_id = glCreateShader(GL_FRAGMENT_SHADER);
+		if(!compile_shaders(shader_id, fragment_shaders, fragment_shader_count)) {
+			exit(1);
+		} else {
+			glAttachShader(programId, shader_id);
+			glDeleteShader(shader_id);
+		}
+	}
+
+
+	GLint status{GL_FALSE};
+	glLinkProgram(programId);
+	glGetProgramiv(programId, GL_LINK_STATUS, &status);
+	if (!status) {
+		int logLength{0};
+		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &logLength);
+		if (logLength > 0) {
+			char error[2048]{0};
+			glGetProgramInfoLog(programId, logLength, nullptr, error);
+			printf("Program link error: %s\n", error);
+			exit(1);
+		}
+	}
+
+	return programId;
+
+}
+
+int32_t ProgramCompiler::compile_shaders(uint32_t shader_id, const char **shader_sources, uint32_t shader_count)
+{
+	GLint status{GL_FALSE};
+	glShaderSource(shader_id, shader_count, shader_sources, nullptr);
+	glCompileShader(shader_id);
+	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &status);
+	if(!status) {
+		int logLength{0};
+		glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &logLength);
+		if (logLength > 0) {
+			char error[4096]{0};
+			glGetShaderInfoLog(shader_id, 4096, nullptr, error);
+			printf("Failed to compile shader - error: %s\n", error);
+		}
+	}
+	return status;
+}
+
 void ProgramCompiler::resolveUniforms(uint32_t programId, uint32_t *uniforms,
                                       uint32_t size) {
     GLint count;
     glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &count);
-	if((uint32_t)count != size) {
-		printf("Incorrect uniform count, expected: %u, but requested: %u\n", count, size);
+	if ((uint32_t)count != size) {
+		printf("Incorrect uniform count, expected: %u, but requested: %u\n",
+			   count, size);
 		ASSERT((uint32_t)count == size);
 	}
 
@@ -135,3 +214,6 @@ void Uniforms::setUniform(uint32_t uniformId, const glm::mat3 &value) {
 void Uniforms::setUniform(uint32_t uniformId, const glm::mat4 &value) {
     glUniformMatrix4fv(uniformId, 1, GL_FALSE, &value[0][0]);
 }
+
+
+

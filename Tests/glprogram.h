@@ -9,6 +9,7 @@
 #include "Util/text.h"
 #include "Util/controlinput.h"
 #include "Util/gbuffer.h"
+#include "Util/smaa.h"
 #include "solarsystem.h"
 
 struct point_light_t {
@@ -57,6 +58,7 @@ class glProgram {
 	light_pass_program_t m_light_pass_program;
 	SolarSystem m_solar_system;
 	GBuffer m_gbuffer;
+	SMAA m_smaa;
 	Camera m_camera;
 	ScreenRender m_screen;
 	point_light_t m_light;

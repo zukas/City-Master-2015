@@ -96,7 +96,7 @@ char_detail_t load_char(float *buffer_data, FT_Face face, uint32_t index) {
 
 Text::program_data Text::text_program{0, 0, 0, 0, 0};
 
-void Text::init(const Shader *shaders, uint32_t size, uint32_t projection_hash,
+void Text::init(const ShaderSource *shaders, uint32_t size, uint32_t projection_hash,
 				uint32_t model_hash, uint32_t colour_hash) {
 	text_program.program_id = ProgramCompiler::compileProgram(shaders, size);
 	uint32_t uniforms[4];

@@ -34,12 +34,12 @@ void GBuffer::init() {
     // - Normal color buffer
     glGenTextures(1, &m_normal_buffer);
     glBindTexture(GL_TEXTURE_2D, m_normal_buffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _viewport_width, _viewport_height, 0,
-                 GL_RGB, GL_FLOAT, NULL);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _viewport_width, _viewport_height, 0,
+				 GL_RGB, GL_FLOAT, NULL);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D,
                            m_normal_buffer, 0);
 
@@ -48,12 +48,12 @@ void GBuffer::init() {
     // - Color + Specular color buffer
     glGenTextures(1, &m_colour_buffer);
     glBindTexture(GL_TEXTURE_2D, m_colour_buffer);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _viewport_width, _viewport_height,
                  0, GL_RGBA, GL_FLOAT, NULL);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D,
                            m_colour_buffer, 0);
@@ -87,18 +87,14 @@ void GBuffer::end_geom_pass() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
 void GBuffer::begin_render_pass() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //    glBindSampler(0, 0);
-    //    glBindSampler(1, 0);
-    //    glBindSampler(2, 0);
-
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_position_buffer);
+	glBindTexture(GL_TEXTURE_2D, m_position_buffer);
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, m_normal_buffer);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_normal_buffer);
 
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, m_colour_buffer);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, m_colour_buffer);
 }
 
 void GBuffer::end_render_pass() {
@@ -109,18 +105,7 @@ void GBuffer::end_render_pass() {
     glBlitFramebuffer(0, 0, _viewport_width, _viewport_height, 0, 0,
                       _viewport_width, _viewport_height, GL_DEPTH_BUFFER_BIT,
                       GL_NEAREST);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void GBuffer::blit_buffer(uint32_t id) {
-    float _viewport_width = Viewport::width();
-    float _viewport_height = Viewport::height();
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_frame_buffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Write to default framebuffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glReadBuffer(GL_COLOR_ATTACHMENT0 + id);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glBlitFramebuffer(0, 0, _viewport_width, _viewport_height, 0, 0,
-                      _viewport_width, _viewport_height, GL_COLOR_BUFFER_BIT,
-                      GL_LINEAR);
-}
+uint32_t GBuffer::colour_buffer_id() { return m_colour_buffer; }

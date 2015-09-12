@@ -42,7 +42,7 @@
 //		}
 //	}
 
-void create2(uv_vertex *vertexes, uint32_t *indexes, float radius,
+void create2(obj_3d_vertex *vertexes, uint32_t *indexes, float radius,
 					uint32_t units) {
 
 	const float RS = 1.f/float(units-1.f);
@@ -53,7 +53,7 @@ void create2(uv_vertex *vertexes, uint32_t *indexes, float radius,
 			const float x = glm::cos(2*M_PI * float(j) * RS) * glm::sin( M_PI * float(i) * RS );
 			const float z = glm::sin(2*M_PI * float(j) * RS) * glm::sin( M_PI * float(i) * RS );
 
-			vertexes[index++] = uv_vertex{glm::vec3{x, y, z} * radius, glm::vec3{x, y, z}, glm::vec2{float(j) * RS, float(i) * RS}};
+			vertexes[index++] = obj_3d_vertex{glm::vec3{x, y, z} * radius, glm::vec3{x, y, z}, glm::vec2{float(j) * RS, float(i) * RS}};
 		}
 	}
 
@@ -68,7 +68,7 @@ void create2(uv_vertex *vertexes, uint32_t *indexes, float radius,
 }
 
 
-void sphare::create(uv_vertex *vertexes, uint32_t *indexes, float radius,
+void sphare::create(obj_3d_vertex *vertexes, uint32_t *indexes, float radius,
                     uint32_t units) {
 
 	float _units = float(int32_t(units));
@@ -89,7 +89,7 @@ void sphare::create(uv_vertex *vertexes, uint32_t *indexes, float radius,
 			float Y = glm::cos(phi);
 			float Z = glm::sin(theta) * glm::sin(phi);
 
-            vertexes[index++] = uv_vertex{glm::vec3{X, Y, Z} * radius, glm::normalize(glm::vec3{X, Y, Z}), glm::vec2{U, V}};
+            vertexes[index++] = obj_3d_vertex{glm::vec3{X, Y, Z} * radius, glm::normalize(glm::vec3{X, Y, Z}), glm::vec2{U, V}};
 		}
 	}
 

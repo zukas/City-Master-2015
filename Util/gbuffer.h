@@ -25,7 +25,7 @@ class GBuffer {
 	void begin_render_pass();
 	void end_render_pass();
 
-	void blit_buffer(uint32_t id);
+	uint32_t colour_buffer_id();
 
 };
 

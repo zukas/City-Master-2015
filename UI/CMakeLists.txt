@@ -11,4 +11,4 @@ list(APPEND SOURCES
     )
 
 add_library(${PROJECT_NAME} SHARED ${HEADERS} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} ${MEMORY} ${UTIL} ${IMPORT})
+target_link_libraries(${PROJECT_NAME} ${MEMORY} ${UTIL})

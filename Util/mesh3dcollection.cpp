@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <string.h>
 
-uint32_t Mesh3DCollection::create(const uv_vertex *vertexes,
+uint32_t Mesh3DCollection::create(const uv_3d_vertex *vertexes,
 								  uint32_t vertexe_size,
 								  const uint32_t *indexes,
 								  uint32_t index_size) {
@@ -18,14 +18,14 @@ uint32_t Mesh3DCollection::create(const uv_vertex *vertexes,
     glGenBuffers(2, buffer_);
     glBindBuffer(GL_ARRAY_BUFFER, buffer_[0]);
 
-    glBufferData(GL_ARRAY_BUFFER, vertexe_size * sizeof(uv_vertex), vertexes,
+    glBufferData(GL_ARRAY_BUFFER, vertexe_size * sizeof(uv_3d_vertex), vertexes,
                  GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,                 // attribute
                           3,                 // size
                           GL_FLOAT,          // type
                           GL_FALSE,          // normalized?
-                          sizeof(uv_vertex), // stride
+                          sizeof(uv_3d_vertex), // stride
                           0                  // array buffer offset
                           );
 
@@ -35,7 +35,7 @@ uint32_t Mesh3DCollection::create(const uv_vertex *vertexes,
         3,                                          // size
         GL_FLOAT,                                   // type
         GL_FALSE,                                   // normalized?
-        sizeof(uv_vertex),                          // stride
+        sizeof(uv_3d_vertex),                          // stride
         reinterpret_cast<void *>(sizeof(float) * 3) // array buffer offset
         );
 
@@ -45,13 +45,13 @@ uint32_t Mesh3DCollection::create(const uv_vertex *vertexes,
         2,                                          // size
         GL_FLOAT,                                   // type
         GL_FALSE,                                   // normalized?
-        sizeof(uv_vertex),                          // stride
+        sizeof(uv_3d_vertex),                          // stride
         reinterpret_cast<void *>(sizeof(float) * 6) // array buffer offset
         );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer_[1]);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_size * sizeof(GLID), indexes,
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_size * sizeof(uint32_t), indexes,
                  GL_STATIC_DRAW);
     glBindVertexArray(0);
 	return vertex_array_;

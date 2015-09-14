@@ -121,19 +121,12 @@ void Text::init(const Shader *shaders, uint32_t size, uint32_t projection_hash,
 }
 
 void Text::beginRender() {
-
-	glDisable(GL_DEPTH_TEST);
-	glDepthFunc(GL_ALWAYS);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glUseProgram(text_program.program_id);
 	Uniforms::setUniform(text_program.projection_id, Viewport::ortho());
 }
 
 void Text::endRender() {
-	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+
 }
 
 Text::Text() {}

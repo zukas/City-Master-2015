@@ -19,7 +19,7 @@ struct model_gfx_data_t {
 
 struct model_bin_data_t {
     byte *texture_data;
-    uv_vertex *model_data;
+    uv_3d_vertex *model_data;
     uint32_t *index_data;
 
     uint32_t texture_size;

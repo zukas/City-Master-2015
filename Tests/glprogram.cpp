@@ -9,6 +9,7 @@
 #include "Util/profiler.h"
 #include "Util/viewport.h"
 #include "Util/texture2dcollection.h"
+#include "Util/helperfunctions.h"
 
 #include "resources/resourcemanager.h"
 
@@ -133,8 +134,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_sun_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -158,8 +159,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_mercury_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -184,8 +185,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_venus_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -210,8 +211,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_earth_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -235,8 +236,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_moon_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -260,8 +261,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_mars_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -286,8 +287,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_jupiter_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -312,8 +313,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_europa_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -337,8 +338,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_io_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -363,8 +364,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_ganymede_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -389,8 +390,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_callisto_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -415,8 +416,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_saturn_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -441,8 +442,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_titan_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -466,8 +467,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_enceladus_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -491,8 +492,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_rhea_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -516,8 +517,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_dione_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -541,8 +542,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_tethys_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -566,8 +567,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_iapetus_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -591,8 +592,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_mimas_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -616,8 +617,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_uranus_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -642,8 +643,8 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 			(byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
 		get_res_neptune_dds(_buffer);
 
-		uv_vertex *vertexes =
-			(uv_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_vertex));
+		uv_3d_vertex *vertexes =
+			(uv_3d_vertex *)mem.malloc_aligend_64(vertex_size * sizeof(uv_3d_vertex));
 		uint32_t *indexes =
 			(uint32_t *)mem.malloc_aligend_64(index_size * sizeof(uint32_t));
 
@@ -845,9 +846,9 @@ void glProgram::render() {
                          m_minFrameRate);
             {
                 PROF("Rendering text");
-                Text::beginRender();
+                render2dBegin();
                 m_text.render(buf, 20, 40);
-                Text::endRender();
+                render2dEnd();
             }
         }
     }

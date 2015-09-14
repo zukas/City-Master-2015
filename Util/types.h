@@ -78,13 +78,23 @@ struct colour_vertex {
     glm::vec3 c;
 };
 
-struct uv_vertex {
+struct uv_3d_vertex {
     glm::vec3 p;
     glm::vec3 n;
     glm::vec2 uv;
-    bool operator==(const uv_vertex &other) const {
+    bool operator==(const uv_3d_vertex &other) const {
         return p == other.p && n == other.n && uv == other.uv;
     }
 };
+
+struct uv_2d_vertex {
+    glm::vec2 p;
+    glm::vec2 uv;
+    bool operator==(const uv_2d_vertex &other) const {
+        return p == other.p && uv == other.uv;
+    }
+};
+
+
 
 #endif // TYPES_H

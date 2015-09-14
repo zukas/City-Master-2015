@@ -1,7 +1,7 @@
 #include "shapes.h"
 #include <glm/glm.hpp>
 
-void sphare::create(uv_vertex *vertexes, uint32_t *indexes, float radius,
+void sphare::create(uv_3d_vertex *vertexes, uint32_t *indexes, float radius,
                     uint32_t units) {
 
     float _units = float(int32_t(units));
@@ -21,7 +21,7 @@ void sphare::create(uv_vertex *vertexes, uint32_t *indexes, float radius,
             float X = glm::cos(theta) * glm::sin(phi);
             float Y = glm::cos(phi);
             float Z = glm::sin(theta) * glm::sin(phi);
-            uv_vertex val{glm::vec3{X, Y, Z} * radius, glm::vec3{X, Y, Z}, glm::vec2{U, V}};
+            uv_3d_vertex val{glm::vec3{X, Y, Z} * radius, glm::vec3{X, Y, Z}, glm::vec2{U, V}};
 
             vertexes[index++] = val;
         }

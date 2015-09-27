@@ -9,6 +9,7 @@
 #include "Util/text.h"
 #include "Util/controlinput.h"
 #include "Util/gbuffer.h"
+#include "Util/tempbuffer.h"
 #include "Util/smaa.h"
 #include "solarsystem.h"
 
@@ -27,7 +28,7 @@ struct light_pass_program_t {
 		uint32_t projection_id;
 		uint32_t view_id;
 		uint32_t model_id;
-		uint32_t screen_size_id;
+		uint32_t pix_size_id;
 		uint32_t render_type_id;
         uint32_t camera_position_id;
 
@@ -56,8 +57,10 @@ class glProgram {
 
 	solar_program_t m_geom_pass_program;
 	light_pass_program_t m_light_pass_program;
+	solar_program_t m_normal_render;
 	SolarSystem m_solar_system;
 	GBuffer m_gbuffer;
+	TempBuffer m_temp;
 	SMAA m_smaa;
 	Camera m_camera;
 	ScreenRender m_screen;
@@ -65,7 +68,8 @@ class glProgram {
 	Text m_text;
 	ControlInput m_input;
     int render_type { 0 };
-	float m_frameRate{0.f};
+	float m_frameRate{60.f};
+	char m_frameRateBuffer[128];
 
   public:
 	glProgram();
@@ -77,6 +81,7 @@ class glProgram {
 	void handle_input(const control &ctl);
 	void geom_pass();
 	void light_pass();
+	void normal_pass();
 
 };
 

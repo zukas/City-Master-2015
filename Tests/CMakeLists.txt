@@ -10,6 +10,7 @@ file(GLOB RES_FILES
     "textures/*.dds"
     "textures/*.jpg"
     "textures/*.png"
+    "textures/*.tga"
     )
 
 execute_process(

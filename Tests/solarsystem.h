@@ -35,6 +35,7 @@ class SolarSystem {
     model_phx_data_t *m_model_phx_data;
     glm::mat4 *m_model_matrixes;
     model_gfx_data_t *m_model_gfx_data;
+	uint32_t m_sampler;
     uint16_t m_size;
 
   public:

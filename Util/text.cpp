@@ -3,6 +3,7 @@
 #include "texture2dcollection.h"
 #include "viewport.h"
 #include "profiler.h"
+#include "glvalidator.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -44,7 +45,7 @@ char_detail_t load_char(float *buffer_data, FT_Face face, uint32_t index) {
 
 	const uint32_t width = bitmap->width;
 	const uint32_t height = bitmap->rows;
-
+	GL_CHECK;
 	{
 		byte buffer[32768]{0};
 		ASSERT(nw * nh < 32768);
@@ -65,6 +66,7 @@ char_detail_t load_char(float *buffer_data, FT_Face face, uint32_t index) {
 		res.char_data.advance = ax;
 		res.char_data.bearing = bx;
 		res.height = ch;
+		GL_CHECK;
 	}
 
 	const float _hy = float(int32_t(nh - ay));
@@ -90,7 +92,7 @@ char_detail_t load_char(float *buffer_data, FT_Face face, uint32_t index) {
 	buffer_data[13] = _ay;
 	buffer_data[14] = 1.f;
 	buffer_data[15] = 0.f;
-
+	GL_CHECK;
 	return res;
 }
 
@@ -128,17 +130,20 @@ void Text::beginRender() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glUseProgram(text_program.program_id);
 	Uniforms::setUniform(text_program.projection_id, Viewport::ortho());
+	GL_CHECK;
 }
 
 void Text::endRender() {
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	GL_CHECK;
 }
 
 Text::Text() {}
 
 Text::Text(byte *font_buffer, ulong font_bufer_size, uint32_t size) {
+	GL_CHECK;
 	FT_Library lib{nullptr};
 	FT_Face face{nullptr};
     FT_Init_FreeType(&lib);
@@ -147,7 +152,7 @@ Text::Text(byte *font_buffer, ulong font_bufer_size, uint32_t size) {
 
     glGenVertexArrays(1, &m_vertexArray);
     glBindVertexArray(m_vertexArray);
-
+	GL_CHECK;
 	float vertex_data[2048];
 
 	for (uint32_t i = 0; i < 128; ++i) {
@@ -155,17 +160,17 @@ Text::Text(byte *font_buffer, ulong font_bufer_size, uint32_t size) {
 		m_charData[i] = detail.char_data;
 		m_lineSize = max(m_lineSize, detail.height);
 	}
-
+	GL_CHECK;
     FT_Done_Face(face);
     FT_Done_FreeType(lib);
-
+	GL_CHECK;
 	GLuint buffer;
 	glGenBuffers(1, &buffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data,
 				 GL_STATIC_DRAW);
-
+	GL_CHECK;
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0,                          // attribute
 						  2,                          // size
@@ -174,7 +179,7 @@ Text::Text(byte *font_buffer, ulong font_bufer_size, uint32_t size) {
 						  sizeof(float[4]),           // stride
 						  reinterpret_cast<void *>(0) // array buffer offset
 						  );
-
+	GL_CHECK;
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(
 		1,                                         // attribute
@@ -184,7 +189,7 @@ Text::Text(byte *font_buffer, ulong font_bufer_size, uint32_t size) {
 		sizeof(float[4]),                          // stride
 		reinterpret_cast<void *>(sizeof(float[2])) // array buffer offset
 		);
-
+	GL_CHECK;
     glBindVertexArray(0);
 }
 

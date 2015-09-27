@@ -85,7 +85,7 @@ create_blend_weight_program(const char *shader_source) {
 		"in vec2 UV;" NL "in vec2 PIX;" NL "in vec4 offset[3];" NL
 		"out vec4 weights;" NL "void main() {" NL
 		"weights = SMAABlendingWeightCalculationPS(UV, PIX, offset, "
-		"edge_texture, area_texture, search_texture, vec4(4));" NL "}" NL};
+		"edge_texture, area_texture, search_texture, vec4(1, 1, 1, 0));" NL "}" NL};
 
 	prog.program_id =
 		ProgramCompiler::compileProgram(_vertex, 3, nullptr, 0, _fragment, 3);
@@ -203,7 +203,7 @@ void SMAA::init(const char *shader_source, byte *area, byte *search) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, _viewport_width, _viewport_height,
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, _viewport_width, _viewport_height,
                  0, GL_RGBA, GL_FLOAT, 0);
 	GL_CHECK;
     glBindTexture(GL_TEXTURE_2D, m_texture_buffers[1]);
@@ -211,7 +211,7 @@ void SMAA::init(const char *shader_source, byte *area, byte *search) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, _viewport_width, _viewport_height,
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, _viewport_width, _viewport_height,
                  0, GL_RGBA, GL_FLOAT, 0);
 	GL_CHECK;
     GLenum modes[] = {GL_COLOR_ATTACHMENT0};
@@ -247,9 +247,8 @@ void SMAA::run(uint32_t src_texture_buffer, uint32_t dest_frame_buffer) const {
 	run_pass();
 	GL_CHECK;
 	neighbor_blend_pass(src_texture_buffer, dest_frame_buffer);
-//	glEnable(GL_FRAMEBUFFER_SRGB);
+
 	run_pass();
-//	glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
 void SMAA::edge_detection_pass(uint32_t colour_texture_id) const {
@@ -297,7 +296,7 @@ void SMAA::neighbor_blend_pass(uint32_t colour_texture_id,
 							   uint32_t dst_framebuffer_id) const {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, dst_framebuffer_id);
-	glClearColor(0, 0, 0, 0);
+	glClearColor(0.1, 0.1, 0.1, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	GL_CHECK;
 

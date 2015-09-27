@@ -10,7 +10,7 @@
 Camera::Camera() {
     m_viewMat = glm::lookAt(m_eye, m_view, m_up);
 
-    m_projectionMat = glm::perspective(45.f, 16.0f / 9.0f, 0.005f,
+	m_projectionMat = glm::perspective(45.f, 16.0f / 9.0f, 0.1f,
                                        5000.0f); // CONVERT TO CONSTEXPR
     //	calcQuads();
 }

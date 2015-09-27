@@ -13,16 +13,24 @@ class Texture2DCollection {
 
 	static uint32_t create_dss_from_memory(byte *buffer, uint32_t size);
 
+	static uint32_t create_jpg_from_memory(byte *buffer, uint32_t size);
+
 	static uint32_t create_ttf_from_memory(byte *buffer, uint32_t width,
 										   uint32_t height);
+
+	static uint32_t create_sampler();
 
 	static void destroy(uint32_t texture_id);
 
 	static void bind(uint32_t texture_id, uint32_t unit = 0);
 
+	static void bind_sampler(uint32_t sampler_id, uint32_t unit = 0);
+
 	static void bind(const uint32_t *texture_ids, uint32_t size, uint32_t start_unit = 0);
 
-    static  void unbind(uint32_t unit = 0);
+	static void unbind(uint32_t unit = 0);
+
+	static void unbind_sampler(uint32_t unit = 0);
 
 	static void save(const char *filename, uint32_t texture_id);
 };

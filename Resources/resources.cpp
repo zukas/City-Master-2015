@@ -137,7 +137,7 @@ uint32_t file_hash(const char *filename) {
         rewind(file);
 
         while (!feof(file)) {
-            tmp_size = fread(read_buffer, 1, sizeof(read_buffer), file);
+			tmp_size = fread(read_buffer, sizeof(unsigned char), sizeof(read_buffer), file);
             read_size += tmp_size;
             res = crc32_fast(read_buffer, tmp_size, res);
         }
@@ -240,7 +240,7 @@ void load_resource(char *out_header, const char *file, const char *out_dir) {
             tmp = fopen64(full_file_path, "wb");
             if (tmp) {
                 printf("Updating %s\n", full_file_path);
-                fwrite(buffer, 1, buffer_offest, tmp);
+				fwrite(buffer, sizeof(unsigned char), buffer_offest, tmp);
                 fclose(tmp);
             }
 
@@ -323,8 +323,8 @@ void generate_resources(const char **files, size_t size, const char *out_dir) {
     FILE *man_cpp = fopen64(out_man_file, "wb");
 
     if (man_h && man_cpp) {
-        fwrite(template_h_1, strlen(template_h_1), 1, man_h);
-        fwrite(template_cpp_1, strlen(template_cpp_1), 1, man_cpp);
+		fwrite(template_h_1, sizeof(char), strlen(template_h_1), man_h);
+		fwrite(template_cpp_1, sizeof(char), strlen(template_cpp_1), man_cpp);
         size_t buff_res_cout{0};
         for (size_t i = 0; i < size; ++i) {
             if (get_storage_type(files[i]) == BINERY) {
@@ -334,7 +334,7 @@ void generate_resources(const char **files, size_t size, const char *out_dir) {
             load_resource(out_buffer, files[i], out_dir);
             fprintf(man_cpp, "#include \"%s\"\n", out_buffer);
         }
-        fwrite(template_cpp_2, strlen(template_cpp_2), 1, man_cpp);
+		fwrite(template_cpp_2, sizeof(char), strlen(template_cpp_2), man_cpp);
         for (size_t i = 0, curr = 0, last = buff_res_cout - 1; i < size; ++i) {
             if (BINERY == get_storage_type(files[i])) {
                 char up_res[256]{'\0'};
@@ -355,8 +355,8 @@ void generate_resources(const char **files, size_t size, const char *out_dir) {
                 ++curr;
             }
         }
-        fwrite(template_h_2, strlen(template_h_2), 1, man_h);
-        fwrite(template_cpp_3, strlen(template_cpp_3), 1, man_cpp);
+		fwrite(template_h_2, sizeof(char), strlen(template_h_2), man_h);
+		fwrite(template_cpp_3, sizeof(char), strlen(template_cpp_3),  man_cpp);
         for (size_t i = 0, curr = 0, last = size - 1 - buff_res_cout; i < size;
              ++i) {
             if (TEXT == get_storage_type(files[i])) {
@@ -377,8 +377,8 @@ void generate_resources(const char **files, size_t size, const char *out_dir) {
                 ++curr;
             }
         }
-        fwrite(template_h_3, strlen(template_h_3), 1, man_h);
-        fwrite(template_cpp_4, strlen(template_cpp_4), 1, man_cpp);
+		fwrite(template_h_3, sizeof(char), strlen(template_h_3), man_h);
+		fwrite(template_cpp_4, sizeof(char), strlen(template_cpp_4), man_cpp);
     } else {
         for (size_t i = 0; i < size; ++i) {
             load_resource(nullptr, files[i], out_dir);
@@ -441,7 +441,7 @@ resource_info write(FILE *out, FILE *in) {
     //    printf("start: %lu, size: %lu\n", info.offset, info.size);
     while (wb < info.size) {
         size_t rs = fread(buffer, 1, sizeof(buffer), in);
-        wb += fwrite(buffer, 1, rs, out);
+		wb += fwrite(buffer, sizeof(unsigned char), rs, out);
     }
     return info;
 }
@@ -532,7 +532,7 @@ void generate_resource_manager(const char **files, size_t size,
     sprintf(tmp_buffer, "%s/resourcemanager.h", out_dir);
     if (crc32_fast(out_buffer, wb) != file_hash(tmp_buffer)) {
         _out = fopen(tmp_buffer, "wb");
-        fwrite(out_buffer, 1, wb, _out);
+		fwrite(out_buffer, sizeof(unsigned char), wb, _out);
         fclose(_out);
     }
 
@@ -542,7 +542,7 @@ void generate_resource_manager(const char **files, size_t size,
 
     if (crc32_fast(out_buffer, wb) != file_hash(tmp_buffer)) {
         _out = fopen(tmp_buffer, "wb");
-        fwrite(out_buffer, 1, wb, _out);
+		fwrite(out_buffer, sizeof(unsigned char), wb, _out);
         fclose(_out);
     }
 }

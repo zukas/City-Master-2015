@@ -1,4 +1,4 @@
-#version 330
+#version 420 core
 
 
 layout (location = 0) out vec3 outPos;

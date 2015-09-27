@@ -122,21 +122,21 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     system.init(21, model_id);
 
-    const uint32_t sun_parts = 64;
-    const uint32_t planet_parts = 32;
-    const uint32_t moon_parts = 16;
+	const uint32_t sun_parts = 64;
+	const uint32_t planet_parts = 64;
+	const uint32_t moon_parts = 32;
 
     uint32_t index = 0;
-    BitsMemory mem(1024 * 1024 * 2);
+	BitsMemory mem(1024 * 1024 * 50);
     {
         /// SUN
-        const uint32_t texture_size = get_res_sun_dds_size();
+		const uint32_t texture_size = get_res_sun_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(sun_parts);
         const uint32_t index_size = sphare::index_size(sun_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_sun_dds(_buffer);
+		get_res_sun_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -155,13 +155,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// MERCURY
-        const uint32_t texture_size = get_res_mercury_dds_size();
+		const uint32_t texture_size = get_res_mercury_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(planet_parts);
         const uint32_t index_size = sphare::index_size(planet_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_mercury_dds(_buffer);
+		get_res_mercury_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -181,13 +181,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// VENUS
-        const uint32_t texture_size = get_res_venus_dds_size();
+		const uint32_t texture_size = get_res_venus_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(planet_parts);
         const uint32_t index_size = sphare::index_size(planet_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_venus_dds(_buffer);
+		get_res_venus_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -207,13 +207,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// EARTH
-        const uint32_t texture_size = get_res_earth_dds_size();
+		const uint32_t texture_size = get_res_earth_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(planet_parts);
         const uint32_t index_size = sphare::index_size(planet_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_earth_dds(_buffer);
+		get_res_earth_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -232,13 +232,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// MOON
-        const uint32_t texture_size = get_res_moon_dds_size();
+		const uint32_t texture_size = get_res_moon_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_moon_dds(_buffer);
+		get_res_moon_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -257,13 +257,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// MARS
-        const uint32_t texture_size = get_res_mars_dds_size();
+		const uint32_t texture_size = get_res_mars_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(planet_parts);
         const uint32_t index_size = sphare::index_size(planet_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_mars_dds(_buffer);
+		get_res_mars_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -283,13 +283,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// JUPITER
-        const uint32_t texture_size = get_res_jupiter_dds_size();
+		const uint32_t texture_size = get_res_jupiter_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(planet_parts);
         const uint32_t index_size = sphare::index_size(planet_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_jupiter_dds(_buffer);
+		get_res_jupiter_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -309,13 +309,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// EUROPA
-        const uint32_t texture_size = get_res_europa_dds_size();
+		const uint32_t texture_size = get_res_europa_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_europa_dds(_buffer);
+		get_res_europa_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -334,13 +334,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// IO
-        const uint32_t texture_size = get_res_io_dds_size();
+		const uint32_t texture_size = get_res_io_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_io_dds(_buffer);
+		get_res_io_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -360,13 +360,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// GANYMADE
-        const uint32_t texture_size = get_res_ganymede_dds_size();
+		const uint32_t texture_size = get_res_ganymede_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_ganymede_dds(_buffer);
+		get_res_ganymede_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -386,13 +386,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// CALLISTO
-        const uint32_t texture_size = get_res_callisto_dds_size();
+		const uint32_t texture_size = get_res_callisto_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_callisto_dds(_buffer);
+		get_res_callisto_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -412,13 +412,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// SATURN
-        const uint32_t texture_size = get_res_saturn_dds_size();
+		const uint32_t texture_size = get_res_saturn_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(planet_parts);
         const uint32_t index_size = sphare::index_size(planet_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_saturn_dds(_buffer);
+		get_res_saturn_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -438,13 +438,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// TITAN
-        const uint32_t texture_size = get_res_titan_dds_size();
+		const uint32_t texture_size = get_res_titan_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_titan_dds(_buffer);
+		get_res_titan_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -463,13 +463,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// ENCELADUS
-        const uint32_t texture_size = get_res_enceladus_dds_size();
+		const uint32_t texture_size = get_res_enceladus_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_enceladus_dds(_buffer);
+		get_res_enceladus_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -488,13 +488,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// RHEA
-        const uint32_t texture_size = get_res_rhea_dds_size();
+		const uint32_t texture_size = get_res_rhea_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_rhea_dds(_buffer);
+		get_res_rhea_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -513,13 +513,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// DIONE
-        const uint32_t texture_size = get_res_dione_dds_size();
+		const uint32_t texture_size = get_res_dione_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_dione_dds(_buffer);
+		get_res_dione_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -538,13 +538,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// TETHYS
-        const uint32_t texture_size = get_res_tethys_dds_size();
+		const uint32_t texture_size = get_res_tethys_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_tethys_dds(_buffer);
+		get_res_tethys_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -563,13 +563,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// IAPETUS
-        const uint32_t texture_size = get_res_iapetus_dds_size();
+		const uint32_t texture_size = get_res_iapetus_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_iapetus_dds(_buffer);
+		get_res_iapetus_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -588,13 +588,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// MIMAS
-        const uint32_t texture_size = get_res_mimas_dds_size();
+		const uint32_t texture_size = get_res_mimas_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(moon_parts);
         const uint32_t index_size = sphare::index_size(moon_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_mimas_dds(_buffer);
+		get_res_mimas_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -613,13 +613,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
 
     {
         /// URANUS
-        const uint32_t texture_size = get_res_uranus_dds_size();
+		const uint32_t texture_size = get_res_uranus_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(planet_parts);
         const uint32_t index_size = sphare::index_size(planet_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_uranus_dds(_buffer);
+		get_res_uranus_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -639,13 +639,13 @@ void init_home_solar_system(SolarSystem &system, uint32_t model_id) {
     }
     {
         /// NEPTUNE
-        const uint32_t texture_size = get_res_neptune_dds_size();
+		const uint32_t texture_size = get_res_neptune_jpg_size();
         const uint32_t vertex_size = sphare::vertex_size(planet_parts);
         const uint32_t index_size = sphare::index_size(planet_parts);
 
         byte *_buffer =
             (byte *)mem.malloc_aligend_64(texture_size * sizeof(byte));
-        get_res_neptune_dds(_buffer);
+		get_res_neptune_jpg(_buffer);
 
 		obj_3d_vertex *vertexes = (obj_3d_vertex *)mem.malloc_aligend_64(
 			vertex_size * sizeof(obj_3d_vertex));
@@ -671,9 +671,9 @@ glProgram::glProgram() {
         exit(1);
     }
 
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_SAMPLES, 16);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     m_window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, nullptr,
@@ -681,42 +681,43 @@ glProgram::glProgram() {
     glfwMakeContextCurrent(m_window);
 
     glewExperimental = GL_TRUE;
-
+	GL_CHECK;
     if (glewInit() != GLEW_OK) {
         fprintf(stderr, "Failed to initialize GLEW\n");
         exit(1);
     } else {
+		GL_CHECK;
         if (!GLEW_VERSION_3_3) {
             fprintf(stderr, "OpenGL 3.3 is not supported\n");
             exit(1);
         }
     }
-
+	GL_CHECK;
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
     glfwSetCursorPos(m_window, halfWindowWidth, halfWindowHeight);
 
     Viewport::update({0, 0, windowWidth, windowHeight});
+	GL_CHECK;
+	glClearColor(0.02f, 0.03f, 0.03f, 1.0f);
 
-    glClearColor(0.05f, 0.075f, 0.1f, 1.0f);
-
-    glClearDepth(1.0f);
-    glDepthFunc(GL_LESS);
-
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_POINT_SMOOTH);
-    glEnable(GL_POLYGON_SMOOTH);
-
-    glEnable(GL_MULTISAMPLE);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glClearDepth(1.0f);
+	glDepthFunc(GL_LESS);
+	GL_CHECK;
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+	GL_CHECK;
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
+	GL_CHECK;
+	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_SAMPLE_SHADING);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
     init_resources();
-
+	GL_CHECK;
     {
         ShaderSource _solar_shaders[2]{
 			{VERTEX, get_res_object_differed_geom_pass_vert_glsl()},
@@ -741,23 +742,46 @@ glProgram::glProgram() {
             0);
         glUseProgram(0);
     }
+	GL_CHECK;
+	{
+		ShaderSource _solar_shaders[2]{{VERTEX, get_res_object_vert_glsl()},
+									   {FRAGMENT, get_res_object_frag_glsl()}};
+		m_normal_render.program_id =
+			ProgramCompiler::compileProgram(_solar_shaders, 2);
 
+		const int _uni_size = 4;
+		uint32_t _solar_uni[_uni_size];
+		ProgramCompiler::resolveUniforms(m_geom_pass_program.program_id,
+										 _solar_uni, _uni_size);
+		m_normal_render.projection_id =
+			Uniforms::getUniformId(_solar_uni, _uni_size, "projectionMatrix"_h);
+		m_normal_render.view_id =
+			Uniforms::getUniformId(_solar_uni, _uni_size, "viewMatrix"_h);
+		m_normal_render.model_id =
+			Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
+
+		glUseProgram(m_normal_render.program_id);
+		Uniforms::setUniform(
+			Uniforms::getUniformId(_solar_uni, _uni_size, "texture_diffuse"_h),
+			0);
+		glUseProgram(0);
+	}
+	GL_CHECK;
     {
-		ShaderSource _solar_shaders[3]{
+		ShaderSource _solar_shaders[2]{
 			{VERTEX, get_res_light_pass_vert_glsl()},
-			{FRAGMENT, get_res_light_pass_frag_glsl()},
-			{FRAGMENT, get_res_fxaa_frag_glsl()}};
+			{FRAGMENT, get_res_light_pass_frag_glsl()}};
         m_light_pass_program.program_id =
-            ProgramCompiler::compileProgram(_solar_shaders, 3);
+			ProgramCompiler::compileProgram(_solar_shaders, 2);
 
-        const int _uni_size = 6;
+		const int _uni_size = 5;
         uint32_t _solar_uni[_uni_size];
         ProgramCompiler::resolveUniforms(m_light_pass_program.program_id,
                                          _solar_uni, _uni_size);
         m_light_pass_program.model_id =
             Uniforms::getUniformId(_solar_uni, _uni_size, "modelMatrix"_h);
-        m_light_pass_program.screen_size_id =
-            Uniforms::getUniformId(_solar_uni, _uni_size, "screen_size"_h);
+		m_light_pass_program.pix_size_id =
+			Uniforms::getUniformId(_solar_uni, _uni_size, "pix_size"_h);
         m_light_pass_program.render_type_id =
             Uniforms::getUniformId(_solar_uni, _uni_size, "render_type"_h);
         m_light_pass_program.camera_position_id =
@@ -794,8 +818,10 @@ glProgram::glProgram() {
         m_text.setColour(colour(150, 160, 170, 255));
     }
 
-
+	GL_CHECK;
     m_gbuffer.init();
+	m_temp.init(Viewport::width(), Viewport::height(), TempBuffer::RGBA);
+
 	GL_CHECK;
 	{
 		BitsMemory mem(1024 * 1024);
@@ -821,15 +847,18 @@ void glProgram::exec() {
     Clock::update();
     uint32_t frame = 0;
     uint64_t start = Clock::now();
+	sprintf(m_frameRateBuffer, "FPS: %.1f", m_frameRate);
     do {
         glfwPollEvents();
         Mouse::update(m_window);
         handle_input(m_input.poll(m_window));
         render();
         Clock::update();
-        if (++frame % 30 == 0) {
-            m_frameRate = 30000000000.f / (Clock::now() - start);
+		if (++frame % 90 == 0) {
+			m_frameRate = 90000000000.f / (Clock::now() - start);
             start = Clock::now();
+			PROF("Creating frame rate text");
+			sprintf(m_frameRateBuffer, "FPS: %.1f", m_frameRate);
         }
         //		if (frame == 1000)
         //			return;
@@ -842,7 +871,19 @@ void glProgram::exec() {
             render_type = 2;
         } else if (glfwGetKey(m_window, GLFW_KEY_3) == GLFW_PRESS) {
             render_type = 3;
-        }
+		} else if (glfwGetKey(m_window, GLFW_KEY_4) == GLFW_PRESS) {
+			render_type = 4;
+		} else if (glfwGetKey(m_window, GLFW_KEY_5) == GLFW_PRESS) {
+			render_type = 5;
+		} else if (glfwGetKey(m_window, GLFW_KEY_6) == GLFW_PRESS) {
+			render_type = 6;
+		} else if (glfwGetKey(m_window, GLFW_KEY_7) == GLFW_PRESS) {
+			render_type = 7;
+		} else if (glfwGetKey(m_window, GLFW_KEY_8) == GLFW_PRESS) {
+			render_type = 8;
+		} else if (glfwGetKey(m_window, GLFW_KEY_9) == GLFW_PRESS) {
+			render_type = 9;
+		}
 
     } while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
              glfwWindowShouldClose(m_window) == 0);
@@ -851,37 +892,24 @@ void glProgram::exec() {
 void glProgram::render() {
     PROF("Render loop iteration");
     {
+		GL_CHECK;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         {
             PROF("Setup before render");
             m_camera.update();
         }
-		//        		m_gbuffer.begin_frame();
-        geom_pass();
-
-        //		glEnable(GL_STENCIL_TEST);
-        //		cencil_pass();
-        //		glDisable(GL_STENCIL_TEST);
+		GL_CHECK;
+//				normal_pass();
+		geom_pass();
+		GL_CHECK;
 		light_pass();
-
-        //		m_gbuffer.begin_final_render();
-        //		glBlitFramebuffer(0, 0, Viewport::width(),
-        // Viewport::height(), 0, 0,
-        //						  Viewport::width(),
-        // Viewport::height(),
-        //						  GL_COLOR_BUFFER_BIT,
-        // GL_LINEAR);
-        {
-            PROF("Creating frame rate text");
-            char buf[128];
-            sprintf(buf, "FPS: %.2f", m_frameRate);
-            {
-                PROF("Rendering text");
-                Text::beginRender();
-                m_text.render(buf, 20, 40);
-                Text::endRender();
-            }
-        }
+		GL_CHECK;
+		{
+			PROF("Rendering text");
+			Text::beginRender();
+			m_text.render(m_frameRateBuffer, 20, 40);
+			Text::endRender();
+		}
     }
 
     glfwSwapBuffers(m_window);
@@ -933,7 +961,12 @@ void glProgram::handle_input(const control &ctl) {
 }
 
 void glProgram::geom_pass() {
+	PROF("Geometry pass");
 	GL_CHECK;
+
+	//	glEnable(GL_CULL_FACE);
+	//	glCullFace(GL_BACK);
+
     glUseProgram(m_geom_pass_program.program_id);
 	m_gbuffer.begin_geom_pass();
 	GL_CHECK;
@@ -944,38 +977,67 @@ void glProgram::geom_pass() {
     m_solar_system.prepare();
     m_solar_system.render();
 	GL_CHECK;
-	m_gbuffer.end_geom_pass();
-	GL_CHECK;
+	{
+		PROF("Performing blit");
+		m_gbuffer.end_geom_pass();
+		GL_CHECK;
+	}
+
+	//	glDisable(GL_CULL_FACE);
 }
 
 void glProgram::light_pass() {
 
-	m_smaa.run(m_gbuffer.colour_buffer_id());
+	PROF("Light pass");
+	//	m_temp.begin_write();
+	//	m_smaa.run(m_gbuffer.colour_buffer_id());
 	GL_CHECK;
-//    glEnable(GL_BLEND);
-//    glUseProgram(m_light_pass_program.program_id);
-//    m_gbuffer.begin_render_pass();
+	glUseProgram(m_light_pass_program.program_id);
+	m_gbuffer.begin_render_pass();
+	GL_CHECK;
+	//	Uniforms::setUniform(
+	//		m_light_pass_program.pix_size_id,
+	//		glm::vec2(1.f / Viewport::width(), 1.f / Viewport::height()));
+	//	GL_CHECK;
+	Uniforms::setUniform(m_light_pass_program.render_type_id, render_type);
+	//	GL_CHECK;
+	//	Uniforms::setUniform(m_light_pass_program.camera_position_id,
+	//						 m_camera.position());
+	GL_CHECK;
+	m_screen.render();
+	GL_CHECK;
+	m_gbuffer.end_render_pass();
+	//	m_temp.end_write();
 
-//    Uniforms::setUniform(m_light_pass_program.model_id, glm::mat4(1.f));
-//    Uniforms::setUniform(m_light_pass_program.screen_size_id,
-//                         glm::vec2(Viewport::width(), Viewport::height()));
-//    Uniforms::setUniform(m_light_pass_program.render_type_id, render_type);
-//    Uniforms::setUniform(m_light_pass_program.camera_position_id,
-//                         m_camera.position());
+	//	m_smaa.run(m_temp.colour_buffer_id());
+}
 
-//    m_screen.render();
-//    m_gbuffer.end_render_pass();
-//    glDisable(GL_BLEND);
+void glProgram::normal_pass() {
+	glUseProgram(m_normal_render.program_id);
+
+	Uniforms::setUniform(m_normal_render.projection_id, m_camera.projection());
+	Uniforms::setUniform(m_normal_render.view_id, m_camera.view());
+	GL_CHECK;
+	m_solar_system.prepare();
+	m_solar_system.render();
 }
 
 ScreenRender::~ScreenRender() { Mesh3DCollection::destroy(m_mesh_id); }
 
 void ScreenRender::init() {
-    glm::vec3 vertexes[4]{
-        {-1.f, 1.f, 0.f}, {-1.f, -1.f, 0.f}, {1.f, -1.f, 0.f}, {1.f, 1.f, 0.f}};
-    uint32_t indexes[6]{0, 1, 2, 2, 3, 0};
+	uv_3d_vertex vertexes[4]{{{-1.f, 1.f, 0.f}, {0.f, 1.f}},
+							 {{-1.f, -1.f, 0.f}, {0.f, 0.f}},
+							 {{1.f, -1.f, 0.f}, {1.f, 0.f}},
+							 {{1.f, 1.f, 0.f}, {1.f, 1.f}}};
+	uint32_t indexes[6]{0, 1, 2, 2, 3, 0};
 
     m_mesh_id = Mesh3DCollection::create(vertexes, 4, indexes, 6);
+
+	GL_CHECK;
 }
 
-void ScreenRender::render() { Mesh3DCollection::render_geometry(m_mesh_id, 6); }
+void ScreenRender::render() {
+	GL_CHECK;
+	Mesh3DCollection::render_geometry(m_mesh_id, 6);
+	GL_CHECK;
+}

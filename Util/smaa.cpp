@@ -3,7 +3,7 @@
 #include "Common/str_hash.h"
 #include "mesh3dcollection.h"
 #include "program.h"
-#include "profile.h"
+#include "profiler.h"
 #include "glvalidator.h"
 
 #include <GL/glew.h>

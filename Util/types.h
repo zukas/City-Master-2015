@@ -95,6 +95,14 @@ struct obj_3d_vertex {
     }
 };
 
+struct uv_2d_vertex {
+    glm::vec2 p;
+    glm::vec2 uv;
+    bool operator==(const uv_2d_vertex &other) const {
+        return p == other.p && uv == other.uv;
+    }
+};
+
 
 
 #endif // TYPES_H

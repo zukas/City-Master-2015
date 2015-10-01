@@ -12,6 +12,7 @@
 #include "Util/texture2dcollection.h"
 #include "Util/mesh3dcollection.h"
 #include "Util/glvalidator.h"
+#include "Util/helperfunctions.h"
 
 #include "resources/resourcemanager.h"
 

@@ -44,7 +44,7 @@ add_custom_target(resources ALL
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES} ${RES_FILES} )
-target_link_libraries(${PROJECT_NAME} ${MEMORY} ${UTIL})
+target_link_libraries(${PROJECT_NAME} ${MEMORY} ${UTIL} ${UI})
 add_dependencies(${PROJECT_NAME} resources)
 
 

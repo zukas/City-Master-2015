@@ -19,7 +19,7 @@ struct model_gfx_data_t {
 
 struct model_bin_data_t {
     byte *texture_data;
-    uv_3d_vertex *model_data;
+    obj_3d_vertex *model_data;
     uint32_t *index_data;
 
     uint32_t texture_size;
@@ -35,6 +35,7 @@ class SolarSystem {
     model_phx_data_t *m_model_phx_data;
     glm::mat4 *m_model_matrixes;
     model_gfx_data_t *m_model_gfx_data;
+	uint32_t m_sampler;
     uint16_t m_size;
 
   public:
@@ -55,5 +56,6 @@ struct solar_program_t {
     uint32_t view_id;
     uint32_t model_id;
 };
+
 
 #endif // SOLARSYSTEM_H

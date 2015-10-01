@@ -28,7 +28,7 @@ class Text {
 	colour m_colour;
 
   public:
-    static void init(const struct Shader *shaders, uint32_t size,
+	static void init(const struct ShaderSource *shaders, uint32_t size,
 					 uint32_t projection_hash, uint32_t model_hash,
 					 uint32_t colour_hash);
 

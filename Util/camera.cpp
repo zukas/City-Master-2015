@@ -10,7 +10,7 @@
 Camera::Camera() {
     m_viewMat = glm::lookAt(m_eye, m_view, m_up);
 
-    m_projectionMat = glm::perspective(45.f, 16.0f / 9.0f, 0.005f,
+	m_projectionMat = glm::perspective(45.f, 16.0f / 9.0f, 0.1f,
                                        5000.0f); // CONVERT TO CONSTEXPR
     //	calcQuads();
 }
@@ -98,6 +98,11 @@ void Camera::zoom(float delta) {
 const glm::mat4 &Camera::view() const { return m_viewMat; }
 
 const glm::mat4 &Camera::projection() const { return m_projectionMat; }
+
+const glm::vec3 &Camera::position() const
+{
+    return m_eye;
+}
 
 float Camera::distance() const {
     return glm::distance(glm::vec3(0.f, 0.f, 0.f), m_eye);

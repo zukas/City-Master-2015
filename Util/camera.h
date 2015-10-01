@@ -9,10 +9,10 @@ class Camera {
   private:
     glm::mat4 m_viewMat;
     glm::mat4 m_projectionMat;
-    glm::vec3 m_eye{-100.f, 88.f, 594.f};
-    glm::vec3 m_view{400.f, 1.f, 1.f};
+	glm::vec3 m_eye{10.f, 10.f, 100.f};
+	glm::vec3 m_view{400.f, 20.f, 1.f};
     glm::vec3 m_up{0.f, 1.f, 0.f};
-    float m_velocity{0.2f};
+    float m_velocity{0.5f};
 
   public:
     Camera();
@@ -24,6 +24,7 @@ class Camera {
     void zoom(float delta);
     const glm::mat4 &view() const;
     const glm::mat4 &projection() const;
+    const glm::vec3 &position() const;
     float distance() const;
 };
 

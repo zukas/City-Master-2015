@@ -6,13 +6,21 @@
 
 enum ShaderType { VERTEX, GEOMETRY, FRAGMENT };
 
-struct Shader {
+struct ShaderSource {
 	ShaderType type;
 	const char *source;
 };
 
 namespace ProgramCompiler {
-uint32_t compileProgram(const Shader *shaders, uint32_t size);
+uint32_t compileProgram(const ShaderSource *shaders, uint32_t size);
+uint32_t
+compileProgram(const char **vertex_shaders, uint32_t vertex_shader_count,
+			   const char **geometry_shaders, uint32_t geometry_shader_count,
+			   const char **fragment_shaders, uint32_t fragment_shader_count);
+
+int32_t compile_shaders(uint32_t shader_id, const char **shader_sources,
+					 uint32_t shader_count);
+
 void resolveUniforms(uint32_t programId, uint32_t *uniforms, uint32_t size);
 }
 

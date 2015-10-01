@@ -76,12 +76,11 @@ uint32_t ProgramCompiler::compileProgram(const char **vertex_shaders,
 										 const char **fragment_shaders,
 										 uint32_t fragment_shader_count) {
 
-
 	uint32_t programId = glCreateProgram();
 
-	if(vertex_shader_count > 0) {
+	if (vertex_shader_count > 0) {
 		uint32_t shader_id = glCreateShader(GL_VERTEX_SHADER);
-		if(!compile_shaders(shader_id, vertex_shaders, vertex_shader_count)) {
+		if (!compile_shaders(shader_id, vertex_shaders, vertex_shader_count)) {
 			exit(1);
 		} else {
 			glAttachShader(programId, shader_id);
@@ -89,9 +88,10 @@ uint32_t ProgramCompiler::compileProgram(const char **vertex_shaders,
 		}
 	}
 
-	if(geometry_shader_count > 0) {
+	if (geometry_shader_count > 0) {
 		uint32_t shader_id = glCreateShader(GL_GEOMETRY_SHADER);
-		if(!compile_shaders(shader_id, geometry_shaders, geometry_shader_count)) {
+		if (!compile_shaders(shader_id, geometry_shaders,
+							 geometry_shader_count)) {
 			exit(1);
 		} else {
 			glAttachShader(programId, shader_id);
@@ -99,16 +99,16 @@ uint32_t ProgramCompiler::compileProgram(const char **vertex_shaders,
 		}
 	}
 
-	if(fragment_shader_count > 0) {
+	if (fragment_shader_count > 0) {
 		uint32_t shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-		if(!compile_shaders(shader_id, fragment_shaders, fragment_shader_count)) {
+		if (!compile_shaders(shader_id, fragment_shaders,
+							 fragment_shader_count)) {
 			exit(1);
 		} else {
 			glAttachShader(programId, shader_id);
 			glDeleteShader(shader_id);
 		}
 	}
-
 
 	GLint status{GL_FALSE};
 	glLinkProgram(programId);
@@ -125,16 +125,16 @@ uint32_t ProgramCompiler::compileProgram(const char **vertex_shaders,
 	}
 
 	return programId;
-
 }
 
-int32_t ProgramCompiler::compile_shaders(uint32_t shader_id, const char **shader_sources, uint32_t shader_count)
-{
+int32_t ProgramCompiler::compile_shaders(uint32_t shader_id,
+										 const char **shader_sources,
+										 uint32_t shader_count) {
 	GLint status{GL_FALSE};
 	glShaderSource(shader_id, shader_count, shader_sources, nullptr);
 	glCompileShader(shader_id);
 	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &status);
-	if(!status) {
+	if (!status) {
 		int logLength{0};
 		glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &logLength);
 		if (logLength > 0) {
@@ -215,5 +215,10 @@ void Uniforms::setUniform(uint32_t uniformId, const glm::mat4 &value) {
     glUniformMatrix4fv(uniformId, 1, GL_FALSE, &value[0][0]);
 }
 
+//ProgramCompiler::UniformStore::UniformStore(const uint32_t *buffer_,
+//											uint32_t size_)
+//	: buffer(buffer_), size(size_) {}
 
-
+//uint32_t ProgramCompiler::UniformRefStore::resolve(uint32_t uniform_hash) {
+//	return Uniforms::getUniformId(buffer, size, uniform_hash);
+//}

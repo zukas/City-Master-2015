@@ -28,6 +28,7 @@ class SMAA {
 	uint32_t m_frame_buffers[2];
 	uint32_t m_texture_buffers[2];
     uint32_t m_data_buffers[2];
+	uint32_t m_sampler;
 
   public:
     SMAA() = default;

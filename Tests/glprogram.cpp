@@ -992,7 +992,7 @@ void glProgram::geom_pass() {
 void glProgram::light_pass() {
 
 	PROF("Light pass");
-//	m_temp.begin_write();
+	m_temp.begin_write();
 	//
 	GL_CHECK;
 	glUseProgram(m_light_pass_program.program_id);
@@ -1011,10 +1011,10 @@ void glProgram::light_pass() {
 	GL_CHECK;
 	m_gbuffer.end_render_pass();
 	GL_CHECK;
-//	m_temp.end_write();
+	m_temp.end_write();
 	GL_CHECK;
 //	m_temp.copy_to_buffer();
-//	m_smaa.run(m_temp.colour_buffer_id());
+	m_smaa.run(m_temp.colour_buffer_id());
 	GL_CHECK;
 }
 

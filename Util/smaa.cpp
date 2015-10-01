@@ -40,7 +40,7 @@ create_edge_detection_program(const char *shader_source) {
         shader_source,
         "in vec2 UV;" NL "in vec4 offset[3];" NL "out vec2 edges;" NL
         "void main() {" NL
-        "edges = SMAALumaEdgeDetectionPS(UV, offset, colour_texture);" NL
+		"edges = SMAALumaEdgeDetectionPS(UV, offset, colour_texture);" NL
         "}" NL};
 
     prog.program_id =
@@ -237,41 +237,53 @@ void SMAA::init(const char *shader_source, byte *area, byte *search) {
     m_edge_detection_program = create_edge_detection_program(shader_source);
     m_blend_weight_program = create_blend_weight_program(shader_source);
     m_neighbor_blend_program = create_neighbor_blend_program(shader_source);
+
+	glGenSamplers(1, &m_sampler);
+
+	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glSamplerParameteri(m_sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glSamplerParameteri(m_sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
 void SMAA::clear() {}
 
 void SMAA::run(uint32_t src_texture_buffer, uint32_t dest_frame_buffer) const {
 
+	glBindSampler(0, m_sampler);
     edge_detection_pass(src_texture_buffer);
     run_pass();
     GL_CHECK;
-    blend_weight_pass();
-    run_pass();
-    GL_CHECK;
-    neighbor_blend_pass(src_texture_buffer, dest_frame_buffer);
-    run_pass();
+	blend_weight_pass();
+	run_pass();
+	GL_CHECK;
+	neighbor_blend_pass(src_texture_buffer, dest_frame_buffer);
+	run_pass();
+
+	glBindSampler(0, 0);
+	glBindSampler(1, 0);
 }
 
 void SMAA::edge_detection_pass(uint32_t colour_texture_id) const {
 
-    glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[0]);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[0]);
     glClear(GL_COLOR_BUFFER_BIT);
     GL_CHECK;
     glUseProgram(m_edge_detection_program.program_id);
     GL_CHECK;
 
-    float _viewport_width = Viewport::width();
-    float _viewport_height = Viewport::height();
+//    float _viewport_width = Viewport::width();
+//    float _viewport_height = Viewport::height();
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, colour_texture_id);
 
-    GL_CHECK;
-    Uniforms::setUniform(m_blend_weight_program.rm_matrix_id,
-                         glm::vec4(1.f / _viewport_width,
-                                   1.f / _viewport_height, _viewport_width,
-                                   _viewport_height));
+//    GL_CHECK;
+//    Uniforms::setUniform(m_blend_weight_program.rm_matrix_id,
+//                         glm::vec4(1.f / _viewport_width,
+//                                   1.f / _viewport_height, _viewport_width,
+//                                   _viewport_height));
 
     GL_CHECK;
 }
@@ -317,7 +329,7 @@ void SMAA::neighbor_blend_pass(uint32_t colour_texture_id,
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, colour_texture_id);
     GL_CHECK;
-
+	glBindSampler(1, m_sampler);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_texture_buffers[1]);
     GL_CHECK;

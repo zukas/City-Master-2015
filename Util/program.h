@@ -12,6 +12,22 @@ struct ShaderSource {
 };
 
 namespace ProgramCompiler {
+
+//	class UniformRefStore{
+//		private:
+//			const uint32_t *buffer;
+//			const uint32_t size;
+//		public:
+//			UniformRefStore(const uint32_t *buffer_, uint32_t size_);
+//			uint32_t resolve(uint32_t uniform_hash);
+
+//	};
+
+//	template <uint32_t __S >
+//	struct UniformBuffer {
+//			uint32_t m_uniforms;
+//	};
+
 uint32_t compileProgram(const ShaderSource *shaders, uint32_t size);
 uint32_t
 compileProgram(const char **vertex_shaders, uint32_t vertex_shader_count,

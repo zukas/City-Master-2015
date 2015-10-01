@@ -671,7 +671,7 @@ glProgram::glProgram() {
         exit(1);
     }
 
-	glfwWindowHint(GLFW_SAMPLES, 16);
+    glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -703,15 +703,13 @@ glProgram::glProgram() {
 	glClearDepth(1.0f);
 	glDepthFunc(GL_LESS);
 	GL_CHECK;
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 	GL_CHECK;
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
 	GL_CHECK;
 	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_SAMPLE_SHADING);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -819,8 +817,8 @@ glProgram::glProgram() {
     }
 
 	GL_CHECK;
-    m_gbuffer.init();
-	m_temp.init(Viewport::width(), Viewport::height(), TempBuffer::RGBA);
+    m_gbuffer.init(Viewport::width(), Viewport::height(), 4);
+//	m_temp.init(Viewport::width(), Viewport::height(), TempBuffer::RGBA);
 
 	GL_CHECK;
 	{

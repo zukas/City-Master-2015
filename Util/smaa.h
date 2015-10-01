@@ -7,6 +7,7 @@ class SMAA {
   public:
 	struct edge_detection_program_t {
 		uint32_t program_id;
+        uint32_t rm_matrix_id;
 	};
 
 	struct blend_weight_program_t {

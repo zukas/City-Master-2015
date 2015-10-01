@@ -46,13 +46,15 @@ create_edge_detection_program(const char *shader_source) {
     prog.program_id =
         ProgramCompiler::compileProgram(_vertex, 3, nullptr, 0, _fragment, 3);
     GL_CHECK;
-    uint32_t uniforms[1];
-    ProgramCompiler::resolveUniforms(prog.program_id, uniforms, 1);
+    uint32_t uniforms[2];
+    ProgramCompiler::resolveUniforms(prog.program_id, uniforms, 2);
+    prog.rm_matrix_id =
+        Uniforms::getUniformId(uniforms, 2, "SMAA_RT_METRICS"_h);
     GL_CHECK;
     glUseProgram(prog.program_id);
     GL_CHECK;
     Uniforms::setUniform(
-        Uniforms::getUniformId(uniforms, 1, "colour_texture"_h), 0);
+        Uniforms::getUniformId(uniforms, 2, "colour_texture"_h), 0);
     GL_CHECK;
     glUseProgram(0);
 
@@ -260,8 +262,18 @@ void SMAA::edge_detection_pass(uint32_t colour_texture_id) const {
     GL_CHECK;
     glUseProgram(m_edge_detection_program.program_id);
     GL_CHECK;
+
+    float _viewport_width = Viewport::width();
+    float _viewport_height = Viewport::height();
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, colour_texture_id);
+
+    GL_CHECK;
+    Uniforms::setUniform(m_blend_weight_program.rm_matrix_id,
+                         glm::vec4(1.f / _viewport_width,
+                                   1.f / _viewport_height, _viewport_width,
+                                   _viewport_height));
 
     GL_CHECK;
 }

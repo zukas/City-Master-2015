@@ -60,7 +60,7 @@ class glProgram {
 	solar_program_t m_normal_render;
 	SolarSystem m_solar_system;
 	GBuffer m_gbuffer;
-	TempBuffer m_temp;
+//	TempBuffer m_temp;
 	SMAA m_smaa;
 	Camera m_camera;
 	ScreenRender m_screen;

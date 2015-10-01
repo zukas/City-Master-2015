@@ -46,15 +46,15 @@ create_edge_detection_program(const char *shader_source) {
     prog.program_id =
         ProgramCompiler::compileProgram(_vertex, 3, nullptr, 0, _fragment, 3);
     GL_CHECK;
-    uint32_t uniforms[2];
-    ProgramCompiler::resolveUniforms(prog.program_id, uniforms, 2);
+	uint32_t uniforms[1];
+	ProgramCompiler::resolveUniforms(prog.program_id, uniforms, 1);
     prog.rm_matrix_id =
-        Uniforms::getUniformId(uniforms, 2, "SMAA_RT_METRICS"_h);
+		Uniforms::getUniformId(uniforms, 1, "SMAA_RT_METRICS"_h);
     GL_CHECK;
     glUseProgram(prog.program_id);
     GL_CHECK;
     Uniforms::setUniform(
-        Uniforms::getUniformId(uniforms, 2, "colour_texture"_h), 0);
+		Uniforms::getUniformId(uniforms, 1, "colour_texture"_h), 0);
     GL_CHECK;
     glUseProgram(0);
 
@@ -250,14 +250,12 @@ void SMAA::run(uint32_t src_texture_buffer, uint32_t dest_frame_buffer) const {
     run_pass();
     GL_CHECK;
     neighbor_blend_pass(src_texture_buffer, dest_frame_buffer);
-
     run_pass();
 }
 
 void SMAA::edge_detection_pass(uint32_t colour_texture_id) const {
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[0]);
-    glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
     GL_CHECK;
     glUseProgram(m_edge_detection_program.program_id);
@@ -281,7 +279,6 @@ void SMAA::edge_detection_pass(uint32_t colour_texture_id) const {
 void SMAA::blend_weight_pass() const {
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[1]);
-    glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
     GL_CHECK;
     glUseProgram(m_blend_weight_program.program_id);
@@ -309,7 +306,6 @@ void SMAA::neighbor_blend_pass(uint32_t colour_texture_id,
                                uint32_t dst_framebuffer_id) const {
 
     glBindFramebuffer(GL_FRAMEBUFFER, dst_framebuffer_id);
-    glClearColor(0.1, 0.1, 0.1, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     GL_CHECK;
 

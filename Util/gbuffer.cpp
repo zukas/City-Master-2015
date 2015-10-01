@@ -50,7 +50,7 @@ void GBuffer::init(uint32_t width, uint32_t height, uint32_t samples) {
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_multisample.colour_buffer);
 
     GL_CHECK;
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGBA16F,
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB16F,
                             width, height, GL_TRUE);
     GL_CHECK;
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2,
@@ -115,7 +115,7 @@ void GBuffer::init(uint32_t width, uint32_t height, uint32_t samples) {
     glBindTexture(GL_TEXTURE_2D, m_final.colour_buffer);
 
     GL_CHECK;
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA,
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB,
                  GL_FLOAT, NULL);
 
     GL_CHECK;

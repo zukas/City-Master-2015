@@ -814,11 +814,12 @@ glProgram::glProgram() {
         get_res_freesans_ttf(ttf_buffer);
         m_text = {ttf_buffer, ttf_size, 32};
         m_text.setColour(colour(150, 160, 170, 255));
+		glDebugger::init(Text(ttf_buffer, ttf_size, 24));
     }
 
 	GL_CHECK;
-    m_gbuffer.init(Viewport::width(), Viewport::height(), 4);
-//	m_temp.init(Viewport::width(), Viewport::height(), TempBuffer::RGBA);
+	m_gbuffer.init(Viewport::width(), Viewport::height(), 16);
+	m_temp.init(Viewport::width(), Viewport::height());
 
 	GL_CHECK;
 	{
@@ -897,7 +898,7 @@ void glProgram::render() {
             m_camera.update();
         }
 		GL_CHECK;
-//				normal_pass();
+		//				normal_pass();
 		geom_pass();
 		GL_CHECK;
 		light_pass();
@@ -906,8 +907,11 @@ void glProgram::render() {
 			PROF("Rendering text");
 			Text::beginRender();
 			m_text.render(m_frameRateBuffer, 20, 40);
+//			glDebugger::flush();
 			Text::endRender();
 		}
+
+//		LOG("Hello %s", "world");
     }
 
     glfwSwapBuffers(m_window);
@@ -962,8 +966,8 @@ void glProgram::geom_pass() {
 	PROF("Geometry pass");
 	GL_CHECK;
 
-	//	glEnable(GL_CULL_FACE);
-	//	glCullFace(GL_BACK);
+//	glEnable(GL_CULL_FACE);
+//	glCullFace(GL_BACK);
 
     glUseProgram(m_geom_pass_program.program_id);
 	m_gbuffer.begin_geom_pass();
@@ -981,14 +985,14 @@ void glProgram::geom_pass() {
 		GL_CHECK;
 	}
 
-	//	glDisable(GL_CULL_FACE);
+//	glDisable(GL_CULL_FACE);
 }
 
 void glProgram::light_pass() {
 
 	PROF("Light pass");
-	//	m_temp.begin_write();
-	//	m_smaa.run(m_gbuffer.colour_buffer_id());
+//	m_temp.begin_write();
+	//
 	GL_CHECK;
 	glUseProgram(m_light_pass_program.program_id);
 	m_gbuffer.begin_render_pass();
@@ -1005,9 +1009,12 @@ void glProgram::light_pass() {
 	m_screen.render();
 	GL_CHECK;
 	m_gbuffer.end_render_pass();
-	//	m_temp.end_write();
-
-	//	m_smaa.run(m_temp.colour_buffer_id());
+	GL_CHECK;
+//	m_temp.end_write();
+	GL_CHECK;
+//	m_temp.copy_to_buffer();
+//	m_smaa.run(m_temp.colour_buffer_id());
+	GL_CHECK;
 }
 
 void glProgram::normal_pass() {

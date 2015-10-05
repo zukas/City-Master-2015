@@ -6,7 +6,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-uint32_t ProgramCompiler::compileProgram(const ShaderSource *shaders,
+uint32_t Program::compile(const ShaderSource *shaders,
 										 uint32_t size) {
     ASSERT(size > 0);
 
@@ -69,7 +69,7 @@ uint32_t ProgramCompiler::compileProgram(const ShaderSource *shaders,
     return programId;
 }
 
-uint32_t ProgramCompiler::compileProgram(const char **vertex_shaders,
+uint32_t Program::compile(const char **vertex_shaders,
 										 uint32_t vertex_shader_count,
 										 const char **geometry_shaders,
 										 uint32_t geometry_shader_count,
@@ -80,7 +80,7 @@ uint32_t ProgramCompiler::compileProgram(const char **vertex_shaders,
 
 	if (vertex_shader_count > 0) {
 		uint32_t shader_id = glCreateShader(GL_VERTEX_SHADER);
-		if (!compile_shaders(shader_id, vertex_shaders, vertex_shader_count)) {
+		if (!compile(shader_id, vertex_shaders, vertex_shader_count)) {
 			exit(1);
 		} else {
 			glAttachShader(programId, shader_id);
@@ -90,7 +90,7 @@ uint32_t ProgramCompiler::compileProgram(const char **vertex_shaders,
 
 	if (geometry_shader_count > 0) {
 		uint32_t shader_id = glCreateShader(GL_GEOMETRY_SHADER);
-		if (!compile_shaders(shader_id, geometry_shaders,
+		if (!compile(shader_id, geometry_shaders,
 							 geometry_shader_count)) {
 			exit(1);
 		} else {
@@ -101,7 +101,7 @@ uint32_t ProgramCompiler::compileProgram(const char **vertex_shaders,
 
 	if (fragment_shader_count > 0) {
 		uint32_t shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-		if (!compile_shaders(shader_id, fragment_shaders,
+		if (!compile(shader_id, fragment_shaders,
 							 fragment_shader_count)) {
 			exit(1);
 		} else {
@@ -127,7 +127,7 @@ uint32_t ProgramCompiler::compileProgram(const char **vertex_shaders,
 	return programId;
 }
 
-int32_t ProgramCompiler::compile_shaders(uint32_t shader_id,
+int32_t Program::compile(uint32_t shader_id,
 										 const char **shader_sources,
 										 uint32_t shader_count) {
 	GLint status{GL_FALSE};
@@ -146,14 +146,14 @@ int32_t ProgramCompiler::compile_shaders(uint32_t shader_id,
 	return status;
 }
 
-void ProgramCompiler::resolveUniforms(uint32_t programId, uint32_t *uniforms,
+void Program::resolve_uniforms(uint32_t program_id, uint32_t *uniforms,
                                       uint32_t size) {
     GLint count;
-    glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &count);
+    glGetProgramiv(program_id, GL_ACTIVE_UNIFORMS, &count);
 	if ((uint32_t)count != size) {
 		printf("Incorrect uniform count, expected: %u, but requested: %u\n",
 			   count, size);
-		ASSERT((uint32_t)count == size);
+//		ASSERT((uint32_t)count == size);
 	}
 
     char name[256];
@@ -162,63 +162,55 @@ void ProgramCompiler::resolveUniforms(uint32_t programId, uint32_t *uniforms,
     for (uint32_t i = 0; i < size; ++i) {
         GLint _size;
         GLenum _type;
-        glGetActiveUniform(programId, i, 256, &length, &_size, &_type, name);
-		uint32_t _loc = glGetUniformLocation(programId, name);
+        glGetActiveUniform(program_id, i, 256, &length, &_size, &_type, name);
+        uint32_t _loc = glGetUniformLocation(program_id, name);
 		ASSERT(_loc == i);
         uint32_t _crc32 = crc32(name, length);
 		uniforms[_loc] = _crc32;
 
-		printf("name: %s, location: %u, i: %u\n", name, _loc, i);
+        printf("name: %s, location: %u, i: %u (%u)\n", name, _loc, i, _crc32);
     }
 }
 
-uint32_t Uniforms::getUniformId(const uint32_t *uniforms, uint32_t size,
-                                uint32_t uniformHash) {
-    uint32_t id = 0;
-    for (uint32_t i = 0; id == 0 && i < size; ++i) {
-        if (uniforms[i] == uniformHash) {
+uint32_t Program::get_uniform_id(const uint32_t *uniforms, uint32_t size,
+                                uint32_t uniform_hash) {
+    uint32_t id = size;
+    for (uint32_t i = 0; id == size && i < size; ++i) {
+        if (uniforms[i] == uniform_hash) {
             id = i;
         }
     }
     return id;
 }
 
-void Uniforms::setUniform(uint32_t uniformId, int32_t value) {
+void Program::set_uniform(uint32_t uniformId, int32_t value) {
     glUniform1i(uniformId, value);
 }
 
-void Uniforms::setUniform(uint32_t uniformId, uint32_t value) {
+void Program::set_uniform(uint32_t uniformId, uint32_t value) {
     glUniform1ui(uniformId, value);
 }
 
-void Uniforms::setUniform(uint32_t uniformId, float_t value) {
+void Program::set_uniform(uint32_t uniformId, float_t value) {
     glUniform1f(uniformId, value);
 }
 
-void Uniforms::setUniform(uint32_t uniformId, const glm::vec2 &value) {
+void Program::set_uniform(uint32_t uniformId, const glm::vec2 &value) {
     glUniform2fv(uniformId, 1, &value[0]);
 }
 
-void Uniforms::setUniform(uint32_t uniformId, const glm::vec3 &value) {
+void Program::set_uniform(uint32_t uniformId, const glm::vec3 &value) {
     glUniform3fv(uniformId, 1, &value[0]);
 }
 
-void Uniforms::setUniform(uint32_t uniformId, const glm::vec4 &value) {
+void Program::set_uniform(uint32_t uniformId, const glm::vec4 &value) {
     glUniform4fv(uniformId, 1, &value[0]);
 }
 
-void Uniforms::setUniform(uint32_t uniformId, const glm::mat3 &value) {
+void Program::set_uniform(uint32_t uniformId, const glm::mat3 &value) {
     glUniformMatrix3fv(uniformId, 1, GL_FALSE, &value[0][0]);
 }
 
-void Uniforms::setUniform(uint32_t uniformId, const glm::mat4 &value) {
+void Program::set_uniform(uint32_t uniformId, const glm::mat4 &value) {
     glUniformMatrix4fv(uniformId, 1, GL_FALSE, &value[0][0]);
 }
-
-//ProgramCompiler::UniformStore::UniformStore(const uint32_t *buffer_,
-//											uint32_t size_)
-//	: buffer(buffer_), size(size_) {}
-
-//uint32_t ProgramCompiler::UniformRefStore::resolve(uint32_t uniform_hash) {
-//	return Uniforms::getUniformId(buffer, size, uniform_hash);
-//}

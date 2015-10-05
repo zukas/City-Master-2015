@@ -143,7 +143,7 @@ void SolarSystem::render() {
     const model_gfx_data_t *model_gfx_data = m_model_gfx_data;
 	Texture2DCollection::bind_sampler(m_sampler);
 	for (uint16_t i = 0; i < m_size; ++i) {
-        Uniforms::setUniform(solar_model_id, model_matrixes[i]);
+        Program::set_uniform(solar_model_id, model_matrixes[i]);
         const model_gfx_data_t tmp = model_gfx_data[i];
         Texture2DCollection::bind(tmp.texture);
         Mesh3DCollection::render_geometry(tmp.mesh, tmp.elem_count);

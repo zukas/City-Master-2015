@@ -100,9 +100,9 @@ Text::program_data Text::text_program{0, 0, 0, 0, 0};
 
 void Text::init(const ShaderSource *shaders, uint32_t size, uint32_t projection_hash,
 				uint32_t model_hash, uint32_t colour_hash) {
-	text_program.program_id = ProgramCompiler::compileProgram(shaders, size);
+	text_program.program_id = Program::compile(shaders, size);
 	uint32_t uniforms[4];
-	ProgramCompiler::resolveUniforms(text_program.program_id, uniforms, 4);
+	Program::resolve_uniforms(text_program.program_id, uniforms, 4);
 
 	for (uint32_t i = 0; i < 4; ++i) {
 		if (uniforms[i] == projection_hash) {
@@ -129,7 +129,7 @@ void Text::beginRender() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glUseProgram(text_program.program_id);
-	Uniforms::setUniform(text_program.projection_id, Viewport::ortho());
+	Program::set_uniform(text_program.projection_id, Viewport::ortho());
 	GL_CHECK;
 }
 
@@ -203,7 +203,7 @@ void Text::setColour(const colour &colour_) { m_colour = colour_; }
 uint32_t Text::render(const char *text, uint32_t x, uint32_t y) const {
 
 	glBindVertexArray(m_vertexArray);
-	Uniforms::setUniform(text_program.colour_id, m_colour);
+	Program::set_uniform(text_program.colour_id, m_colour);
 	const uint32_t viewport_height = Viewport::viewport().h;
 	const uint32_t incY = m_lineSize;
 	const uint32_t length = strlen(text);
@@ -225,7 +225,7 @@ uint32_t Text::render(const char *text, uint32_t x, uint32_t y) const {
 		if (text[i] != ' ') {
 			Texture2DCollection::bind(char_.texture_id);
 
-			Uniforms::setUniform(
+			Program::set_uniform(
 				text_program.model_id,
 				glm::translate(
 					glm::mat4(1.0f),

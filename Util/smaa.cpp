@@ -40,21 +40,17 @@ create_edge_detection_program(const char *shader_source) {
         shader_source,
         "in vec2 UV;" NL "in vec4 offset[3];" NL "out vec2 edges;" NL
         "void main() {" NL
-		"edges = SMAALumaEdgeDetectionPS(UV, offset, colour_texture);" NL
+        "edges = SMAALumaEdgeDetectionPS(UV, offset, colour_texture);" NL
         "}" NL};
 
-    prog.program_id =
-        ProgramCompiler::compileProgram(_vertex, 3, nullptr, 0, _fragment, 3);
+    prog.program_id = Program::compile(_vertex, 3, nullptr, 0, _fragment, 3);
     GL_CHECK;
-	uint32_t uniforms[1];
-	ProgramCompiler::resolveUniforms(prog.program_id, uniforms, 1);
-    prog.rm_matrix_id =
-		Uniforms::getUniformId(uniforms, 1, "SMAA_RT_METRICS"_h);
+    UniformBuffer<2> uni(prog.program_id);
+    prog.rm_matrix_id = uni["SMAA_RT_METRICS"_h];
     GL_CHECK;
     glUseProgram(prog.program_id);
     GL_CHECK;
-    Uniforms::setUniform(
-		Uniforms::getUniformId(uniforms, 1, "colour_texture"_h), 0);
+    Program::set_uniform(uni["colour_texture"_h], 0);
     GL_CHECK;
     glUseProgram(0);
 
@@ -90,26 +86,17 @@ create_blend_weight_program(const char *shader_source) {
         "edge_texture, area_texture, search_texture, vec4(1, 1, 1, 0));" NL
         "}" NL};
 
-    prog.program_id =
-        ProgramCompiler::compileProgram(_vertex, 3, nullptr, 0, _fragment, 3);
+    prog.program_id = Program::compile(_vertex, 3, nullptr, 0, _fragment, 3);
     GL_CHECK;
-    uint32_t uniforms[4];
-    ProgramCompiler::resolveUniforms(prog.program_id, uniforms, 4);
-    prog.rm_matrix_id =
-        Uniforms::getUniformId(uniforms, 4, "SMAA_RT_METRICS"_h);
+
+    UniformBuffer<4> uni(prog.program_id);
+    prog.rm_matrix_id = uni["SMAA_RT_METRICS"_h];
 
     glUseProgram(prog.program_id);
     GL_CHECK;
-    uint32_t edge_texture_id =
-        Uniforms::getUniformId(uniforms, 4, "edge_texture"_h);
-    uint32_t area_texture_id =
-        Uniforms::getUniformId(uniforms, 4, "area_texture"_h);
-    uint32_t search_texture_id =
-        Uniforms::getUniformId(uniforms, 4, "search_texture"_h);
-
-    Uniforms::setUniform(edge_texture_id, 0);
-    Uniforms::setUniform(area_texture_id, 1);
-    Uniforms::setUniform(search_texture_id, 2);
+    Program::set_uniform(uni["edge_texture"_h], 0);
+    Program::set_uniform(uni["area_texture"_h], 1);
+    Program::set_uniform(uni["search_texture"_h], 2);
     GL_CHECK;
     glUseProgram(0);
     return prog;
@@ -141,23 +128,16 @@ create_neighbor_blend_program(const char *shader_source) {
         "void main() {" NL "colour = SMAANeighborhoodBlendingPS(UV, offset, "
         "colour_texture, blend_texture);" NL "}" NL};
 
-    prog.program_id =
-        ProgramCompiler::compileProgram(_vertex, 3, nullptr, 0, _fragment, 3);
+    prog.program_id = Program::compile(_vertex, 3, nullptr, 0, _fragment, 3);
     GL_CHECK;
-    uint32_t uniforms[3];
-    ProgramCompiler::resolveUniforms(prog.program_id, uniforms, 3);
-    prog.rm_matrix_id =
-        Uniforms::getUniformId(uniforms, 3, "SMAA_RT_METRICS"_h);
+
+    UniformBuffer<3> uni(prog.program_id);
+    prog.rm_matrix_id = uni["SMAA_RT_METRICS"_h];
 
     glUseProgram(prog.program_id);
     GL_CHECK;
-    uint32_t colour_texture_id =
-        Uniforms::getUniformId(uniforms, 3, "colour_texture"_h);
-    uint32_t blend_texture_id =
-        Uniforms::getUniformId(uniforms, 3, "blend_texture"_h);
-
-    Uniforms::setUniform(colour_texture_id, 0);
-    Uniforms::setUniform(blend_texture_id, 1);
+    Program::set_uniform(uni["colour_texture"_h], 0);
+    Program::set_uniform(uni["blend_texture"_h], 1);
     GL_CHECK;
     glUseProgram(0);
 
@@ -238,52 +218,43 @@ void SMAA::init(const char *shader_source, byte *area, byte *search) {
     m_blend_weight_program = create_blend_weight_program(shader_source);
     m_neighbor_blend_program = create_neighbor_blend_program(shader_source);
 
-	glGenSamplers(1, &m_sampler);
+    glGenSamplers(1, &m_sampler);
 
-	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glSamplerParameteri(m_sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glSamplerParameteri(m_sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glSamplerParameteri(m_sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glSamplerParameteri(m_sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
 void SMAA::clear() {}
 
 void SMAA::run(uint32_t src_texture_buffer, uint32_t dest_frame_buffer) const {
 
-	glBindSampler(0, m_sampler);
+    glBindSampler(0, m_sampler);
     edge_detection_pass(src_texture_buffer);
     run_pass();
     GL_CHECK;
-	blend_weight_pass();
-	run_pass();
-	GL_CHECK;
-	neighbor_blend_pass(src_texture_buffer, dest_frame_buffer);
-	run_pass();
+    blend_weight_pass();
+    run_pass();
+    GL_CHECK;
+    neighbor_blend_pass(src_texture_buffer, dest_frame_buffer);
+    run_pass();
 
-	glBindSampler(0, 0);
-	glBindSampler(1, 0);
+    glBindSampler(0, 0);
+    glBindSampler(1, 0);
 }
 
 void SMAA::edge_detection_pass(uint32_t colour_texture_id) const {
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[0]);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[0]);
     glClear(GL_COLOR_BUFFER_BIT);
     GL_CHECK;
     glUseProgram(m_edge_detection_program.program_id);
     GL_CHECK;
 
-//    float _viewport_width = Viewport::width();
-//    float _viewport_height = Viewport::height();
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, colour_texture_id);
-
-//    GL_CHECK;
-//    Uniforms::setUniform(m_blend_weight_program.rm_matrix_id,
-//                         glm::vec4(1.f / _viewport_width,
-//                                   1.f / _viewport_height, _viewport_width,
-//                                   _viewport_height));
 
     GL_CHECK;
 }
@@ -307,7 +278,7 @@ void SMAA::blend_weight_pass() const {
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, m_data_buffers[1]);
     GL_CHECK;
-    Uniforms::setUniform(m_blend_weight_program.rm_matrix_id,
+    Program::set_uniform(m_blend_weight_program.rm_matrix_id,
                          glm::vec4(1.f / _viewport_width,
                                    1.f / _viewport_height, _viewport_width,
                                    _viewport_height));
@@ -329,12 +300,12 @@ void SMAA::neighbor_blend_pass(uint32_t colour_texture_id,
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, colour_texture_id);
     GL_CHECK;
-	glBindSampler(1, m_sampler);
+    glBindSampler(1, m_sampler);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_texture_buffers[1]);
     GL_CHECK;
 
-    Uniforms::setUniform(m_neighbor_blend_program.rm_matrix_id,
+    Program::set_uniform(m_neighbor_blend_program.rm_matrix_id,
                          glm::vec4(1.f / _viewport_width,
                                    1.f / _viewport_height, _viewport_width,
                                    _viewport_height));

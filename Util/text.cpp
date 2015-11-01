@@ -1,6 +1,6 @@
 #include "text.h"
 #include "program.h"
-#include "texture2dcollection.h"
+#include "texture_2d.h"
 #include "viewport.h"
 #include "profiler.h"
 #include "glvalidator.h"
@@ -62,7 +62,7 @@ char_detail_t load_char(float *buffer_data, FT_Face face, uint32_t index) {
 		}
 
 		res.char_data.texture_id =
-			Texture2DCollection::create_ttf_from_memory(buffer, nw, nh);
+			texture_2d::create_ttf_from_memory(buffer, nw, nh);
 		res.char_data.advance = ax;
 		res.char_data.bearing = bx;
 		res.height = ch;
@@ -223,7 +223,7 @@ uint32_t Text::render(const char *text, uint32_t x, uint32_t y) const {
 
 		cursorX += char_.bearing;
 		if (text[i] != ' ') {
-			Texture2DCollection::bind(char_.texture_id);
+			texture_2d::bind(char_.texture_id);
 
 			Program::set_uniform(
 				text_program.model_id,

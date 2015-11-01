@@ -1,7 +1,7 @@
 #ifndef BOX2D_H
 #define BOX2D_H
 
-#include "Util/texture2dcollection.h"
+#include "Util/texture_2d.h"
 
 class Box2d
 {

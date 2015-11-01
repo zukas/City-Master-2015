@@ -9,10 +9,11 @@
 #include "Util/gldebugger.h"
 #include "Util/profiler.h"
 #include "Util/viewport.h"
-#include "Util/texture2dcollection.h"
-#include "Util/mesh3dcollection.h"
+#include "Util/texture_2d.h"
+#include "Util/mesh_3d.h"
 #include "Util/glvalidator.h"
 #include "Util/helperfunctions.h"
+#include "Util/buffer_store.h"
 
 #include "resources/resourcemanager.h"
 
@@ -714,6 +715,7 @@ glProgram::glProgram() {
     glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
+    buffer_store::inti();
     init_resources();
     GL_CHECK;
     {
@@ -809,7 +811,7 @@ glProgram::glProgram() {
 
     m_screen.init();
     GL_CHECK;
-    glfwSwapInterval(1);
+    glfwSwapInterval(2);
 
     deinit_resources();
 }
@@ -963,7 +965,7 @@ void glProgram::geom_pass() {
 void glProgram::light_pass() {
 
     PROF("Light pass");
-    m_temp.begin_write();
+//    m_temp.begin_write();
     GL_CHECK;
     glUseProgram(m_light_pass_program.program_id);
     m_gbuffer.begin_render_pass();
@@ -974,9 +976,9 @@ void glProgram::light_pass() {
     GL_CHECK;
     m_gbuffer.end_render_pass();
     GL_CHECK;
-    m_temp.end_write();
+//    m_temp.end_write();
     GL_CHECK;
-    m_smaa.run(m_temp.colour_buffer_id());
+//    m_smaa.run(m_temp.colour_buffer_id());
     GL_CHECK;
 }
 
@@ -990,7 +992,7 @@ void glProgram::normal_pass() {
     m_solar_system.render();
 }
 
-ScreenRender::~ScreenRender() { Mesh3DCollection::destroy(m_mesh_id); }
+ScreenRender::~ScreenRender() { mesh_3d::destroy(m_mesh_id); }
 
 void ScreenRender::init() {
     uv_3d_vertex vertexes[4]{{{-1.f, 1.f, 0.f}, {0.f, 1.f}},
@@ -999,13 +1001,13 @@ void ScreenRender::init() {
                              {{1.f, 1.f, 0.f}, {1.f, 1.f}}};
     uint32_t indexes[6]{0, 1, 2, 2, 3, 0};
 
-    m_mesh_id = Mesh3DCollection::create(vertexes, 4, indexes, 6);
+    m_mesh_id = mesh_3d::create(vertexes, 4, indexes, 6);
 
     GL_CHECK;
 }
 
 void ScreenRender::render() {
     GL_CHECK;
-    Mesh3DCollection::render_geometry(m_mesh_id, 6);
+    mesh_3d::render_geometry(m_mesh_id, 6);
     GL_CHECK;
 }

@@ -1,7 +1,7 @@
 #include "smaa.h"
 #include "viewport.h"
 #include "Common/str_hash.h"
-#include "mesh3dcollection.h"
+#include "mesh_3d.h"
 #include "program.h"
 #include "profiler.h"
 #include "glvalidator.h"
@@ -154,7 +154,7 @@ void SMAA::init(const char *shader_source, byte *area, byte *search) {
                              {{1.f, 1.f, 0.f}, {1.f, 1.f}}};
     uint32_t indexes[6]{0, 1, 2, 2, 3, 0};
     GL_CHECK;
-    m_mesh_id = Mesh3DCollection::create(vertexes, 4, indexes, 6);
+    m_mesh_id = mesh_3d::create(vertexes, 4, indexes, 6);
     GL_CHECK;
     glGenTextures(2, m_data_buffers);
     GL_CHECK;
@@ -313,6 +313,6 @@ void SMAA::neighbor_blend_pass(uint32_t colour_texture_id,
 }
 
 void SMAA::run_pass() const {
-    Mesh3DCollection::render_geometry(m_mesh_id, 6);
+    mesh_3d::render_geometry(m_mesh_id, 6);
     GL_CHECK;
 }

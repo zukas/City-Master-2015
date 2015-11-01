@@ -1,10 +1,10 @@
-#include "mesh2dcollection.h"
+#include "mesh_2d.h"
 #include "profiler.h"
 
 #include <GL/glew.h>
 #include <string.h>
 
-uint32_t Mesh2dCollection::create(const uv_2d_vertex *vertexes,
+uint32_t mesh_2d::create(const uv_2d_vertex *vertexes,
                                   uint32_t vertex_size) {
 
     uint32_t vertex_array_;
@@ -41,11 +41,11 @@ uint32_t Mesh2dCollection::create(const uv_2d_vertex *vertexes,
     return vertex_array_;
 }
 
-void Mesh2dCollection::destroy(uint32_t mesh_id) {
+void mesh_2d::destroy(uint32_t mesh_id) {
     glDeleteVertexArrays(1, &mesh_id);
 }
 
-void Mesh2dCollection::render_geometry(uint32_t mesh_id, uint32_t vertex_size) {
+void mesh_2d::render_geometry(uint32_t mesh_id, uint32_t vertex_size) {
     PROF("Render 2d mesh geometry");
     ASSERT(vertex_size > 0);
 

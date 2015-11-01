@@ -1,11 +1,11 @@
-#include "texture2dcollection.h"
+#include "texture_2d.h"
 #include "SOIL/SOIL.h"
 #include "glvalidator.h"
 
 #include <GL/glew.h>
 #include <stdio.h>
 
-uint32_t Texture2DCollection::create_dss_from_memory(byte *buffer,
+uint32_t texture_2d::create_dss_from_memory(byte *buffer,
                                                      uint32_t size) {
     //	uint32_t sampler_id_{0};
     uint32_t texture_id_ = SOIL_load_OGL_texture_from_memory(
@@ -18,7 +18,7 @@ uint32_t Texture2DCollection::create_dss_from_memory(byte *buffer,
     return texture_id_;
 }
 
-uint32_t Texture2DCollection::create_jpg_from_memory(byte *buffer,
+uint32_t texture_2d::create_jpg_from_memory(byte *buffer,
                                                      uint32_t size) {
 
     GL_CHECK;
@@ -53,7 +53,7 @@ uint32_t Texture2DCollection::create_jpg_from_memory(byte *buffer,
     return texture_id_;
 }
 
-uint32_t Texture2DCollection::create_ttf_from_memory(byte *buffer,
+uint32_t texture_2d::create_ttf_from_memory(byte *buffer,
                                                      uint32_t width,
                                                      uint32_t height) {
     GL_CHECK;
@@ -84,19 +84,19 @@ uint32_t Texture2DCollection::create_ttf_from_memory(byte *buffer,
     return texture_id_;
 }
 
-uint32_t Texture2DCollection::create_sampler() {
+uint32_t texture_2d::create_sampler() {
     uint32_t sampler;
     glGenSamplers(1, &sampler);
     return sampler;
 }
 
-void Texture2DCollection::destroy(uint32_t texture_id) {
+void texture_2d::destroy(uint32_t texture_id) {
     glDeleteTextures(1, &texture_id);
     //	glDeleteSamplers(1, &texture_id);
     GL_CHECK;
 }
 
-void Texture2DCollection::bind(uint32_t texture_id, uint32_t unit) {
+void texture_2d::bind(uint32_t texture_id, uint32_t unit) {
     glActiveTexture(GL_TEXTURE0 + unit);
     //	glUniform1i(texture_id, unit);
     glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -104,11 +104,11 @@ void Texture2DCollection::bind(uint32_t texture_id, uint32_t unit) {
     GL_CHECK;
 }
 
-void Texture2DCollection::bind_sampler(uint32_t sampler_id, uint32_t unit) {
+void texture_2d::bind_sampler(uint32_t sampler_id, uint32_t unit) {
     glBindSampler(unit, sampler_id);
 }
 
-void Texture2DCollection::bind(const uint32_t *texture_ids, uint32_t size,
+void texture_2d::bind(const uint32_t *texture_ids, uint32_t size,
                                uint32_t start_unit) {
     ASSERT(texture_ids != nullptr);
     ASSERT(size > 0);
@@ -122,18 +122,18 @@ void Texture2DCollection::bind(const uint32_t *texture_ids, uint32_t size,
     }
 }
 
-void Texture2DCollection::unbind(uint32_t unit) {
+void texture_2d::unbind(uint32_t unit) {
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, 0);
     //    glBindSampler(unit,0);
     GL_CHECK;
 }
 
-void Texture2DCollection::unbind_sampler(uint32_t unit) {
+void texture_2d::unbind_sampler(uint32_t unit) {
     glBindSampler(unit, 0);
 }
 
-void Texture2DCollection::save(const char *filename, uint32_t texture_id) {
+void texture_2d::save(const char *filename, uint32_t texture_id) {
     GLint width, height, internalFormat;
     glBindTexture(GL_TEXTURE_2D, texture_id);
     glGetTexLevelParameteriv(

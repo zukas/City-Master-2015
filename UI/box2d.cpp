@@ -1,6 +1,6 @@
 #include "box2d.h"
 #include "Util/types.h"
-#include "Util/mesh2dcollection.h"
+#include "Util/mesh_2d.h"
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -40,7 +40,7 @@ void Box2d::render(float x, float y) {
 //        glm::translate(glm::mat4(1.0f), glm::vec3(float(x), float(y), 0.0f));
 
 //    m_program.setModelMatrix(model);
-    Mesh2dCollection::render_geometry(m_mesh, 6);
+    mesh_2d::render_geometry(m_mesh, 6);
 
     glDisable(GL_BLEND);
 

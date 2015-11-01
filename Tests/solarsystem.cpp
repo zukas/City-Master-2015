@@ -2,8 +2,8 @@
 
 #include "Util/clock.h"
 #include "Util/program.h"
-#include "Util/mesh3dcollection.h"
-#include "Util/texture2dcollection.h"
+#include "Util/mesh_3d.h"
+#include "Util/texture_2d.h"
 #include "Util/profiler.h"
 
 #include "Common/ptr_arithm.h"
@@ -98,7 +98,7 @@ void SolarSystem::init(uint16_t size, uint32_t model_id) {
         m_memory, (sizeof(model_phx_data_t) + sizeof(glm::mat4)) * size);
     m_size = size;
 
-	m_sampler = Texture2DCollection::create_sampler();
+	m_sampler = texture_2d::create_sampler();
 	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -122,9 +122,9 @@ void SolarSystem::set(uint16_t index, const model_phx_data_t &model_phx,
 	m_model_matrixes[index] = moved_matrix(model_phx.distance);
 
     model_gfx_data_t gfx_data{
-		Texture2DCollection::create_jpg_from_memory(model_bin.texture_data,
+		texture_2d::create_jpg_from_memory(model_bin.texture_data,
 													model_bin.texture_size),
-        Mesh3DCollection::create(model_bin.model_data, model_bin.model_size,
+        mesh_3d::create(model_bin.model_data, model_bin.model_size,
                                  model_bin.index_data, model_bin.index_size),
         model_bin.index_size};
 
@@ -141,15 +141,15 @@ void SolarSystem::render() {
 
     const glm::mat4 *model_matrixes = m_model_matrixes;
     const model_gfx_data_t *model_gfx_data = m_model_gfx_data;
-	Texture2DCollection::bind_sampler(m_sampler);
+	texture_2d::bind_sampler(m_sampler);
 	for (uint16_t i = 0; i < m_size; ++i) {
         Program::set_uniform(solar_model_id, model_matrixes[i]);
         const model_gfx_data_t tmp = model_gfx_data[i];
-        Texture2DCollection::bind(tmp.texture);
-        Mesh3DCollection::render_geometry(tmp.mesh, tmp.elem_count);
-        Texture2DCollection::unbind();
+        texture_2d::bind(tmp.texture);
+        mesh_3d::render_geometry(tmp.mesh, tmp.elem_count);
+        texture_2d::unbind();
     }
-	Texture2DCollection::unbind_sampler();
+	texture_2d::unbind_sampler();
 }
 
 void SolarSystem::render_selection() {}
